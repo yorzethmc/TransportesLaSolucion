@@ -599,6 +599,9 @@
         const [y, m, d] = dateInput.value.split('-');
         const dateStr = `${d}/${m}/${y}`;
 
+        const cleanPhone1 = phone1.replace(/\D/g, '');
+        const waClientLink = `https://wa.me/${cleanPhone1.length === 8 ? '506'+cleanPhone1 : cleanPhone1}`;
+
         // Destino Final Builder
         let finalDest = destGroup.value;
         if (finalDest === 'Nicaragua') {
@@ -618,6 +621,7 @@
 =============
 *Nombre:* ${name}
 *Tel:* ${phone1}
+*WA:* ${waClientLink}
 =============
 *Destino:* ${finalDest}
 *Fecha:* ${dateStr}
