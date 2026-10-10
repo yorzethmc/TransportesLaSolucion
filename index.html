@@ -487,13 +487,26 @@
               const data = await response.json();
               
               const address = data.address || {};
-              const provincia = address.state || '';
-              const canton = address.county || address.city || address.town || '';
-              const distrito = address.suburb || address.village || address.hamlet || '';
-              const barrio = address.neighbourhood || address.road || address.residential || '';
               
-              // Los 4 niveles unidos y ordenados
-              const detectedText = [barrio, distrito, canton, provincia].filter(Boolean).join(', ');
+              // Mapeo adaptado a Costa Rica según OpenStreetMap
+              const provincia = address.state || '';
+              const canton = address.county || address.city || '';
+              const distrito = address.town || address.village || address.suburb || address.municipality || '';
+              
+              // Extraer nivel profundo (Barrios, residenciales, calles, edificios)
+              const otrosArray = [
+                address.neighbourhood,
+                address.residential,
+                address.hamlet,
+                address.road,
+                address.building
+              ].filter(Boolean);
+              
+              // Remover duplicados por si OSM repite nombres en distintos campos
+              const otrosUnicos = [...new Set(otrosArray)].join(', ');
+              
+              // Unir en el orden estricto solicitado: Provincia -> Cantón -> Distrito -> Otros
+              const detectedText = [provincia, canton, distrito, otrosUnicos].filter(Boolean).join(', ');
               
               locationBtn.classList.add('hidden');
               status.textContent = "✓ Ubicación Detectada con Éxito";
@@ -501,7 +514,7 @@
               
               manualInput.classList.remove('hidden');
               manualInput.required = true;
-              manualInput.value = detectedText || "Ubicación detectada (agregue otras señas exactas si es necesario)";
+              manualInput.value = detectedText || "Ubicación detectada (agregue señas exactas si es necesario)";
               
             } catch (err) {
               showFallback("GPS listo. Por favor, escribe Provincia, Cantón, Distrito y Señas:");
