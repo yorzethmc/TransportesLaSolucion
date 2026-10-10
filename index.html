@@ -495,7 +495,7 @@
       <div class="form-group">
         <label class="form-label">📍 Ubicación de partida *</label>
         <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; font-weight:500;">
-          Detectaremos 4 niveles: Provincia, Cantón, Distrito y Barrio.
+          Detectaremos 3 niveles: Provincia, Cantón y Distrito.
         </p>
         <div class="location-wrapper">
           <button type="button" class="btn btn-outline" id="locationBtn" style="padding: 1rem; font-size: 1.05rem; font-weight: 800;">
@@ -611,7 +611,7 @@
         lblLuggage.textContent = e.target.checked ? "SÍ" : "NO";
       });
 
-      // GPS 4 Niveles
+      // GPS 3 Niveles
       locationBtn.addEventListener('click', () => {
         const status = document.getElementById('locationSuccess');
         const manualInput = document.getElementById('manualLocation');
@@ -631,30 +631,19 @@
             userCoords = { lat, lng };
             
             try {
-              const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+              // Zoom 16 para evitar datos de calles (basura) y apuntar a Provincia/Cantón/Distrito
+              const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`);
               const data = await response.json();
               
               const address = data.address || {};
               
-              // Mapeo adaptado a Costa Rica según OpenStreetMap
+              // Mapeo adaptado a Costa Rica según OpenStreetMap (3 niveles)
               const provincia = address.state || '';
-              const canton = address.county || address.city || '';
-              const distrito = address.town || address.village || address.suburb || address.municipality || '';
+              const canton = address.county || address.municipality || '';
+              const distrito = address.city || address.town || address.village || address.suburb || address.district || '';
               
-              // Extraer nivel profundo (Barrios, residenciales, calles, edificios)
-              const otrosArray = [
-                address.neighbourhood,
-                address.residential,
-                address.hamlet,
-                address.road,
-                address.building
-              ].filter(Boolean);
-              
-              // Remover duplicados por si OSM repite nombres en distintos campos
-              const otrosUnicos = [...new Set(otrosArray)].join(', ');
-              
-              // Unir en el orden estricto solicitado: Provincia -> Cantón -> Distrito -> Otros
-              const detectedText = [provincia, canton, distrito, otrosUnicos].filter(Boolean).join(', ');
+              // Unir en el orden estricto solicitado: Provincia -> Cantón -> Distrito
+              const detectedText = [provincia, canton, distrito].filter(Boolean).join(', ');
               
               locationBtn.classList.add('hidden');
               status.textContent = "✓ Ubicación Detectada con Éxito";
