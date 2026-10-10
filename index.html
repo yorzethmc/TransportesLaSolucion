@@ -3,511 +3,423 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transportes La Solución - Reservas</title>
-  <meta name="description" content="Reserva tus viajes de manera rápida y segura.">
+  <title>Transportes La Solución - Reservas Premium</title>
+  <meta name="description" content="Servicio de transporte VIP. Rápido, seguro y confiable.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #dc2626; /* Rojo Taxi/Buseta */
-      --primary-hover: #b91c1c;
-      --secondary: #facc15; /* Amarillo Taxi */
-      --secondary-hover: #eab308;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --text: #0f172a;
-      --text-muted: #475569;
-      --border: #cbd5e1;
-      --danger: #ef4444;
+      --primary: #e11d48; /* Premium Red */
+      --primary-glow: rgba(225, 29, 72, 0.5);
+      --secondary: #f59e0b; /* Premium Yellow/Gold */
+      --bg: #0b0f19; /* Deep Space Dark */
+      --surface: #111827; /* Dark Surface */
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
       --success: #10b981;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --success-glow: rgba(16, 185, 129, 0.3);
+      --input-bg: #1f2937;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      line-height: 1.6;
       min-height: 100vh;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Background Ambient Orbs */
+    .ambient-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: -1;
+      animation: drift 20s infinite alternate;
+    }
+    .orb-1 {
+      top: -10%; left: -10%;
+      width: 50vw; height: 50vw;
+      background: rgba(225, 29, 72, 0.15);
+    }
+    .orb-2 {
+      bottom: -20%; right: -10%;
+      width: 60vw; height: 60vw;
+      background: rgba(245, 158, 11, 0.1);
+      animation-delay: -5s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(5%, 10%); }
     }
 
     .top-bar {
-      width: 100%;
-      height: 14px;
-      background: repeating-linear-gradient(
-        45deg,
-        var(--secondary),
-        var(--secondary) 15px,
-        #000 15px,
-        #000 30px
-      );
+      width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
     }
 
-    .container {
-      width: 100%;
-      max-width: 480px;
+    .main-wrapper {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       padding: 2rem 1.5rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1.5rem;
-      animation: fadeIn 0.6s ease-out;
+      width: 100%; max-width: 500px;
+      margin: 0 auto;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    /* PREMIUM HERO SECTION */
+    .hero {
+      text-align: center;
+      width: 100%;
+      margin-bottom: 3rem;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .logo-container {
+      position: relative;
+      width: 120px; height: 120px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 1px solid var(--surface-border);
+      transform-style: preserve-3d;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .logo-icon {
+      font-size: 4rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotateX(0); }
+      50% { transform: translateY(-10px) rotateX(5deg); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .hero { 
-      text-align: center; 
-      margin-bottom: 1.5rem; 
-      background: var(--surface);
-      padding: 2.5rem 2rem;
-      border-radius: 1.5rem;
-      box-shadow: var(--shadow);
-      border-top: 6px solid var(--primary);
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     
-    .logo-icon {
-      font-size: 4rem;
-      margin-bottom: 0.5rem;
-      display: inline-block;
-      animation: bounce 2s infinite;
+    .hero h1 span {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .hero h1 { font-size: 2rem; margin-bottom: 0.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-    .hero p { color: var(--text-muted); font-size: 1.1rem; font-weight: 500;}
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 1.15rem 1.5rem;
-      border-radius: 1rem;
+    .hero p {
+      color: var(--text-muted);
       font-size: 1.15rem;
-      font-weight: 700;
+      font-weight: 400;
+    }
+
+    /* CTA BUTTON */
+    .btn-cta {
+      position: relative;
+      width: 100%;
+      padding: 1.4rem;
+      border-radius: 1.25rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #be123c);
       border: none;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      gap: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 15px 35px var(--primary-glow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
     }
     
-    .btn:active { transform: scale(0.96); }
-    
-    .btn-primary { 
-      background-color: var(--primary); 
-      color: white; 
-      box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.3); 
+    .btn-cta::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: skewX(-20deg);
+      animation: shine 4s infinite;
     }
-    .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 15px 20px -3px rgba(220, 38, 38, 0.4); }
     
+    @keyframes shine {
+      0% { left: -100%; }
+      20%, 100% { left: 200%; }
+    }
+
+    .btn-cta:active { transform: scale(0.95); box-shadow: 0 5px 15px var(--primary-glow); }
+
+    /* MODAL (GLASSMORPHISM) */
     .modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(5px);
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       opacity: 0; visibility: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 40;
     }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     
     .modal {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--bg);
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
       border-radius: 2rem 2rem 0 0;
-      padding: 2.5rem 1.5rem;
-      max-height: 92vh;
+      padding: 2rem 1.5rem 3rem;
+      max-height: 90vh;
       overflow-y: auto;
       transform: translateY(100%);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 50;
-      box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
     }
     .modal.active { transform: translateY(0); }
     
     @media (min-width: 640px) {
       .modal {
         top: 50%; bottom: auto; left: 50%; right: auto;
-        transform: translate(-50%, -50%) scale(0.95);
-        width: 100%; max-width: 520px;
+        transform: translate(-50%, -45%) scale(0.95);
+        width: 100%; max-width: 500px;
         border-radius: 1.5rem;
+        border: 1px solid var(--surface-border);
         opacity: 0; pointer-events: none;
       }
       .modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
     }
     
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .modal-title { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: white; }
     .close-btn { 
-      background: #f1f5f9; border: none; font-size: 1.75rem; 
-      color: var(--text-muted); cursor: pointer; 
-      width: 44px; height: 44px; border-radius: 50%; 
+      background: var(--input-bg); border: 1px solid var(--surface-border); 
+      font-size: 1.5rem; color: var(--text-muted); cursor: pointer; 
+      width: 40px; height: 40px; border-radius: 50%; 
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .close-btn:hover { background: #e2e8f0; color: var(--text); }
-    
-    .form-group { 
-      margin-bottom: 1.5rem; 
-      background: var(--surface); 
-      padding: 1.25rem; 
-      border-radius: 1rem; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-      border: 1px solid var(--border); 
-    }
-    
-    .form-label { 
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 1.05rem; 
-      font-weight: 800; 
-      margin-bottom: 0.75rem; 
-      color: var(--text); 
-    }
-    
-    .form-control {
-      width: 100%; 
-      padding: 1rem 1.25rem;
-      border: 2px solid var(--border);
-      border-radius: 0.75rem; 
-      font-size: 1.05rem;
-      background: var(--bg); 
       transition: all 0.2s;
-      font-family: inherit; 
-      font-weight: 600;
-      color: var(--text);
     }
-    .form-control::placeholder { color: #94a3b8; font-weight: 500; }
-    .form-control:focus { 
-      outline: none; 
-      border-color: var(--primary); 
-      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1); 
-      background: var(--surface); 
-    }
+    .close-btn:active { transform: scale(0.9); background: var(--surface-border); color: white; }
 
-    input[type="tel"].form-control {
-      text-align: center;
-      font-size: 1.25rem;
-      letter-spacing: 2px;
+    /* FORMS */
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { 
+      display: block; font-family: 'Outfit', sans-serif; font-size: 1.05rem; 
+      font-weight: 600; margin-bottom: 0.5rem; color: #cbd5e1; 
     }
-
-    /* CONTADOR DE PASAJEROS (STEPPER) VISUAL E INTUITIVO */
-    .passenger-counter {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--surface);
-      border: 2px solid var(--border);
+    .form-control {
+      width: 100%; padding: 1.15rem;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
       border-radius: 1rem;
-      padding: 1rem;
-      margin-bottom: 0.75rem;
+      font-family: 'Inter', sans-serif; font-size: 1.05rem;
+      color: white; transition: all 0.2s;
+    }
+    .form-control::placeholder { color: #64748b; }
+    .form-control:focus { 
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
+      background: #1e293b;
+    }
+    textarea.form-control { resize: vertical; min-height: 100px; }
+
+    /* STEPPERS */
+    .stepper-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--input-bg); border: 1px solid var(--surface-border);
+      border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem;
       transition: all 0.3s;
     }
-    .passenger-counter.active {
-      border-color: var(--primary);
-      background: #fef2f2;
-      box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+    .stepper-card.active { border-color: var(--primary); background: rgba(225,29,72,0.05); }
+    .passenger-info { display: flex; align-items: center; gap: 1rem; }
+    .p-icon { font-size: 2rem; }
+    .p-text strong { display: block; font-family: 'Outfit', sans-serif; font-size: 1.15rem; color: white; }
+    .p-text span { font-size: 0.85rem; color: var(--text-muted); }
+    
+    .stepper-controls {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: rgba(0,0,0,0.2); padding: 0.3rem; border-radius: 2rem;
     }
-    .passenger-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .passenger-icon {
-      font-size: 2.2rem;
-      background: var(--bg);
-      width: 54px;
-      height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .passenger-text {
-      display: flex;
-      flex-direction: column;
-    }
-    .passenger-text strong {
-      font-size: 1.15rem;
-      color: var(--text);
-      line-height: 1.2;
-    }
-    .passenger-text span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-    .stepper {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--surface);
-      padding: 0.25rem;
-      border-radius: 2rem;
-      border: 1px solid var(--border);
-    }
-    .stepper-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: none;
-      background: var(--bg);
-      font-size: 1.75rem;
-      font-weight: 600;
-      color: var(--primary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    .st-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: var(--surface); color: var(--text);
+      font-size: 1.5rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
-      user-select: none;
+    }
+    .st-btn:active { transform: scale(0.85); background: var(--primary); color: white; }
+    .st-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .st-val { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; width: 24px; text-align: center; }
+
+    /* TOGGLE SWITCH */
+    .toggle-wrapper {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--input-bg); border: 1px solid var(--surface-border);
+      border-radius: 1.25rem; padding: 1.25rem 1rem; cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .stepper-btn:active {
-      transform: scale(0.9);
-      background: #e2e8f0;
+    .t-label { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; color: white; }
+    .t-switch {
+      position: relative; width: 56px; height: 32px;
+      background: #334155; border-radius: 16px; transition: 0.3s;
     }
-    .stepper-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      color: var(--text-muted);
+    .t-switch::after {
+      content: ''; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px;
+      background: white; border-radius: 50%; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .stepper-value {
-      font-size: 1.35rem;
-      font-weight: 900;
-      width: 28px;
-      text-align: center;
-      color: var(--text);
+    input[type="checkbox"] { display: none; }
+    input[type="checkbox"]:checked ~ .t-switch { background: var(--success); box-shadow: 0 0 12px var(--success-glow); }
+    input[type="checkbox"]:checked ~ .t-switch::after { transform: translateX(24px); }
+
+    /* GPS BUTTON INTERNAL LOGIC */
+    .btn-gps {
+      width: 100%; padding: 1.15rem; border-radius: 1rem;
+      background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa; font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem;
     }
+    .btn-gps:active { transform: scale(0.97); }
+    .gps-hint { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 1rem; }
     
-    .shake {
-      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    .loc-success {
+      display: none; align-items: center; justify-content: center; gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399; padding: 1rem; border-radius: 1rem; font-weight: 600;
+      margin-bottom: 1rem; animation: fadeUp 0.3s ease;
     }
+
+    .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
     @keyframes shake {
       10%, 90% { transform: translate3d(-2px, 0, 0); }
       20%, 80% { transform: translate3d(3px, 0, 0); }
       30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
       40%, 60% { transform: translate3d(5px, 0, 0); }
     }
-
-    /* Toggles Sí/No */
-    .toggle-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      padding: 0.25rem 0;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .toggle-label {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text);
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 54px;
-      height: 30px;
-      background: var(--border);
-      border-radius: 15px;
-      transition: background 0.3s ease-in-out;
-      flex-shrink: 0;
-    }
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 24px;
-      height: 24px;
-      background: white;
-      border-radius: 50%;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .toggle-wrapper input[type="checkbox"] {
-      display: none;
-    }
-    
-    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch {
-      background: var(--success);
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
-    }
-    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch::after {
-      transform: translateX(24px);
-    }
-    
-    .toggle-switch:active::after {
-      width: 32px;
-    }
-    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch:active::after {
-      transform: translateX(16px);
-    }
-
-    .toggle-state-text {
-      font-size: 0.95rem;
-      font-weight: 800;
-      margin-right: 12px;
-      color: var(--text-muted);
-      transition: color 0.3s ease-in-out, transform 0.2s;
-    }
-    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-state-text {
-      color: var(--success);
-      transform: scale(1.1);
-    }
-    
-    .hidden { display: none !important; }
-    
-    .location-wrapper { display: flex; flex-direction: column; gap: 1rem; }
-    .location-status { 
-      font-size: 1rem; color: var(--success); display: none; font-weight: 800; 
-      background: #ecfdf5; padding: 1rem; border-radius: 0.75rem; 
-      text-align: center; border: 2px solid #34d399;
-    }
-    .location-status.active { display: block; animation: fadeIn 0.3s ease; }
-    
-    .btn-outline {
-      background: transparent; color: var(--primary); border: 2px solid var(--primary);
-    }
-    .btn-outline:hover { background: #fef2f2; }
-    
-    textarea.form-control {
-      resize: vertical;
-      min-height: 80px;
-      text-align: left;
-    }
   </style>
 </head>
 <body>
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
   <div class="top-bar"></div>
-  <div class="container">
+  
+  <div class="main-wrapper">
     <div class="hero">
-      <div class="logo-icon">🚐</div>
-      <h1>La Solución</h1>
-      <p>Tu transporte confiable, rápido y seguro</p>
+      <div class="logo-container">
+        <span class="logo-icon">🚐</span>
+      </div>
+      <h1>La <span>Solución</span></h1>
+      <p>Servicio de transporte privado. Rápido, VIP y totalmente seguro.</p>
     </div>
     
-    <button class="btn btn-primary" id="btnOpenModal" style="padding: 1.5rem; font-size: 1.3rem; margin-top: 1rem; border-radius: 1.5rem;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="16" y1="2" x2="16" y2="6"></line>
-        <line x1="8" y1="2" x2="8" y2="6"></line>
-        <line x1="3" y1="10" x2="21" y2="10"></line>
+    <button class="btn-cta" id="btnOpenModal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="12" y1="18" x2="12" y2="12"></line>
+        <line x1="9" y1="15" x2="15" y2="15"></line>
       </svg>
-      Reservar Viaje Ahora
+      Agendar Viaje Ahora
     </button>
   </div>
 
   <div class="modal-overlay" id="overlay"></div>
   <div class="modal" id="modal">
     <div class="modal-header">
-      <h2 class="modal-title">Detalles de tu viaje</h2>
-      <button class="close-btn" id="btnCloseModal">&times;</button>
+      <h2 class="modal-title">Detalles del Viaje</h2>
+      <button class="close-btn" id="btnCloseModal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
     
     <form id="bookingForm">
       <div class="form-group">
-        <label class="form-label">👤 Nombre completo *</label>
-        <input type="text" id="name" class="form-control" required placeholder="Ej: Juan Pérez">
+        <label class="form-label">Nombre Completo</label>
+        <input type="text" id="name" class="form-control" required placeholder="Ingresa tu nombre">
       </div>
       
       <div class="form-group">
-        <label class="form-label">📞 Teléfono Principal *</label>
-        <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888">
+        <label class="form-label">Teléfono Principal</label>
+        <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888" style="letter-spacing: 2px;">
       </div>
       
-      <div class="form-group">
-        <label class="form-label">📞 Teléfono Secundario (Opcional)</label>
-        <input type="tel" id="phone2" class="form-control" placeholder="Teléfono alternativo">
-      </div>
-      
-      <!-- CONTADOR DE PASAJEROS -->
-      <div class="form-group" style="padding: 1rem 0; border: none; background: transparent; box-shadow: none;">
-        <label class="form-label" style="justify-content: center; font-size: 1.15rem; margin-bottom: 1rem;">
-          👥 ¿Cuántos viajan? (Máx. 11)
-        </label>
+      <!-- PASAJEROS -->
+      <div class="form-group" style="margin-top: 2rem;">
+        <label class="form-label" style="text-align: center; margin-bottom: 1rem;">¿Cuántos viajan? (Máx. 11)</label>
         
-        <div class="passenger-counter active" id="cardAdults">
+        <div class="stepper-card active" id="cardAdults">
           <div class="passenger-info">
-            <span class="passenger-icon">🧑</span>
-            <div class="passenger-text">
-              <strong>Adultos</strong>
-              <span>Más de 5 años</span>
-            </div>
+            <span class="p-icon">🧑</span>
+            <div class="p-text"><strong>Adultos</strong><span>Más de 5 años</span></div>
           </div>
-          <div class="stepper">
-            <button type="button" class="stepper-btn" id="btnSubAdults">-</button>
-            <span class="stepper-value" id="valAdults">1</span>
-            <button type="button" class="stepper-btn" id="btnAddAdults">+</button>
+          <div class="stepper-controls">
+            <button type="button" class="st-btn" id="btnSubAdults">-</button>
+            <span class="st-val" id="valAdults">1</span>
+            <button type="button" class="st-btn" id="btnAddAdults">+</button>
           </div>
         </div>
 
-        <div class="passenger-counter" id="cardMinors">
+        <div class="stepper-card" id="cardMinors">
           <div class="passenger-info">
-            <span class="passenger-icon">👶</span>
-            <div class="passenger-text">
-              <strong>Bebés / Niños</strong>
-              <span>Menores de 5 años</span>
-            </div>
+            <span class="p-icon">👶</span>
+            <div class="p-text"><strong>Niños/Bebés</strong><span>Menores de 5 años</span></div>
           </div>
-          <div class="stepper">
-            <button type="button" class="stepper-btn" id="btnSubMinors">-</button>
-            <span class="stepper-value" id="valMinors">0</span>
-            <button type="button" class="stepper-btn" id="btnAddMinors">+</button>
+          <div class="stepper-controls">
+            <button type="button" class="st-btn" id="btnSubMinors">-</button>
+            <span class="st-val" id="valMinors">0</span>
+            <button type="button" class="st-btn" id="btnAddMinors">+</button>
           </div>
         </div>
       </div>
 
       <div class="form-group">
         <label class="toggle-wrapper">
-          <span class="toggle-label">🧳 ¿Lleva equipaje grande?</span>
+          <span class="t-label">🧳 ¿Lleva equipaje grande?</span>
           <input type="checkbox" id="hasLuggage">
-          <span class="toggle-state-text" id="lblLuggage">NO</span>
-          <div class="toggle-switch"></div>
+          <div class="t-switch"></div>
         </label>
       </div>
       
       <div class="form-group">
-        <label class="form-label">📅 Fecha del viaje *</label>
-        <input type="date" id="date" class="form-control" required style="text-align:center;">
+        <label class="form-label">Fecha del viaje</label>
+        <input type="date" id="date" class="form-control" required>
       </div>
       
-      <div class="form-group">
-        <label class="form-label">📍 Ubicación de partida *</label>
-        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; font-weight:500;">
-          Detectaremos 3 niveles: Provincia, Cantón y Distrito.
-        </p>
-        <div class="location-wrapper">
-          <button type="button" class="btn btn-outline" id="locationBtn" style="padding: 1rem; font-size: 1.05rem; font-weight: 800;">
-            🛰️ Detectar mi ubicación GPS
-          </button>
-          <span class="location-status" id="locationSuccess">✓ Ubicación Fijada</span>
-          <textarea id="manualLocation" class="form-control hidden" placeholder="Ej: San José, Escazú, San Rafael, Barrio Los Laureles, casa roja..."></textarea>
+      <div class="form-group" style="margin-top: 2rem;">
+        <label class="form-label">Punto de Recogida</label>
+        
+        <button type="button" class="btn-gps" id="locationBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+          Compartir Ubicación Actual
+        </button>
+        <p class="gps-hint">Presiona "Permitir" cuando tu navegador lo solicite para ubicarte automáticamente.</p>
+        
+        <div class="loc-success" id="locationSuccess">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Ubicación Interna Guardada
         </div>
+
+        <textarea id="manualLocation" class="form-control mt-3" required placeholder="Escribe aquí las señas exactas. Ej: Casa de dos plantas con portón negro, frente al parque..."></textarea>
       </div>
       
-      <button type="submit" class="btn btn-primary" style="margin-top: 1rem; padding: 1.25rem; font-size: 1.25rem;">
-        🚀 Enviar Solicitud por WhatsApp
+      <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
+        Enviar Solicitud por WhatsApp
       </button>
     </form>
   </div>
@@ -515,220 +427,137 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const TARGET_PHONE = '50688292124';
+      
+      // Variable interna oculta al usuario
+      let internalGeoData = ""; 
       let userCoords = null;
 
       const modal = document.getElementById('modal');
       const overlay = document.getElementById('overlay');
-      const btnOpenModal = document.getElementById('btnOpenModal');
-      const btnCloseModal = document.getElementById('btnCloseModal');
-      const form = document.getElementById('bookingForm');
-      const dateInput = document.getElementById('date');
-      const locationBtn = document.getElementById('locationBtn');
-      const hasLuggageCheck = document.getElementById('hasLuggage');
-      const lblLuggage = document.getElementById('lblLuggage');
-
-      // Variables Stepper
-      const MAX_PASSENGERS = 11;
-      let adultsCount = 1;
-      let minorsCount = 0;
       
-      const elValAdults = document.getElementById('valAdults');
-      const elValMinors = document.getElementById('valMinors');
-      const btnAddAdults = document.getElementById('btnAddAdults');
-      const btnSubAdults = document.getElementById('btnSubAdults');
-      const btnAddMinors = document.getElementById('btnAddMinors');
-      const btnSubMinors = document.getElementById('btnSubMinors');
-      const cardAdults = document.getElementById('cardAdults');
-      const cardMinors = document.getElementById('cardMinors');
-
-      function updateCounters() {
-        const total = adultsCount + minorsCount;
-        
-        elValAdults.textContent = adultsCount;
-        elValMinors.textContent = minorsCount;
-        
-        // Limites inferiores
-        btnSubAdults.disabled = adultsCount <= 1; // Mínimo 1 adulto
-        btnSubMinors.disabled = minorsCount <= 0; // Mínimo 0 bebés
-        
-        // Límite superior
-        const canAdd = total < MAX_PASSENGERS;
-        btnAddAdults.disabled = !canAdd;
-        btnAddMinors.disabled = !canAdd;
-        
-        // Colores de tarjeta
-        cardAdults.classList.toggle('active', adultsCount > 0);
-        cardMinors.classList.toggle('active', minorsCount > 0);
-      }
-      
-      function shakeLimit(btn) {
-        btn.classList.remove('shake');
-        void btn.offsetWidth; // reiniciar animación
-        btn.classList.add('shake');
-        if (navigator.vibrate) navigator.vibrate(50); // Feedback táctil si hay límite
-      }
-
-      btnAddAdults.addEventListener('click', () => {
-        if (adultsCount + minorsCount < MAX_PASSENGERS) { adultsCount++; updateCounters(); } else shakeLimit(btnAddAdults);
+      // Modales
+      document.getElementById('btnOpenModal').addEventListener('click', () => {
+        modal.classList.add('active'); overlay.classList.add('active');
       });
-      btnSubAdults.addEventListener('click', () => {
-        if (adultsCount > 1) { adultsCount--; updateCounters(); }
-      });
-      btnAddMinors.addEventListener('click', () => {
-        if (adultsCount + minorsCount < MAX_PASSENGERS) { minorsCount++; updateCounters(); } else shakeLimit(btnAddMinors);
-      });
-      btnSubMinors.addEventListener('click', () => {
-        if (minorsCount > 0) { minorsCount--; updateCounters(); }
-      });
-
-      // Inicializar steppers
-      updateCounters();
-
-      // Fecha mínima
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const d = String(now.getDate()).padStart(2, '0');
-      const today = `${y}-${m}-${d}`;
-      dateInput.min = today;
-      dateInput.value = today;
-
-      // Lógica de Modales
-      function openModal() {
-        modal.classList.add('active');
-        overlay.classList.add('active');
-      }
-      function closeModal() {
-        modal.classList.remove('active');
-        overlay.classList.remove('active');
-      }
-      btnOpenModal.addEventListener('click', openModal);
-      btnCloseModal.addEventListener('click', closeModal);
+      const closeModal = () => { modal.classList.remove('active'); overlay.classList.remove('active'); };
+      document.getElementById('btnCloseModal').addEventListener('click', closeModal);
       overlay.addEventListener('click', closeModal);
 
-      // Toggles
-      hasLuggageCheck.addEventListener('change', (e) => {
-        lblLuggage.textContent = e.target.checked ? "SÍ" : "NO";
-      });
+      // Fecha Mínima
+      const dateInput = document.getElementById('date');
+      const now = new Date();
+      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      dateInput.min = today; dateInput.value = today;
 
-      // GPS 3 Niveles
-      locationBtn.addEventListener('click', () => {
-        const status = document.getElementById('locationSuccess');
-        const manualInput = document.getElementById('manualLocation');
+      // Steppers
+      let adultsCount = 1, minorsCount = 0;
+      const MAX_PASSENGERS = 11;
+      
+      const updateCounters = () => {
+        document.getElementById('valAdults').textContent = adultsCount;
+        document.getElementById('valMinors').textContent = minorsCount;
         
-        locationBtn.textContent = "⌛ Detectando satélites...";
+        document.getElementById('btnSubAdults').disabled = adultsCount <= 1;
+        document.getElementById('btnSubMinors').disabled = minorsCount <= 0;
+        
+        const canAdd = (adultsCount + minorsCount) < MAX_PASSENGERS;
+        document.getElementById('btnAddAdults').disabled = !canAdd;
+        document.getElementById('btnAddMinors').disabled = !canAdd;
+        
+        document.getElementById('cardAdults').classList.toggle('active', adultsCount > 0);
+        document.getElementById('cardMinors').classList.toggle('active', minorsCount > 0);
+      };
+
+      const shakeBtn = (btnId) => {
+        const btn = document.getElementById(btnId);
+        btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+        if(navigator.vibrate) navigator.vibrate(50);
+      };
+
+      document.getElementById('btnAddAdults').addEventListener('click', () => { if(adultsCount + minorsCount < MAX_PASSENGERS) { adultsCount++; updateCounters(); } else shakeBtn('btnAddAdults'); });
+      document.getElementById('btnSubAdults').addEventListener('click', () => { if(adultsCount > 1) { adultsCount--; updateCounters(); } });
+      document.getElementById('btnAddMinors').addEventListener('click', () => { if(adultsCount + minorsCount < MAX_PASSENGERS) { minorsCount++; updateCounters(); } else shakeBtn('btnAddMinors'); });
+      document.getElementById('btnSubMinors').addEventListener('click', () => { if(minorsCount > 0) { minorsCount--; updateCounters(); } });
+      updateCounters();
+
+      // GPS Lógica (Oculta al usuario)
+      const locationBtn = document.getElementById('locationBtn');
+      const locSuccess = document.getElementById('locationSuccess');
+      
+      locationBtn.addEventListener('click', () => {
+        locationBtn.innerHTML = "⌛ Detectando...";
         locationBtn.disabled = true;
 
         if (!navigator.geolocation) {
-          showFallback("GPS no soportado. Escribe manual:");
-          return;
+          fallbackGps(); return;
         }
 
         navigator.geolocation.getCurrentPosition(
           async (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            userCoords = { lat, lng };
-            
+            userCoords = { lat: position.coords.latitude, lng: position.coords.longitude };
             try {
-              // Zoom 16 para evitar datos de calles (basura) y apuntar a Provincia/Cantón/Distrito
-              const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`);
-              const data = await response.json();
+              const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lng}&zoom=16&addressdetails=1`);
+              const data = await res.json();
+              const addr = data.address || {};
+              // Se guarda internamente pero NO se muestra en el input del cliente
+              internalGeoData = [addr.state, addr.county || addr.municipality, addr.city || addr.town || addr.village || addr.suburb || addr.district].filter(Boolean).join(', ');
               
-              const address = data.address || {};
-              
-              // Mapeo adaptado a Costa Rica según OpenStreetMap (3 niveles)
-              const provincia = address.state || '';
-              const canton = address.county || address.municipality || '';
-              const distrito = address.city || address.town || address.village || address.suburb || address.district || '';
-              
-              // Unir en el orden estricto solicitado: Provincia -> Cantón -> Distrito
-              const detectedText = [provincia, canton, distrito].filter(Boolean).join(', ');
-              
-              locationBtn.classList.add('hidden');
-              status.textContent = "✓ Ubicación Detectada con Éxito";
-              status.classList.add('active');
-              
-              manualInput.classList.remove('hidden');
-              manualInput.required = true;
-              
-              // REGLA NUEVA: No precargar texto basura (placeholder), solo el texto útil.
-              manualInput.value = detectedText;
-              manualInput.placeholder = "Agrega señas exactas si es necesario (ej. casa roja con portón negro...)";
-              
-            } catch (err) {
-              showFallback("Por favor, escribe Provincia, Cantón, Distrito y Señas:");
-            }
+              locationBtn.style.display = "none";
+              document.querySelector('.gps-hint').style.display = "none";
+              locSuccess.style.display = "flex";
+              document.getElementById('manualLocation').focus();
+            } catch (e) { fallbackGps(); }
           },
-          (error) => {
-            showFallback("No se pudo obtener GPS. Escribe manual:");
-          },
-          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+          () => fallbackGps(),
+          { enableHighAccuracy: true, timeout: 8000 }
         );
 
-        function showFallback(text) {
-          locationBtn.textContent = "📍 Reintentar GPS";
-          locationBtn.disabled = false;
-          manualInput.classList.remove('hidden');
-          manualInput.required = true;
-          manualInput.placeholder = text;
-          manualInput.focus();
+        function fallbackGps() {
+          locationBtn.innerHTML = "❌ Falló el GPS. Ingresa datos manuales abajo.";
+          setTimeout(() => { locationBtn.style.display = "none"; document.querySelector('.gps-hint').style.display = "none"; }, 2000);
         }
       });
 
-      // WhatsApp Submit
-      form.addEventListener('submit', (e) => {
+      // Submit WhatsApp
+      document.getElementById('bookingForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
         const name = document.getElementById('name').value.trim();
         const phone1 = document.getElementById('phone1').value.trim();
-        const phone2 = document.getElementById('phone2').value.trim() || 'No provisto';
-        const luggage = hasLuggageCheck.checked ? 'Sí' : 'No';
-        const dateRaw = dateInput.value;
+        const luggage = document.getElementById('hasLuggage').checked ? 'Sí' : 'No';
         
-        const [year, month, day] = dateRaw.split('-');
-        const formattedDate = `${day}/${month}/${year}`;
+        const [y, m, d] = dateInput.value.split('-');
+        const dateStr = `${d}/${m}/${y}`;
 
-        // Generar un enlace rápido para que el conductor agregue o chatee con el cliente
         const cleanPhone1 = phone1.replace(/\D/g, '');
-        // Suponiendo formato internacional (si no tiene 506, agregarlo. Asumimos CR por defecto)
-        let waClientPhone = cleanPhone1;
-        if(waClientPhone.length === 8) { waClientPhone = '506' + waClientPhone; }
-        const clientWaLink = `https://wa.me/${waClientPhone}`;
-
-        let locationLinks = '';
+        const waClientLink = `https://wa.me/${cleanPhone1.length === 8 ? '506'+cleanPhone1 : cleanPhone1}`;
+        
+        let mapLinks = '';
         if (userCoords) {
-          const { lat, lng } = userCoords;
-          const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
-          const waze = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
-          const apple = `https://maps.apple.com/?q=${lat},${lng}`;
-          locationLinks = `\n  - Google Maps: ${gmaps}\n  - Waze: ${waze}\n  - Apple Maps: ${apple}`;
+          mapLinks = `\n  - G. Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n  - Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
         }
 
-        const addressText = document.getElementById('manualLocation').value.trim();
+        const senias = document.getElementById('manualLocation').value.trim();
 
-        const message = `*🚐 NUEVA SOLICITUD DE VIAJE*
+        const msg = `*🚐 NUEVA SOLICITUD VIP*
 
 *👤 DATOS DEL CLIENTE*
 - *Nombre:* ${name}
 - *Teléfono:* ${phone1}
-- *Chat Directo WA:* ${clientWaLink}
-- *Alt:* ${phone2}
+- *Chat Directo:* ${waClientLink}
 
 *🧳 DETALLES DEL VIAJE*
-- *Fecha:* ${formattedDate}
+- *Fecha:* ${dateStr}
 - *Adultos:* ${adultsCount}
-- *Bebés/Niños:* ${minorsCount}
-- *¿Lleva Equipaje?:* ${luggage}
+- *Niños:* ${minorsCount}
+- *Equipaje Grande:* ${luggage}
 
-*📍 UBICACIÓN DE SALIDA*
-- *Dirección:* ${addressText || 'No provista'}
-${locationLinks ? `\n*🧭 GPS EXACTO PARA EL CHOFER:*${locationLinks}` : ''}`;
+*📍 UBICACIÓN*
+- *Zona detectada (GPS):* ${internalGeoData || 'No se concedió permiso'}
+- *Señas del Cliente:* ${senias}
+${mapLinks ? `\n*🧭 ENLACES DIRECTOS CHOFER:*${mapLinks}` : ''}`;
 
-        const encodedMessage = encodeURIComponent(message);
-        const waUrl = `https://wa.me/${TARGET_PHONE}?text=${encodedMessage}`;
-        
-        window.open(waUrl, '_blank');
+        window.open(`https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
         closeModal();
       });
     });
