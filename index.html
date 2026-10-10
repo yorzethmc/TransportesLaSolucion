@@ -79,7 +79,7 @@
     .hero {
       text-align: center;
       width: 100%;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
@@ -132,6 +132,17 @@
       color: var(--text-muted);
       font-size: 1.15rem;
       font-weight: 400;
+    }
+
+    .warning-box {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 1rem;
+      color: #fcd34d;
+      font-size: 0.95rem;
+      text-align: left;
     }
 
     /* CTA BUTTON */
@@ -238,6 +249,8 @@
       background: #1e293b;
     }
     textarea.form-control { resize: vertical; min-height: 100px; }
+    select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+    select.form-control option { background: var(--surface); color: white; }
 
     /* STEPPERS */
     .stepper-card {
@@ -326,6 +339,14 @@
       </div>
       <h1>La <span>Solución</span></h1>
       <p>Servicio de transporte privado. Rápido, VIP y totalmente seguro.</p>
+      
+      <div class="warning-box">
+        <strong style="color: #fbbf24; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          AVISO IMPORTANTE
+        </strong>
+        Por favor, complete este formulario <strong>ÚNICAMENTE</strong> cuando ya esté en el <strong>punto exacto de recolección</strong> para que el GPS y las señas (calle, casa, portón) que envíe sean precisas.
+      </div>
     </div>
     
     <button class="btn-cta" id="btnOpenModal">
@@ -359,6 +380,38 @@
         <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888" style="letter-spacing: 2px;">
       </div>
       
+      <!-- DESTINOS -->
+      <div class="form-group" style="margin-top: 2rem;">
+        <label class="form-label">🗺️ ¿Hacia dónde viaja?</label>
+        <select id="destinationGroup" class="form-control" required>
+          <option value="" disabled selected>Seleccione su destino...</option>
+          <option value="Los Chiles">Los Chiles (Costa Rica)</option>
+          <option value="Tablillas">Tablillas (Frontera)</option>
+          <option value="Nicaragua">Nicaragua (Seleccionar ciudad)</option>
+          <option value="Otro">Otro destino...</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -1rem;">
+        <label class="form-label" style="font-size: 0.95rem; color: var(--secondary);">📍 Especifique ciudad en Nicaragua:</label>
+        <select id="nicaraguaCity" class="form-control">
+          <option value="" disabled selected>Seleccione la ciudad...</option>
+          <option value="Managua">Managua</option>
+          <option value="El Boaco">El Boaco</option>
+          <option value="Rivas">Rivas</option>
+          <option value="Granada">Granada</option>
+          <option value="Masaya">Masaya</option>
+          <option value="Leon">León</option>
+          <option value="Esteli">Estelí</option>
+          <option value="Otro">Otra ciudad...</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="otherDestination" style="display: none; margin-top: -1rem;">
+        <label class="form-label" style="font-size: 0.95rem; color: var(--secondary);">✍️ Escriba el lugar exacto:</label>
+        <input type="text" id="otherDestText" class="form-control" placeholder="Ej: San Carlos, Upala...">
+      </div>
+
       <!-- PASAJEROS -->
       <div class="form-group" style="margin-top: 2rem;">
         <label class="form-label" style="text-align: center; margin-bottom: 1rem;">¿Cuántos viajan? (Máx. 11)</label>
@@ -415,7 +468,7 @@
           Ubicación Interna Guardada
         </div>
 
-        <textarea id="manualLocation" class="form-control mt-3" required placeholder="Escribe aquí las señas exactas. Ej: Casa de dos plantas con portón negro, frente al parque..."></textarea>
+        <textarea id="manualLocation" class="form-control mt-3" required placeholder="Escribe aquí nombre de calle, casa y señas exactas. Ej: Casa de dos plantas con portón negro, frente al parque, Calle Central..."></textarea>
       </div>
       
       <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
@@ -448,6 +501,32 @@
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       dateInput.min = today; dateInput.value = today;
+
+      // Destinos Logic
+      const destGroup = document.getElementById('destinationGroup');
+      const nicGroup = document.getElementById('nicaraguaDestinations');
+      const nicCity = document.getElementById('nicaraguaCity');
+      const otherGroup = document.getElementById('otherDestination');
+      const otherDestText = document.getElementById('otherDestText');
+
+      const checkDestinations = () => {
+        const val = destGroup.value;
+        const nicVal = nicCity.value;
+        
+        nicGroup.style.display = val === 'Nicaragua' ? 'block' : 'none';
+        nicCity.required = (val === 'Nicaragua');
+
+        if (val === 'Otro' || (val === 'Nicaragua' && nicVal === 'Otro')) {
+          otherGroup.style.display = 'block';
+          otherDestText.required = true;
+        } else {
+          otherGroup.style.display = 'none';
+          otherDestText.required = false;
+        }
+      };
+
+      destGroup.addEventListener('change', checkDestinations);
+      nicCity.addEventListener('change', checkDestinations);
 
       // Steppers
       let adultsCount = 1, minorsCount = 0;
@@ -532,6 +611,14 @@
         const cleanPhone1 = phone1.replace(/\D/g, '');
         const waClientLink = `https://wa.me/${cleanPhone1.length === 8 ? '506'+cleanPhone1 : cleanPhone1}`;
         
+        // Destino Final Builder
+        let finalDest = destGroup.value;
+        if (finalDest === 'Nicaragua') {
+          finalDest = `Nicaragua (${nicCity.value === 'Otro' ? otherDestText.value.trim() : nicCity.value})`;
+        } else if (finalDest === 'Otro') {
+          finalDest = otherDestText.value.trim();
+        }
+
         let mapLinks = '';
         if (userCoords) {
           mapLinks = `\n  - G. Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n  - Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
@@ -547,14 +634,15 @@
 - *Chat Directo:* ${waClientLink}
 
 *🧳 DETALLES DEL VIAJE*
+- *Destino:* ${finalDest}
 - *Fecha:* ${dateStr}
 - *Adultos:* ${adultsCount}
 - *Niños:* ${minorsCount}
 - *Equipaje Grande:* ${luggage}
 
-*📍 UBICACIÓN*
+*📍 UBICACIÓN DE RECOLECCIÓN*
 - *Zona detectada (GPS):* ${internalGeoData || 'No se concedió permiso'}
-- *Señas del Cliente:* ${senias}
+- *Calle y Señas:* ${senias}
 ${mapLinks ? `\n*🧭 ENLACES DIRECTOS CHOFER:*${mapLinks}` : ''}`;
 
         window.open(`https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
