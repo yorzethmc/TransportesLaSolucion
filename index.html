@@ -226,6 +226,8 @@
       justify-content: space-between;
       cursor: pointer;
       padding: 0.25rem 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .toggle-label {
       font-size: 1.05rem;
@@ -239,7 +241,7 @@
       height: 30px;
       background: var(--border);
       border-radius: 15px;
-      transition: background 0.3s;
+      transition: background 0.3s ease-in-out;
       flex-shrink: 0;
     }
     .toggle-switch::after {
@@ -251,29 +253,41 @@
       height: 24px;
       background: white;
       border-radius: 50%;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .toggle-wrapper input[type="checkbox"] {
       display: none;
     }
-    .toggle-wrapper input[type="checkbox"]:checked + .toggle-switch {
-      background: var(--primary);
+    
+    /* El selector debe ser ~ (sibling) en lugar de + porque el span lblMinors está en medio */
+    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch {
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
     }
-    .toggle-wrapper input[type="checkbox"]:checked + .toggle-switch::after {
+    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch::after {
       transform: translateX(24px);
+    }
+    
+    /* Efecto de presionado elástico */
+    .toggle-switch:active::after {
+      width: 32px;
+    }
+    .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch:active::after {
+      transform: translateX(16px);
     }
 
     /* Indicador Sí/No texto */
     .toggle-state-text {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 800;
       margin-right: 12px;
       color: var(--text-muted);
-      transition: color 0.3s;
+      transition: color 0.3s ease-in-out, transform 0.2s;
     }
     .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-state-text {
-      color: var(--primary);
+      color: var(--success);
+      transform: scale(1.1);
     }
     
     .hidden { display: none !important; }
