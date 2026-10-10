@@ -155,7 +155,7 @@
       .modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
     }
     
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
     .close-btn { 
       background: #f1f5f9; border: none; font-size: 1.75rem; 
@@ -176,9 +176,11 @@
     }
     
     .form-label { 
-      display: block; 
-      font-size: 1rem; 
-      font-weight: 700; 
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.05rem; 
+      font-weight: 800; 
       margin-bottom: 0.75rem; 
       color: var(--text); 
     }
@@ -203,20 +205,112 @@
       background: var(--surface); 
     }
 
-    /* Centrado de números y selectores */
-    input[type="tel"].form-control, select.form-control {
+    input[type="tel"].form-control {
       text-align: center;
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+    }
+
+    /* CONTADOR DE PASAJEROS (STEPPER) VISUAL E INTUITIVO */
+    .passenger-counter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s;
+    }
+    .passenger-counter.active {
+      border-color: var(--primary);
+      background: #fef2f2; /* Rojo muy tenue para destacar selección */
+      box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+    }
+    .passenger-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .passenger-icon {
+      font-size: 2.2rem;
+      background: var(--bg);
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .passenger-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .passenger-text strong {
       font-size: 1.15rem;
-      letter-spacing: 1px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .passenger-text span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface);
+      padding: 0.25rem;
+      border-radius: 2rem;
+      border: 1px solid var(--border);
+    }
+    .stepper-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .stepper-btn:active {
+      transform: scale(0.9);
+      background: #e2e8f0;
+    }
+    .stepper-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      color: var(--text-muted);
+    }
+    .stepper-value {
+      font-size: 1.35rem;
+      font-weight: 900;
+      width: 28px;
+      text-align: center;
+      color: var(--text);
     }
     
-    select.form-control { 
-      appearance: none; 
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
-      background-repeat: no-repeat; 
-      background-position: right 1.25rem center; 
-      background-size: 1.2em; 
-      cursor: pointer;
+    /* Animación al llegar al límite */
+    .shake {
+      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(3px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
     }
 
     /* Toggles Sí/No */
@@ -234,6 +328,9 @@
       font-weight: 700;
       color: var(--text);
       flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .toggle-switch {
       position: relative;
@@ -260,7 +357,6 @@
       display: none;
     }
     
-    /* El selector debe ser ~ (sibling) en lugar de + porque el span lblMinors está en medio */
     .toggle-wrapper input[type="checkbox"]:checked ~ .toggle-switch {
       background: var(--success);
       box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
@@ -269,7 +365,6 @@
       transform: translateX(24px);
     }
     
-    /* Efecto de presionado elástico */
     .toggle-switch:active::after {
       width: 32px;
     }
@@ -277,7 +372,6 @@
       transform: translateX(16px);
     }
 
-    /* Indicador Sí/No texto */
     .toggle-state-text {
       font-size: 0.95rem;
       font-weight: 800;
@@ -337,44 +431,60 @@
     
     <form id="bookingForm">
       <div class="form-group">
-        <label class="form-label">Nombre completo *</label>
+        <label class="form-label">👤 Nombre completo *</label>
         <input type="text" id="name" class="form-control" required placeholder="Ej: Juan Pérez">
       </div>
       
       <div class="form-group">
-        <label class="form-label">Teléfono Principal *</label>
+        <label class="form-label">📞 Teléfono Principal *</label>
         <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888">
       </div>
       
       <div class="form-group">
-        <label class="form-label">Teléfono Secundario (Opcional)</label>
+        <label class="form-label">📞 Teléfono Secundario (Opcional)</label>
         <input type="tel" id="phone2" class="form-control" placeholder="Teléfono alternativo">
       </div>
       
-      <div class="form-group">
-        <label class="form-label">Pasajeros (mayores de 5 años) *</label>
-        <select id="adults" class="form-control" required></select>
-      </div>
-      
-      <div class="form-group">
-        <label class="toggle-wrapper">
-          <span class="toggle-label">¿Viajan bebés/niños (<5 años)?</span>
-          <input type="checkbox" id="hasMinors">
-          <span class="toggle-state-text" id="lblMinors">NO</span>
-          <div class="toggle-switch"></div>
+      <!-- CONTADOR DE PASAJEROS -->
+      <div class="form-group" style="padding: 1rem 0; border: none; background: transparent; box-shadow: none;">
+        <label class="form-label" style="justify-content: center; font-size: 1.15rem; margin-bottom: 1rem;">
+          👥 ¿Cuántos viajan? (Máx. 11)
         </label>
-      </div>
-      
-      <div class="form-group hidden" id="minorsGroup">
-        <label class="form-label">Número de bebés/niños</label>
-        <select id="minors" class="form-control">
-          <option value="0">0</option>
-        </select>
+        
+        <div class="passenger-counter active" id="cardAdults">
+          <div class="passenger-info">
+            <span class="passenger-icon">🧑</span>
+            <div class="passenger-text">
+              <strong>Adultos</strong>
+              <span>Más de 5 años</span>
+            </div>
+          </div>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" id="btnSubAdults">-</button>
+            <span class="stepper-value" id="valAdults">1</span>
+            <button type="button" class="stepper-btn" id="btnAddAdults">+</button>
+          </div>
+        </div>
+
+        <div class="passenger-counter" id="cardMinors">
+          <div class="passenger-info">
+            <span class="passenger-icon">👶</span>
+            <div class="passenger-text">
+              <strong>Bebés / Niños</strong>
+              <span>Menores de 5 años</span>
+            </div>
+          </div>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" id="btnSubMinors">-</button>
+            <span class="stepper-value" id="valMinors">0</span>
+            <button type="button" class="stepper-btn" id="btnAddMinors">+</button>
+          </div>
+        </div>
       </div>
 
       <div class="form-group">
         <label class="toggle-wrapper">
-          <span class="toggle-label">¿Lleva equipaje?</span>
+          <span class="toggle-label">🧳 ¿Lleva equipaje grande?</span>
           <input type="checkbox" id="hasLuggage">
           <span class="toggle-state-text" id="lblLuggage">NO</span>
           <div class="toggle-switch"></div>
@@ -382,25 +492,25 @@
       </div>
       
       <div class="form-group">
-        <label class="form-label">Fecha del viaje *</label>
-        <input type="date" id="date" class="form-control" required>
+        <label class="form-label">📅 Fecha del viaje *</label>
+        <input type="date" id="date" class="form-control" required style="text-align:center;">
       </div>
       
       <div class="form-group">
-        <label class="form-label">Ubicación de partida *</label>
+        <label class="form-label">📍 Ubicación de partida *</label>
         <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; font-weight:500;">
           Detectaremos 4 niveles: Provincia, Cantón, Distrito y Barrio.
         </p>
         <div class="location-wrapper">
-          <button type="button" class="btn btn-outline" id="locationBtn" style="padding: 1rem; font-size: 1.05rem;">
-            📍 Detectar mi ubicación GPS
+          <button type="button" class="btn btn-outline" id="locationBtn" style="padding: 1rem; font-size: 1.05rem; font-weight: 800;">
+            🛰️ Detectar mi ubicación GPS
           </button>
           <span class="location-status" id="locationSuccess">✓ Ubicación Fijada</span>
           <textarea id="manualLocation" class="form-control hidden" placeholder="Ej: San José, Escazú, San Rafael, Barrio Los Laureles, casa roja..."></textarea>
         </div>
       </div>
       
-      <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+      <button type="submit" class="btn btn-primary" style="margin-top: 1rem; padding: 1.25rem; font-size: 1.25rem;">
         🚀 Enviar Solicitud por WhatsApp
       </button>
     </form>
@@ -418,26 +528,66 @@
       const btnSaveContact = document.getElementById('btnSaveContact');
       const form = document.getElementById('bookingForm');
       const dateInput = document.getElementById('date');
-      const adultsSelect = document.getElementById('adults');
-      const minorsSelect = document.getElementById('minors');
-      const hasMinorsCheck = document.getElementById('hasMinors');
-      const lblMinors = document.getElementById('lblMinors');
-      const minorsGroup = document.getElementById('minorsGroup');
       const locationBtn = document.getElementById('locationBtn');
       const hasLuggageCheck = document.getElementById('hasLuggage');
       const lblLuggage = document.getElementById('lblLuggage');
 
-      // Popular selects de números
-      for(let i=1; i<=15; i++) {
-        let opt = document.createElement('option');
-        opt.value = i; opt.textContent = i;
-        adultsSelect.appendChild(opt);
+      // Variables Stepper
+      const MAX_PASSENGERS = 11;
+      let adultsCount = 1;
+      let minorsCount = 0;
+      
+      const elValAdults = document.getElementById('valAdults');
+      const elValMinors = document.getElementById('valMinors');
+      const btnAddAdults = document.getElementById('btnAddAdults');
+      const btnSubAdults = document.getElementById('btnSubAdults');
+      const btnAddMinors = document.getElementById('btnAddMinors');
+      const btnSubMinors = document.getElementById('btnSubMinors');
+      const cardAdults = document.getElementById('cardAdults');
+      const cardMinors = document.getElementById('cardMinors');
+
+      function updateCounters() {
+        const total = adultsCount + minorsCount;
+        
+        elValAdults.textContent = adultsCount;
+        elValMinors.textContent = minorsCount;
+        
+        // Limites inferiores
+        btnSubAdults.disabled = adultsCount <= 1; // Mínimo 1 adulto
+        btnSubMinors.disabled = minorsCount <= 0; // Mínimo 0 bebés
+        
+        // Límite superior
+        const canAdd = total < MAX_PASSENGERS;
+        btnAddAdults.disabled = !canAdd;
+        btnAddMinors.disabled = !canAdd;
+        
+        // Colores de tarjeta
+        cardAdults.classList.toggle('active', adultsCount > 0);
+        cardMinors.classList.toggle('active', minorsCount > 0);
       }
-      for(let i=1; i<=10; i++) {
-        let opt = document.createElement('option');
-        opt.value = i; opt.textContent = i;
-        minorsSelect.appendChild(opt);
+      
+      function shakeLimit(btn) {
+        btn.classList.remove('shake');
+        void btn.offsetWidth; // reiniciar animación
+        btn.classList.add('shake');
+        if (navigator.vibrate) navigator.vibrate(50); // Feedback táctil si hay límite
       }
+
+      btnAddAdults.addEventListener('click', () => {
+        if (adultsCount + minorsCount < MAX_PASSENGERS) { adultsCount++; updateCounters(); } else shakeLimit(btnAddAdults);
+      });
+      btnSubAdults.addEventListener('click', () => {
+        if (adultsCount > 1) { adultsCount--; updateCounters(); }
+      });
+      btnAddMinors.addEventListener('click', () => {
+        if (adultsCount + minorsCount < MAX_PASSENGERS) { minorsCount++; updateCounters(); } else shakeLimit(btnAddMinors);
+      });
+      btnSubMinors.addEventListener('click', () => {
+        if (minorsCount > 0) { minorsCount--; updateCounters(); }
+      });
+
+      // Inicializar steppers
+      updateCounters();
 
       // Fecha mínima
       const now = new Date();
@@ -462,17 +612,6 @@
       overlay.addEventListener('click', closeModal);
 
       // Toggles
-      hasMinorsCheck.addEventListener('change', (e) => {
-        lblMinors.textContent = e.target.checked ? "SÍ" : "NO";
-        if (e.target.checked) {
-          minorsGroup.classList.remove('hidden');
-          minorsSelect.value = "1";
-        } else {
-          minorsGroup.classList.add('hidden');
-          minorsSelect.value = "0";
-        }
-      });
-      
       hasLuggageCheck.addEventListener('change', (e) => {
         lblLuggage.textContent = e.target.checked ? "SÍ" : "NO";
       });
@@ -501,13 +640,10 @@
               const data = await response.json();
               
               const address = data.address || {};
-              
-              // Mapeo adaptado a Costa Rica según OpenStreetMap
               const provincia = address.state || '';
               const canton = address.county || address.city || '';
               const distrito = address.town || address.village || address.suburb || address.municipality || '';
               
-              // Extraer nivel profundo (Barrios, residenciales, calles, edificios)
               const otrosArray = [
                 address.neighbourhood,
                 address.residential,
@@ -516,10 +652,7 @@
                 address.building
               ].filter(Boolean);
               
-              // Remover duplicados por si OSM repite nombres en distintos campos
               const otrosUnicos = [...new Set(otrosArray)].join(', ');
-              
-              // Unir en el orden estricto solicitado: Provincia -> Cantón -> Distrito -> Otros
               const detectedText = [provincia, canton, distrito, otrosUnicos].filter(Boolean).join(', ');
               
               locationBtn.classList.add('hidden');
@@ -557,8 +690,6 @@
         const name = document.getElementById('name').value.trim();
         const phone1 = document.getElementById('phone1').value.trim();
         const phone2 = document.getElementById('phone2').value.trim() || 'N/A';
-        const adults = adultsSelect.value;
-        const minors = hasMinorsCheck.checked ? minorsSelect.value : 'No';
         const luggage = hasLuggageCheck.checked ? 'Sí' : 'No';
         const dateRaw = dateInput.value;
         
@@ -580,8 +711,8 @@
 - *Cliente:* ${name}
 - *Teléfono Principal:* ${phone1}
 - *Teléfono Opcional:* ${phone2}
-- *Pasajeros (>5 años):* ${adults}
-- *Bebés/Niños (<5 años):* ${minors}
+- *Adultos (>5 años):* ${adultsCount}
+- *Bebés/Niños (<5 años):* ${minorsCount}
 - *¿Lleva Equipaje?:* ${luggage}
 - *Fecha del Viaje:* ${formattedDate}
 - *Dirección Detallada:* ${addressText || 'No provista'}${locationLinks ? `\n\n*GPS Exacto para el Chofer:*${locationLinks}` : ''}`;
