@@ -243,22 +243,29 @@
       </div>
       
       <div class="form-group">
-        <label class="form-label">Pasajeros (> 5 años) *</label>
+        <label class="form-label">Adultos y niños mayores de 5 años *</label>
         <select id="adults" class="form-control" required></select>
       </div>
       
       <div class="form-group">
         <label class="checkbox-group">
           <input type="checkbox" id="hasMinors">
-          <span class="form-label" style="margin:0">¿Viajan menores de 5 años?</span>
+          <span class="form-label" style="margin:0">¿Viajan bebés o niños menores de 5 años?</span>
         </label>
       </div>
       
       <div class="form-group hidden" id="minorsGroup">
-        <label class="form-label">Cantidad de menores de 5 años</label>
+        <label class="form-label">Número de bebés/niños (0 a 5 años)</label>
         <select id="minors" class="form-control">
           <option value="0">0</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-group">
+          <input type="checkbox" id="hasLuggage">
+          <span class="form-label" style="margin:0">¿Lleva equipaje?</span>
+        </label>
       </div>
       
       <div class="form-group">
@@ -268,12 +275,13 @@
       
       <div class="form-group">
         <label class="form-label">Ubicación de partida *</label>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem;">Detectaremos automáticamente la provincia, cantón y distrito de origen usando el GPS.</p>
         <div class="location-wrapper">
           <button type="button" class="btn btn-outline" id="locationBtn" style="padding: 0.75rem; font-size: 0.95rem;">
-            📍 Obtener mi ubicación
+            📍 Detectar mi ubicación
           </button>
-          <span class="location-status" id="locationSuccess">✓ Ubicación GPS fijada</span>
-          <input type="text" id="manualLocation" class="form-control hidden" placeholder="Escribe tu dirección detallada">
+          <span class="location-status" id="locationSuccess">✓ GPS Fijado</span>
+          <input type="text" id="manualLocation" class="form-control hidden" placeholder="Escribe tu dirección detallada, Provincia, Cantón...">
         </div>
       </div>
       
@@ -300,6 +308,7 @@
       const hasMinorsCheck = document.getElementById('hasMinors');
       const minorsGroup = document.getElementById('minorsGroup');
       const locationBtn = document.getElementById('locationBtn');
+      const hasLuggageCheck = document.getElementById('hasLuggage');
 
       for(let i=1; i<=15; i++) {
         let opt = document.createElement('option');
@@ -348,7 +357,7 @@
         const status = document.getElementById('locationSuccess');
         const manualInput = document.getElementById('manualLocation');
         
-        locationBtn.textContent = "⌛ Obteniendo GPS...";
+        locationBtn.textContent = "⌛ Detectando zona...";
         locationBtn.disabled = true;
 
         if (!navigator.geolocation) {
@@ -357,23 +366,43 @@
         }
 
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            userCoords = { lat: position.coords.latitude, lng: position.coords.longitude };
-            locationBtn.classList.add('hidden');
-            status.classList.add('active');
-            manualInput.classList.add('hidden');
-            manualInput.required = false;
+          async (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            userCoords = { lat, lng };
+            
+            try {
+              const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`);
+              const data = await response.json();
+              
+              const address = data.address || {};
+              const provincia = address.state || '';
+              const canton = address.county || address.city || address.town || '';
+              const distrito = address.suburb || address.village || address.neighbourhood || '';
+              
+              const detectedText = [distrito, canton, provincia].filter(Boolean).join(', ');
+              
+              locationBtn.classList.add('hidden');
+              status.textContent = "✓ Ubicación detectada";
+              status.classList.add('active');
+              
+              manualInput.classList.remove('hidden');
+              manualInput.required = true;
+              manualInput.value = detectedText || "Dirección aproximada (ver GPS)";
+              
+            } catch (err) {
+              showFallback("GPS listo. Escribe Provincia/Cantón:");
+            }
           },
           (error) => {
             showFallback("No se pudo obtener GPS. Escribe manual:");
           },
-          { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
 
         function showFallback(text) {
-          locationBtn.textContent = "📍 Reintentar GPS";
+          locationBtn.textContent = "📍 Reintentar Detección";
           locationBtn.disabled = false;
-          userCoords = null;
           manualInput.classList.remove('hidden');
           manualInput.required = true;
           manualInput.placeholder = text;
@@ -389,21 +418,22 @@
         const phone2 = document.getElementById('phone2').value.trim() || 'N/A';
         const adults = adultsSelect.value;
         const minors = hasMinorsCheck.checked ? minorsSelect.value : 'No';
+        const luggage = hasLuggageCheck.checked ? 'Sí' : 'No';
         const dateRaw = dateInput.value;
         
         const [year, month, day] = dateRaw.split('-');
         const formattedDate = `${day}/${month}/${year}`;
 
-        let locationText = '';
+        let locationLinks = '';
         if (userCoords) {
           const { lat, lng } = userCoords;
           const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
           const waze = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
           const apple = `https://maps.apple.com/?q=${lat},${lng}`;
-          locationText = `\n  - Google Maps: ${gmaps}\n  - Waze: ${waze}\n  - Apple Maps: ${apple}`;
-        } else {
-          locationText = document.getElementById('manualLocation').value.trim();
+          locationLinks = `\n  - Google Maps: ${gmaps}\n  - Waze: ${waze}\n  - Apple Maps: ${apple}`;
         }
+
+        const addressText = document.getElementById('manualLocation').value.trim();
 
         const message = `*🚐 Solicitud de Viaje (La Solución)*\n
 - *Cliente:* ${name}
@@ -411,8 +441,9 @@
 - *Teléfono Opcional:* ${phone2}
 - *Pasajeros (>5 años):* ${adults}
 - *Menores (<5 años):* ${minors}
+- *¿Lleva Equipaje?:* ${luggage}
 - *Fecha del Viaje:* ${formattedDate}
-- *Ubicación del Cliente:* ${locationText}`;
+- *Dirección Aproximada:* ${addressText || 'No provista'}${locationLinks ? `\n- *GPS Exacto para el Chofer:*${locationLinks}` : ''}`;
 
         const encodedMessage = encodeURIComponent(message);
         const waUrl = `https://wa.me/${TARGET_PHONE}?text=${encodedMessage}`;
