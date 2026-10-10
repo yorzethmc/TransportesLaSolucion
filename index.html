@@ -612,25 +612,30 @@
 
         let mapLinks = '';
         if (userCoords) {
-          mapLinks = `\n- G.Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n- Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
+          mapLinks = `  - G.Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n  - Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
         }
 
         const senias = document.getElementById('manualLocation').value.trim();
 
-        const msg = `*🚐 NUEVA SOLICITUD VIP*
-=============
-*Nombre:* ${name}
-*Tel:* ${phone1}
-*WA:* ${waClientLink}
-=============
-*Destino:* ${finalDest}
-*Fecha:* ${dateStr}
-*Pasajeros:* ${adultsCount} Adultos, ${minorsCount} Niños
-*Equipaje:* ${luggage}
-=============
-*📍 UBICACIÓN*
-*Zona:* ${internalGeoData || 'No se concedió permiso'}
-*Señas:* ${senias || 'No se ingresaron señas'}${mapLinks ? `\n${mapLinks}` : ''}`;
+        const msg = `╔════════════════════════════╗
+║    N U E V A   R E S E R V A   ║
+╚════════════════════════════╝
+
+▸ INFO DEL CLIENTE
+  • Nombre: ${name}
+  • Tel: ${phone1}
+  • Chat: ${waClientLink}
+
+▸ DETALLES DEL VIAJE
+  • Destino: ${finalDest}
+  • Fecha: ${dateStr}
+  • Pasajeros: ${adultsCount} Adulto(s), ${minorsCount} Niño(s)
+  • Lleva equipaje: ${luggage}
+
+▸ PUNTOS DE RECOLECCIÓN
+  • Zona GPS: ${internalGeoData || 'Sin permiso de ubicación'}
+  • Señas: ${senias || 'No se ingresaron detalles'}
+${mapLinks ? `\n▸ NAVEGACIÓN AL PUNTO\n${mapLinks}` : ''}`;
 
         window.open(`https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
         closeModal();
