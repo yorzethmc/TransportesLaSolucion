@@ -136,7 +136,7 @@
 
     .warning-box {
       margin-top: 1.5rem;
-      padding: 1.25rem;
+      padding: 1rem;
       background: rgba(245, 158, 11, 0.1);
       border: 1px solid rgba(245, 158, 11, 0.3);
       border-radius: 1rem;
@@ -248,7 +248,7 @@
       box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
       background: #1e293b;
     }
-    textarea.form-control { resize: vertical; min-height: 100px; }
+    textarea.form-control { resize: vertical; min-height: 80px; }
     select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
     select.form-control option { background: var(--surface); color: white; }
 
@@ -341,11 +341,11 @@
       <p>Servicio de transporte privado. Rápido, VIP y totalmente seguro.</p>
       
       <div class="warning-box">
-        <strong style="color: #fbbf24; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+        <strong style="color: #fbbf24; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          AVISO IMPORTANTE
+          AVISO
         </strong>
-        Por favor, complete este formulario <strong>ÚNICAMENTE</strong> cuando ya esté en el <strong>punto exacto de recolección</strong> para que el GPS y las señas (calle, casa, portón) que envíe sean precisas.
+        Llene esto <strong>ÚNICAMENTE</strong> estando en el punto de recolección para ubicarlo por GPS.
       </div>
     </div>
     
@@ -356,7 +356,7 @@
         <line x1="12" y1="18" x2="12" y2="12"></line>
         <line x1="9" y1="15" x2="15" y2="15"></line>
       </svg>
-      Agendar Viaje Ahora
+      Agendar Viaje
     </button>
   </div>
 
@@ -372,30 +372,29 @@
     <form id="bookingForm">
       <div class="form-group">
         <label class="form-label">Nombre Completo</label>
-        <input type="text" id="name" class="form-control" required placeholder="Ingresa tu nombre">
+        <input type="text" id="name" class="form-control" required placeholder="Ej: Juan Pérez">
       </div>
       
       <div class="form-group">
-        <label class="form-label">Teléfono Principal</label>
+        <label class="form-label">Teléfono</label>
         <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888" style="letter-spacing: 2px;">
       </div>
       
       <!-- DESTINOS -->
-      <div class="form-group" style="margin-top: 2rem;">
-        <label class="form-label">🗺️ ¿Hacia dónde viaja?</label>
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label class="form-label">🗺️ Destino</label>
         <select id="destinationGroup" class="form-control" required>
-          <option value="" disabled selected>Seleccione su destino...</option>
+          <option value="" disabled selected>Seleccione...</option>
           <option value="Los Chiles">Los Chiles (Costa Rica)</option>
           <option value="Tablillas">Tablillas (Frontera)</option>
-          <option value="Nicaragua">Nicaragua (Seleccionar ciudad)</option>
-          <option value="Otro">Otro destino...</option>
+          <option value="Nicaragua">Nicaragua (Elegir ciudad)</option>
+          <option value="Otro">Otro...</option>
         </select>
       </div>
 
       <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -1rem;">
-        <label class="form-label" style="font-size: 0.95rem; color: var(--secondary);">📍 Especifique ciudad en Nicaragua:</label>
         <select id="nicaraguaCity" class="form-control">
-          <option value="" disabled selected>Seleccione la ciudad...</option>
+          <option value="" disabled selected>Ciudad en Nicaragua...</option>
           <option value="Managua">Managua</option>
           <option value="El Boaco">El Boaco</option>
           <option value="Rivas">Rivas</option>
@@ -403,23 +402,22 @@
           <option value="Masaya">Masaya</option>
           <option value="Leon">León</option>
           <option value="Esteli">Estelí</option>
-          <option value="Otro">Otra ciudad...</option>
+          <option value="Otro">Otra...</option>
         </select>
       </div>
 
       <div class="form-group" id="otherDestination" style="display: none; margin-top: -1rem;">
-        <label class="form-label" style="font-size: 0.95rem; color: var(--secondary);">✍️ Escriba el lugar exacto:</label>
-        <input type="text" id="otherDestText" class="form-control" placeholder="Ej: San Carlos, Upala...">
+        <input type="text" id="otherDestText" class="form-control" placeholder="Escriba lugar exacto...">
       </div>
 
       <!-- PASAJEROS -->
       <div class="form-group" style="margin-top: 2rem;">
-        <label class="form-label" style="text-align: center; margin-bottom: 1rem;">¿Cuántos viajan? (Máx. 11)</label>
+        <label class="form-label" style="text-align: center; margin-bottom: 1rem;">Pasajeros (Máx 11)</label>
         
         <div class="stepper-card active" id="cardAdults">
           <div class="passenger-info">
             <span class="p-icon">🧑</span>
-            <div class="p-text"><strong>Adultos</strong><span>Más de 5 años</span></div>
+            <div class="p-text"><strong>Adultos</strong><span>> 5 años</span></div>
           </div>
           <div class="stepper-controls">
             <button type="button" class="st-btn" id="btnSubAdults">-</button>
@@ -431,7 +429,7 @@
         <div class="stepper-card" id="cardMinors">
           <div class="passenger-info">
             <span class="p-icon">👶</span>
-            <div class="p-text"><strong>Niños/Bebés</strong><span>Menores de 5 años</span></div>
+            <div class="p-text"><strong>Niños/Bebés</strong><span>< 5 años</span></div>
           </div>
           <div class="stepper-controls">
             <button type="button" class="st-btn" id="btnSubMinors">-</button>
@@ -443,7 +441,7 @@
 
       <div class="form-group">
         <label class="toggle-wrapper">
-          <span class="t-label">🧳 ¿Lleva equipaje grande?</span>
+          <span class="t-label">🧳 ¿Lleva equipaje?</span>
           <input type="checkbox" id="hasLuggage">
           <div class="t-switch"></div>
         </label>
@@ -455,40 +453,39 @@
       </div>
       
       <div class="form-group" style="margin-top: 2rem;">
-        <label class="form-label">Punto de Recogida</label>
+        <label class="form-label">📍 Recogida (Opcional si usa GPS)</label>
         
         <button type="button" class="btn-gps" id="locationBtn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
-          Compartir Ubicación Actual
+          Compartir GPS Actual
         </button>
-        <p class="gps-hint">Presiona "Permitir" cuando tu navegador lo solicite para ubicarte automáticamente.</p>
+        <p class="gps-hint" style="margin-top: 0.5rem;">Toque "Permitir" si su celular lo solicita.</p>
         
         <div class="loc-success" id="locationSuccess">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          Ubicación Interna Guardada
+          GPS Guardado Internamente
         </div>
 
-        <textarea id="manualLocation" class="form-control mt-3" required placeholder="Escribe aquí nombre de calle, casa y señas exactas. Ej: Casa de dos plantas con portón negro, frente al parque, Calle Central..."></textarea>
+        <textarea id="manualLocation" class="form-control mt-3" placeholder="Señas adicionales (Ej: Casa roja, portón negro...)"></textarea>
       </div>
       
       <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
-        Enviar Solicitud por WhatsApp
+        Enviar por WhatsApp
       </button>
     </form>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const TARGET_PHONE = '50688292124';
+      // NUEVO NÚMERO DE RECEPTOR: Álvaro Scott
+      const TARGET_PHONE = '50672094457';
       
-      // Variable interna oculta al usuario
       let internalGeoData = ""; 
       let userCoords = null;
 
       const modal = document.getElementById('modal');
       const overlay = document.getElementById('overlay');
       
-      // Modales
       document.getElementById('btnOpenModal').addEventListener('click', () => {
         modal.classList.add('active'); overlay.classList.add('active');
       });
@@ -496,13 +493,11 @@
       document.getElementById('btnCloseModal').addEventListener('click', closeModal);
       overlay.addEventListener('click', closeModal);
 
-      // Fecha Mínima
       const dateInput = document.getElementById('date');
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       dateInput.min = today; dateInput.value = today;
 
-      // Destinos Logic
       const destGroup = document.getElementById('destinationGroup');
       const nicGroup = document.getElementById('nicaraguaDestinations');
       const nicCity = document.getElementById('nicaraguaCity');
@@ -528,7 +523,6 @@
       destGroup.addEventListener('change', checkDestinations);
       nicCity.addEventListener('change', checkDestinations);
 
-      // Steppers
       let adultsCount = 1, minorsCount = 0;
       const MAX_PASSENGERS = 11;
       
@@ -559,7 +553,6 @@
       document.getElementById('btnSubMinors').addEventListener('click', () => { if(minorsCount > 0) { minorsCount--; updateCounters(); } });
       updateCounters();
 
-      // GPS Lógica (Oculta al usuario)
       const locationBtn = document.getElementById('locationBtn');
       const locSuccess = document.getElementById('locationSuccess');
       
@@ -578,7 +571,6 @@
               const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lng}&zoom=16&addressdetails=1`);
               const data = await res.json();
               const addr = data.address || {};
-              // Se guarda internamente pero NO se muestra en el input del cliente
               internalGeoData = [addr.state, addr.county || addr.municipality, addr.city || addr.town || addr.village || addr.suburb || addr.district].filter(Boolean).join(', ');
               
               locationBtn.style.display = "none";
@@ -592,12 +584,11 @@
         );
 
         function fallbackGps() {
-          locationBtn.innerHTML = "❌ Falló el GPS. Ingresa datos manuales abajo.";
+          locationBtn.innerHTML = "❌ Falló el GPS";
           setTimeout(() => { locationBtn.style.display = "none"; document.querySelector('.gps-hint').style.display = "none"; }, 2000);
         }
       });
 
-      // Submit WhatsApp
       document.getElementById('bookingForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
@@ -611,7 +602,6 @@
         const cleanPhone1 = phone1.replace(/\D/g, '');
         const waClientLink = `https://wa.me/${cleanPhone1.length === 8 ? '506'+cleanPhone1 : cleanPhone1}`;
         
-        // Destino Final Builder
         let finalDest = destGroup.value;
         if (finalDest === 'Nicaragua') {
           finalDest = `Nicaragua (${nicCity.value === 'Otro' ? otherDestText.value.trim() : nicCity.value})`;
@@ -621,29 +611,25 @@
 
         let mapLinks = '';
         if (userCoords) {
-          mapLinks = `\n  - G. Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n  - Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
+          mapLinks = `\n- G.Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}\n- Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes`;
         }
 
         const senias = document.getElementById('manualLocation').value.trim();
 
         const msg = `*🚐 NUEVA SOLICITUD VIP*
-
-*👤 DATOS DEL CLIENTE*
-- *Nombre:* ${name}
-- *Teléfono:* ${phone1}
-- *Chat Directo:* ${waClientLink}
-
-*🧳 DETALLES DEL VIAJE*
-- *Destino:* ${finalDest}
-- *Fecha:* ${dateStr}
-- *Adultos:* ${adultsCount}
-- *Niños:* ${minorsCount}
-- *Equipaje Grande:* ${luggage}
-
-*📍 UBICACIÓN DE RECOLECCIÓN*
-- *Zona detectada (GPS):* ${internalGeoData || 'No se concedió permiso'}
-- *Calle y Señas:* ${senias}
-${mapLinks ? `\n*🧭 ENLACES DIRECTOS CHOFER:*${mapLinks}` : ''}`;
+=============
+*Nombre:* ${name}
+*Tel:* ${phone1}
+*WA:* ${waClientLink}
+=============
+*Destino:* ${finalDest}
+*Fecha:* ${dateStr}
+*Pasajeros:* ${adultsCount} Adultos, ${minorsCount} Niños
+*Equipaje:* ${luggage}
+=============
+*📍 UBICACIÓN*
+*Zona:* ${internalGeoData || 'No se concedió permiso'}
+*Señas:* ${senias || 'No se ingresaron señas'}${mapLinks ? `\n${mapLinks}` : ''}`;
 
         window.open(`https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
         closeModal();
