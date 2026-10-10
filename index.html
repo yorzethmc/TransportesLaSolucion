@@ -316,7 +316,7 @@
       const y = now.getFullYear();
       const m = String(now.getMonth() + 1).padStart(2, '0');
       const d = String(now.getDate()).padStart(2, '0');
-      const today = \`\${y}-\${m}-\${d}\`;
+      const today = `${y}-${m}-${d}`;
       
       dateInput.min = today;
       dateInput.value = today;
@@ -392,37 +392,37 @@
         const dateRaw = dateInput.value;
         
         const [year, month, day] = dateRaw.split('-');
-        const formattedDate = \`\${day}/\${month}/\${year}\`;
+        const formattedDate = `${day}/${month}/${year}`;
 
         let locationText = '';
         if (userCoords) {
           const { lat, lng } = userCoords;
-          const gmaps = \`https://www.google.com/maps?q=\${lat},\${lng}\`;
-          const waze = \`https://waze.com/ul?ll=\${lat},\${lng}&navigate=yes\`;
-          const apple = \`https://maps.apple.com/?q=\${lat},\${lng}\`;
-          locationText = \`\\n  - Google Maps: \${gmaps}\\n  - Waze: \${waze}\\n  - Apple Maps: \${apple}\`;
+          const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
+          const waze = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+          const apple = `https://maps.apple.com/?q=${lat},${lng}`;
+          locationText = `\n  - Google Maps: ${gmaps}\n  - Waze: ${waze}\n  - Apple Maps: ${apple}`;
         } else {
           locationText = document.getElementById('manualLocation').value.trim();
         }
 
-        const message = \`*🚐 Solicitud de Viaje (La Solución)*\\n
-- *Cliente:* \${name}
-- *Teléfono Principal:* \${phone1}
-- *Teléfono Opcional:* \${phone2}
-- *Pasajeros (>5 años):* \${adults}
-- *Menores (<5 años):* \${minors}
-- *Fecha del Viaje:* \${formattedDate}
-- *Ubicación del Cliente:* \${locationText}\`;
+        const message = `*🚐 Solicitud de Viaje (La Solución)*\n
+- *Cliente:* ${name}
+- *Teléfono Principal:* ${phone1}
+- *Teléfono Opcional:* ${phone2}
+- *Pasajeros (>5 años):* ${adults}
+- *Menores (<5 años):* ${minors}
+- *Fecha del Viaje:* ${formattedDate}
+- *Ubicación del Cliente:* ${locationText}`;
 
         const encodedMessage = encodeURIComponent(message);
-        const waUrl = \`https://wa.me/\${TARGET_PHONE}?text=\${encodedMessage}\`;
+        const waUrl = `https://wa.me/${TARGET_PHONE}?text=${encodedMessage}`;
         
         window.open(waUrl, '_blank');
         closeModal();
       });
 
       btnSaveContact.addEventListener('click', () => {
-        const vcard = \`BEGIN:VCARD\\nVERSION:3.0\\nFN:Transportes La Solución\\nORG:Transportes La Solución\\nTEL;TYPE=WORK,VOICE:+50688292124\\nEND:VCARD\`;
+        const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:Transportes La Solución\nORG:Transportes La Solución\nTEL;TYPE=WORK,VOICE:+50688292124\nEND:VCARD`;
         const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
