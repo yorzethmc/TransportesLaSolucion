@@ -408,7 +408,7 @@
           <span>Ubicación fijada correctamente</span>
         </div>
 
-        <textarea id="manualLocation" class="form-control" placeholder="Señas o referencias físicas (Ej: Casa blanca con portón negro, frente al parque...)"></textarea>
+        <textarea id="manualLocation" class="form-control" placeholder="Señas o referencias adicionales (Ej: Zona Franca Coyol edificio B14, casa blanca con portón negro...)"></textarea>
       </div>
       
       <!-- DESTINOS -->
@@ -644,12 +644,100 @@
       updateCounters();
 
       // ==========================================
-      // CAPTURA SILENCIOSA DE GEOLOCALIZACIÓN
+      // CAPTURA DE ALTA PRECISIÓN Y GEOCODIFICACIÓN DETALLADA
       // ==========================================
       const locationBtn = document.getElementById('locationBtn');
       const locationSuccess = document.getElementById('locationSuccess');
       const gpsHint = document.getElementById('gpsHint');
-      
+
+      // Función para procesar y resolver la dirección de máxima precisión
+      const resolveDetailedAddress = async (coords) => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`, {
+            headers: { 'Accept-Language': 'es' }
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          const addr = data.address || {};
+
+          // 1. Lugares específicos, complejos industriales, parques empresariales, residenciales y comercios
+          const placeNames = [
+            addr.industrial,     // Ej: "Zona Franca Coyol"
+            addr.amenity,        // Ej: Nombre de empresa, hospital, escuela
+            addr.office,         // Ej: Oficinas corporativas
+            addr.commercial,     // Ej: Centro comercial
+            addr.residential,    // Ej: "Condominio Royal Palm"
+            addr.building,       // Ej: Nombre del edificio
+            addr.neighbourhood,  // Ej: "Llanos del Coyol" o "El Coyol"
+            addr.suburb,         // Ej: "El Coyol"
+            addr.hamlet,         // Ej: Caseríos rurales
+            addr.quarter,
+            addr.locality
+          ].filter(Boolean);
+
+          // 2. Vía o calle exacta con número de inmueble si existe
+          const roadNames = [
+            addr.road || addr.pedestrian || addr.highway || addr.path,
+            addr.house_number ? `#${addr.house_number}` : null
+          ].filter(Boolean);
+
+          // 3. Distrito / Poblado / Ciudad
+          const districtNames = [
+            addr.district,
+            addr.village,
+            addr.town,
+            addr.city
+          ].filter(Boolean);
+
+          // 4. Cantón y Provincia
+          const cantonName = addr.county || addr.municipality || '';
+          const provinceName = addr.state || '';
+
+          // Ensamblar elementos jerárquicos deduplicados
+          const elements = [];
+
+          if (placeNames.length > 0) {
+            const uniquePlaces = [...new Set(placeNames)];
+            elements.push(uniquePlaces.join(', '));
+          }
+
+          if (roadNames.length > 0) {
+            const roadStr = roadNames.join(' ');
+            if (!elements.some(el => el.toLowerCase().includes(roadStr.toLowerCase()))) {
+              elements.push(roadStr);
+            }
+          }
+
+          if (districtNames.length > 0) {
+            const distStr = districtNames[0];
+            if (!elements.some(el => el.toLowerCase().includes(distStr.toLowerCase()))) {
+              elements.push(distStr);
+            }
+          }
+
+          if (cantonName && !elements.some(el => el.toLowerCase().includes(cantonName.toLowerCase()))) {
+            elements.push(cantonName);
+          }
+
+          if (provinceName && !elements.some(el => el.toLowerCase().includes(provinceName.toLowerCase()))) {
+            elements.push(provinceName);
+          }
+
+          if (elements.length >= 2) {
+            internalGeoData = elements.join(', ');
+          } else if (data.display_name) {
+            // Fallback con display_name limpio sin códigos postales ni "Costa Rica"
+            internalGeoData = data.display_name
+              .split(',')
+              .map(s => s.trim())
+              .filter(s => s && s.toLowerCase() !== 'costa rica' && !/^\d{4,5}$/.test(s))
+              .join(', ');
+          }
+        } catch (e) {
+          // Si la consulta de red falla, se preservan coordenadas crudas
+        }
+      };
+
       locationBtn.addEventListener('click', () => {
         locationBtn.disabled = true;
         locationBtn.innerHTML = `
@@ -664,46 +752,74 @@
           return;
         }
 
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // Guardar en memoria coords y precisión
-            userCoords = { 
-              lat: position.coords.latitude, 
-              lng: position.coords.longitude,
-              accuracy: position.coords.accuracy
-            };
+        let bestPosition = null;
+        let watchId = null;
+        let convergenceTimeout = null;
 
-            // Confirmación limpia e inmediata en UI (CERO datos técnicos expuestos al cliente)
-            locationBtn.style.display = "none";
-            if (gpsHint) gpsHint.style.display = "none";
-            locationSuccess.style.display = "flex";
+        const finalizeLocation = (position) => {
+          if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+          }
+          if (convergenceTimeout !== null) {
+            clearTimeout(convergenceTimeout);
+            convergenceTimeout = null;
+          }
 
-            // Geocodificación inversa silenciosa en segundo plano (no bloqueante)
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lng}&zoom=18&addressdetails=1`, {
-              headers: { 'Accept-Language': 'es' }
-            })
-            .then(res => res.json())
-            .then(data => {
-              const addr = data.address || {};
-              const roadPart = [addr.road, addr.house_number].filter(Boolean).join(' #');
-              const suburbPart = addr.neighbourhood || addr.suburb || addr.quarter;
-              const districtPart = addr.district || addr.city || addr.town || addr.village;
-              const countyStatePart = [addr.county || addr.municipality, addr.state].filter(Boolean).join(', ');
-              
-              const parts = [roadPart, suburbPart, districtPart, countyStatePart].filter(Boolean);
-              internalGeoData = parts.length > 0 ? parts.join(' - ') : (data.display_name || '');
-            })
-            .catch(() => {
-              // Fallo silencioso: se preservan coordenadas crudas sin interrumpir al usuario
-            });
-          },
-          () => {
-            resetGpsBtn();
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
+          userCoords = { 
+            lat: position.coords.latitude, 
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+
+          // Confirmación visual sin exponer datos técnicos al cliente
+          locationBtn.style.display = "none";
+          if (gpsHint) gpsHint.style.display = "none";
+          locationSuccess.style.display = "flex";
+
+          // Geocodificación inversa detallada en segundo plano
+          resolveDetailedAddress(userCoords);
+        };
+
+        // Escucha convergente: Permite al chip GPS móvil fijar satélites de alta precisión (< 25m)
+        try {
+          watchId = navigator.geolocation.watchPosition(
+            (pos) => {
+              if (!bestPosition || pos.coords.accuracy < bestPosition.coords.accuracy) {
+                bestPosition = pos;
+              }
+              // Si la precisión es excelente (≤ 25 metros), tenemos un bloqueo satelital real
+              if (pos.coords.accuracy <= 25) {
+                finalizeLocation(pos);
+              }
+            },
+            (err) => {
+              if (bestPosition) {
+                finalizeLocation(bestPosition);
+              } else {
+                resetGpsBtn();
+              }
+            },
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+          );
+
+          // Si tras 3.5 segundos aún no baja de 25m, finaliza con la mejor captura disponible
+          convergenceTimeout = setTimeout(() => {
+            if (bestPosition) {
+              finalizeLocation(bestPosition);
+            }
+          }, 3500);
+        } catch (e) {
+          // Fallback a getCurrentPosition si watchPosition no responde
+          navigator.geolocation.getCurrentPosition(
+            finalizeLocation,
+            resetGpsBtn,
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        }
 
         function resetGpsBtn() {
+          if (watchId !== null) navigator.geolocation.clearWatch(watchId);
           locationBtn.disabled = false;
           locationBtn.innerHTML = `
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
