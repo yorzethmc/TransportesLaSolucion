@@ -2,13 +2,2276 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=./frontend/public-web/">
-  <title>Transportes La Solución</title>
-  <script>
-    window.location.replace("./frontend/public-web/");
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Transportes La Solución - Reservas VIP</title>
+  <meta name="description" content="Servicio de transporte privado VIP. Rápido, seguro y confiable.">
+
+  <!-- Favicon SVG Embebido Data-URI (Evita 404 en navegadores) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚐</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CDN Dependencias Open-Source -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.49/bundle/libphonenumber-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #e11d48; /* Crimson Red */
+      --primary-glow: rgba(225, 29, 72, 0.45);
+      --secondary: #f59e0b; /* Amber */
+      --secondary-glow: rgba(245, 158, 11, 0.35);
+      --emergency: #ef4444; /* Rescue Red */
+      --emergency-glow: rgba(239, 68, 68, 0.4);
+      --bg: #0b0f19; /* Deep Space Dark */
+      --surface: #111827; /* Dark Glass Surface */
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --input-bg: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Iconos SVG y Lucide: Alineación perfecta */
+    i[data-lucide], .app-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    i[data-lucide] svg, .app-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Orbes Ambientales de Fondo */
+    .ambient-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: -1;
+      animation: drift 20s infinite alternate ease-in-out;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .orb-1 {
+      top: -10%;
+      left: -10%;
+      width: 55vw;
+      height: 55vw;
+      background: rgba(225, 29, 72, 0.16);
+    }
+
+    .orb-2 {
+      bottom: -20%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: rgba(245, 158, 11, 0.12);
+      animation-delay: -5s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(5%, 10%, 0); }
+    }
+
+    .top-bar {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.25rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      width: 100%;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* LOGO CON TRIGGER OCULTO (10 TOQUES / 3.5S) */
+    .logo-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--surface-border);
+      animation: float 6s ease-in-out infinite;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .logo-container:active {
+      transform: scale(0.92);
+      box-shadow: 0 10px 25px rgba(225, 29, 72, 0.3);
+    }
+
+    .logo-svg {
+      width: 78px;
+      height: 78px;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.85rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #fb7185, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 420px;
+      margin: 0 auto 1.5rem;
+      font-weight: 400;
+    }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 1rem;
+      padding: 0.95rem 1.1rem;
+      margin: 0 auto 1.75rem;
+      text-align: left;
+      font-size: 0.88rem;
+      color: #fde68a;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    /* BOTÓN PRINCIPAL ÚNICO EN PANTALLA DE INICIO (SIMPLE Y DIRECTO) */
+    .btn-main-action {
+      width: 100%;
+      padding: 1.35rem 1.5rem;
+      border-radius: 1.4rem;
+      background: linear-gradient(135deg, var(--primary), #be123c);
+      color: white;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 15px 35px var(--primary-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-main-action:active {
+      transform: scale(0.97);
+    }
+
+    /* PLATFORM HUB - ACCESOS DIRECTOS A TODA LA PLATAFORMA */
+    .platform-hub {
+      width: 100%;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      animation: fadeUp 1s ease forwards;
+    }
+
+    .hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .hub-header span {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .hub-card {
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid var(--surface-border);
+      border-radius: 1rem;
+      padding: 0.85rem 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.22s ease;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .hub-card:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+    }
+
+    .hub-card:active {
+      transform: scale(0.97);
+    }
+
+    .hub-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hub-icon-admin {
+      background: rgba(99, 102, 241, 0.18);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+
+    .hub-icon-driver {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .hub-icon-apk {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .hub-icon-support {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .hub-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .hub-info strong {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .hub-info span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    /* MODALES ESTILO GLASSMORPHISM */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 15, 25, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 998;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -45%) scale(0.96);
+      width: 92%;
+      max-width: 480px;
+      max-height: 90vh;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--surface-border);
+      border-radius: 2rem;
+      padding: 2rem 1.6rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: white;
+    }
+
+    .modal-header-emergency .modal-title {
+      color: #fbbf24;
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+
+    /* CONTROLES SIMPLES Y GRANDES */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.55rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1.05rem 1.25rem;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.15rem;
+      color: white;
+      font-size: 1.05rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.25s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25);
+    }
+
+    .form-control-emergency:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.1em;
+      cursor: pointer;
+    }
+
+    select.form-control option {
+      background: var(--surface);
+      color: white;
+    }
+
+    /* STEPPERS DE PASAJEROS (MODAL 1) */
+    .stepper-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.25rem;
+      padding: 0.95rem 1.15rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.25s;
+    }
+
+    .stepper-card.active {
+      border-color: rgba(225, 29, 72, 0.5);
+      background: rgba(225, 29, 72, 0.05);
+    }
+
+    .passenger-info {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .p-text strong {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .p-text span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .st-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--surface-border);
+      background: #334155;
+      color: white;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .st-btn:hover:not(:disabled) {
+      background: var(--primary);
+    }
+
+    .st-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .st-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      width: 26px;
+      text-align: center;
+    }
+
+    /* TOGGLE SWITCH DE EQUIPAJE */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.25rem;
+      padding: 1rem 1.15rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .t-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t-switch {
+      position: relative;
+      width: 54px;
+      height: 30px;
+      background: #334155;
+      border-radius: 15px;
+      transition: 0.3s;
+    }
+
+    .t-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    input[type="checkbox"]:checked ~ .t-switch {
+      background: var(--success);
+      box-shadow: 0 0 12px var(--success-glow);
+    }
+
+    input[type="checkbox"]:checked ~ .t-switch::after {
+      transform: translateX(24px);
+    }
+
+    /* GPS BOTÓN Y RADAR CALIBRACIÓN */
+    .btn-gps {
+      width: 100%;
+      padding: 1.25rem;
+      border-radius: 1.25rem;
+      background: rgba(59, 130, 246, 0.12);
+      border: 2px solid rgba(59, 130, 246, 0.45);
+      color: #60a5fa;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-gps:active {
+      transform: scale(0.98);
+    }
+
+    .btn-gps-emergency {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+    }
+
+    .gps-hint {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 0.85rem;
+    }
+
+    /* RADAR CONTAINER */
+    .radar-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(59, 130, 246, 0.45);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .radar-sweep {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .radar-sweep::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #3b82f6;
+      animation: pulse-radar 2s infinite ease-out;
+    }
+
+    @keyframes pulse-radar {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    .radar-pulse-core {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      box-shadow: 0 0 15px #3b82f6;
+    }
+
+    .radar-timer {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #93c5fd;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .radar-accuracy {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .btn-manual-lock {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--surface-border);
+      color: #e2e8f0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.6rem 1.1rem;
+      border-radius: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn-manual-lock:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    /* ESTADO DE ÉXITO GPS (CLARO Y ACCESIBLE) */
+    .loc-success {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      padding: 1.1rem 1.25rem;
+      border-radius: 1.25rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.85rem;
+      animation: fadeUp 0.3s ease;
+      text-align: center;
+    }
+
+    /* BOTONES DE ENVÍO GRANDES */
+    .btn-submit {
+      width: 100%;
+      padding: 1.3rem;
+      border-radius: 1.3rem;
+      background: linear-gradient(135deg, var(--primary), #be123c);
+      color: white;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px var(--primary-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 1.75rem;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .btn-submit-emergency {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.4);
+      color: #ffffff;
+    }
+
+    .shake {
+      animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    /* SELECTOR VISUAL DE VEHÍCULO (CARRO / BUSETA) */
+    .vehicle-toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 0.35rem;
+    }
+
+    .vehicle-toggle-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.95rem 0.5rem;
+      background: var(--input-bg);
+      border: 2px solid var(--surface-border);
+      border-radius: 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .vehicle-toggle-btn .v-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .vehicle-toggle-btn .v-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .vehicle-toggle-btn.active {
+      border-color: var(--secondary);
+      background: rgba(245, 158, 11, 0.15);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    }
+
+    /* ============================================================ */
+    /* VENTANA DE CHOFER & DESCARGA DE APP ANDROID (.APK)            */
+    /* ============================================================ */
+    .driver-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+      padding: 0.35rem 0.85rem;
+      border-radius: 2rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .driver-download-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 1.35rem;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .driver-download-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .driver-download-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.45;
+    }
+
+    .btn-download-apk {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      text-decoration: none;
+      padding: 1.1rem 1.25rem;
+      border-radius: 1.15rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn-download-apk:active {
+      transform: scale(0.98);
+    }
+
+    .btn-download-apk svg {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .btn-download-apk .btn-text-block {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .btn-download-apk .btn-sub {
+      font-size: 0.76rem;
+      font-weight: 600;
+      opacity: 0.9;
+      color: #a7f3d0;
+    }
+
+    .driver-steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.55rem;
+      margin-top: 1rem;
+      padding-top: 0.95rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .driver-step-item {
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .driver-step-item strong {
+      color: #fde68a;
+      font-weight: 700;
+    }
+
+    .driver-section-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.5rem 0 1.15rem 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .driver-section-divider::before,
+    .driver-section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--surface-border);
+    }
+  </style>
 </head>
 <body>
-  <p>Redirigiendo a <a href="./frontend/public-web/">Transportes La Solución</a>...</p>
+  <!-- Orbes Ambientales de Fondo -->
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+  <div class="top-bar"></div>
+
+  <!-- Vista Principal -->
+  <main class="main-wrapper">
+    <section class="hero">
+      <!-- Contenedor del Logo con Trigger Oculto (10 toques / 3.5s -> Abre Asistencia/Avería) -->
+      <div class="logo-container" id="logoContainer" title="Transportes La Solución">
+        <svg class="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vanBody" x1="6" y1="18" x2="52" y2="46" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#f43f5e"/>
+              <stop offset="1" stop-color="#be123c"/>
+            </linearGradient>
+            <linearGradient id="vanFrontGrad" x1="38" y1="18" x2="58" y2="46" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fb7185"/>
+              <stop offset="1" stop-color="#e11d48"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="18" width="46" height="28" rx="7" fill="url(#vanBody)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <path d="M38 18H51C53.2 18 55.1 19.4 55.7 21.5L58 30V44C58 45.1 57.1 46 56 46H52V18Z" fill="url(#vanFrontGrad)"/>
+          <rect x="11" y="23" width="11" height="9" rx="2.5" fill="#0f172a" opacity="0.85"/>
+          <rect x="25" y="23" width="11" height="9" rx="2.5" fill="#0f172a" opacity="0.85"/>
+          <path d="M39 23H48L53 32H39V23Z" fill="#38bdf8" opacity="0.9"/>
+          <circle cx="56" cy="38" r="3" fill="#fef08a"/>
+          <circle cx="8" cy="38" r="2.5" fill="#ef4444"/>
+          <line x1="6" y1="36" x2="58" y2="36" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <circle cx="18" cy="46" r="7" fill="#0f172a" stroke="#64748b" stroke-width="2.5"/>
+          <circle cx="18" cy="46" r="2.5" fill="#e2e8f0"/>
+          <circle cx="46" cy="46" r="7" fill="#0f172a" stroke="#64748b" stroke-width="2.5"/>
+          <circle cx="46" cy="46" r="2.5" fill="#e2e8f0"/>
+        </svg>
+      </div>
+
+      <h1>La <span>Solución</span></h1>
+      <p>Servicio de transporte privado. Rápido, puntual y seguro.</p>
+
+      <div class="warning-box">
+        <strong style="color: #fbbf24; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="alert-triangle"></i>
+          UBICACIÓN SATELITAL
+        </strong>
+        <span>Llene el formulario <strong>estando en el punto exacto</strong> de recolección para ubicarlo con máxima precisión.</span>
+      </div>
+    </section>
+
+    <!-- ÚNICO BOTÓN VISIBLE PARA EL PÚBLICO GENERAL: AGENDAR VIAJE -->
+    <button class="btn-main-action" id="btnOpenTripModal" type="button">
+      <i data-lucide="calendar"></i>
+      <span>Agendar Viaje</span>
+    </button>
+
+    <!-- ACCESOS OPERATIVOS A TODA LA PLATAFORMA (PAGES) -->
+    <div class="platform-hub">
+      <div class="hub-header">
+        <span>Accesos de la Plataforma</span>
+      </div>
+      <div class="hub-grid">
+        <a href="./admin/" class="hub-card" title="Panel Administrativo" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-admin">
+            <i data-lucide="shield"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Panel Admin</strong>
+            <span>Gestión y Monitoreo</span>
+          </div>
+        </a>
+
+        <a href="./chofer/" class="hub-card" title="App Conductor (Versión Web)" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-driver">
+            <i data-lucide="smartphone"></i>
+          </div>
+          <div class="hub-info">
+            <strong>App Conductor</strong>
+            <span>Versión Web</span>
+          </div>
+        </a>
+
+        <a href="./apk/TransportesLaSolucion-Chofer.apk" class="hub-card hub-card-apk" download="TransportesLaSolucion-Chofer.apk" title="Descargar APK Android">
+          <div class="hub-icon hub-icon-apk">
+            <i data-lucide="download"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Descargar APK</strong>
+            <span>Android v1.0</span>
+          </div>
+        </a>
+
+        <button type="button" class="hub-card hub-card-support" id="btnOpenDriverModalDirect" title="Ventana de Chofer y Auxilio">
+          <div class="hub-icon hub-icon-support">
+            <i data-lucide="wrench"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Ventana Chofer</strong>
+            <span>Auxilio y Avería</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- MODAL 1: RESERVAS DE VIAJE (ÁLVARO SCOTT) -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="overlayTrip"></div>
+  <div class="modal" id="modalTrip" role="dialog" aria-labelledby="tripModalTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title" id="tripModalTitle">
+        <i data-lucide="calendar"></i>
+        Detalles del Viaje
+      </h2>
+      <button class="close-btn" id="btnCloseTripModal" type="button" aria-label="Cerrar">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <form id="tripForm">
+      <!-- 1. Nombre Completo -->
+      <div class="form-group">
+        <label class="form-label" for="tripName">
+          <i data-lucide="user"></i>
+          Nombre Completo
+        </label>
+        <input type="text" id="tripName" class="form-control" required placeholder="Escriba su nombre">
+      </div>
+
+      <!-- 2. Teléfono -->
+      <div class="form-group">
+        <label class="form-label" for="tripPhone">
+          <i data-lucide="phone"></i>
+          Teléfono
+        </label>
+        <input type="tel" id="tripPhone" class="form-control" required placeholder="8888-8888" style="letter-spacing: 1.5px;">
+      </div>
+
+      <!-- 3. GPS -->
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label class="form-label">
+          <i data-lucide="map-pin"></i>
+          Punto de Recogida
+        </label>
+
+        <button type="button" class="btn-gps" id="btnStartTripGPS">
+          <i data-lucide="navigation"></i>
+          <span>Compartir Ubicación Actual</span>
+        </button>
+        <p class="gps-hint" id="tripGpsHint">Toque el botón azul para fijar su ubicación con satélites.</p>
+
+        <!-- Radar de Calibración -->
+        <div class="radar-container" id="tripRadar">
+          <div class="radar-sweep">
+            <div class="radar-pulse-core"></div>
+          </div>
+          <div class="radar-timer">
+            <i data-lucide="radio"></i>
+            <span id="tripRadarCountdown">Buscando satélites... 30s</span>
+          </div>
+          <div class="radar-accuracy" id="tripRadarAccuracy">Afinando señal...</div>
+          <button type="button" class="btn-manual-lock" id="btnLockTripGPS">
+            <i data-lucide="crosshair"></i>
+            Fijar lectura ahora
+          </button>
+        </div>
+
+        <!-- Éxito GPS -->
+        <div class="loc-success" id="tripGpsSuccess">
+          <i data-lucide="check-circle-2"></i>
+          <span>✓ Ubicación lista con máxima precisión</span>
+        </div>
+
+        <textarea id="tripLocationDetails" class="form-control" placeholder="Señas sencillas (Ej: frente al portón negro, casa esquinera, frente al parque...)"></textarea>
+      </div>
+
+      <!-- 4. Destino -->
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label class="form-label" for="destinationGroup">
+          <i data-lucide="map-pin"></i>
+          ¿Hacia dónde va?
+        </label>
+        <select id="destinationGroup" class="form-control" required>
+          <option value="" disabled selected>Seleccione el destino...</option>
+          <option value="Los Chiles">Los Chiles (Costa Rica)</option>
+          <option value="Tablillas">Tablillas (Frontera)</option>
+          <option value="Nicaragua">Nicaragua</option>
+          <option value="Otro">Otro lugar...</option>
+        </select>
+      </div>
+
+      <!-- Submenú condicional Nicaragua -->
+      <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -0.75rem;">
+        <label class="form-label" for="nicaraguaCity" style="font-size: 0.95rem; color: var(--secondary);">Ciudad en Nicaragua</label>
+        <select id="nicaraguaCity" class="form-control">
+          <option value="" disabled selected>Seleccione la ciudad...</option>
+          <option value="Managua">Managua</option>
+          <option value="El Boaco">El Boaco</option>
+          <option value="Rivas">Rivas</option>
+          <option value="Granada">Granada</option>
+          <option value="Masaya">Masaya</option>
+          <option value="Leon">León</option>
+          <option value="Esteli">Estelí</option>
+          <option value="Otro">Otra ciudad...</option>
+        </select>
+      </div>
+
+      <!-- Campo condicional 'Otro' -->
+      <div class="form-group" id="otherDestination" style="display: none; margin-top: -0.75rem;">
+        <label class="form-label" for="otherDestText" style="font-size: 0.95rem; color: var(--secondary);">Escriba el lugar exacto</label>
+        <input type="text" id="otherDestText" class="form-control" placeholder="Ej: Upala, San Carlos...">
+      </div>
+
+      <!-- 5. Pasajeros -->
+      <div class="form-group" style="margin-top: 1.75rem;">
+        <label class="form-label" style="justify-content: center; margin-bottom: 0.9rem;">Cantidad de Pasajeros</label>
+
+        <div class="stepper-card active" id="cardAdults">
+          <div class="passenger-info">
+            <i data-lucide="user"></i>
+            <div class="p-text">
+              <strong>Adultos</strong>
+              <span>Mayores de 5 años</span>
+            </div>
+          </div>
+          <div class="stepper-controls">
+            <button type="button" class="st-btn" id="btnSubAdults" aria-label="Menos">
+              <i data-lucide="minus"></i>
+            </button>
+            <span class="st-val" id="valAdults">1</span>
+            <button type="button" class="st-btn" id="btnAddAdults" aria-label="Más">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="stepper-card" id="cardMinors">
+          <div class="passenger-info">
+            <i data-lucide="smile"></i>
+            <div class="p-text">
+              <strong>Niños / Bebés</strong>
+              <span>Menores de 5 años</span>
+            </div>
+          </div>
+          <div class="stepper-controls">
+            <button type="button" class="st-btn" id="btnSubMinors" aria-label="Menos">
+              <i data-lucide="minus"></i>
+            </button>
+            <span class="st-val" id="valMinors">0</span>
+            <button type="button" class="st-btn" id="btnAddMinors" aria-label="Más">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Equipaje -->
+      <div class="form-group">
+        <label class="toggle-wrapper" for="tripLuggage">
+          <span class="t-label">
+            <i data-lucide="briefcase"></i>
+            ¿Lleva maletas o bultos?
+          </span>
+          <input type="checkbox" id="tripLuggage">
+          <div class="t-switch"></div>
+        </label>
+      </div>
+
+      <!-- 7. Fecha -->
+      <div class="form-group">
+        <label class="form-label" for="tripDate">
+          <i data-lucide="calendar"></i>
+          Día del viaje
+        </label>
+        <input type="date" id="tripDate" class="form-control" required>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        <i data-lucide="send"></i>
+        <span>Enviar Reserva</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL 2: VENTANA DE CHOFER (DESCARGA DE APP & AUXILIO)       -->
+  <!-- ACTIVA TRAS 10 TOQUES EN EL LOGO EN MENOS DE 3.5 SEGUNDOS    -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="overlaySupport"></div>
+  <div class="modal" id="modalSupport" role="dialog" aria-labelledby="supportModalTitle" aria-modal="true">
+    <div class="modal-header modal-header-emergency">
+      <div>
+        <span class="driver-badge">
+          <i data-lucide="shield"></i> Panel Operativo
+        </span>
+        <h2 class="modal-title" id="supportModalTitle" style="margin-top: 0.15rem;">
+          <i data-lucide="truck"></i>
+          Ventana de Chofer
+        </h2>
+      </div>
+      <button class="close-btn" id="btnCloseSupportModal" type="button" aria-label="Cerrar">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <!-- SECCIÓN 1: DESCARGA DIRECTA DE LA APP MÓVIL (ANDROID APK) -->
+    <div class="driver-download-card">
+      <h3>
+        <i data-lucide="smartphone"></i>
+        App Móvil para Choferes
+      </h3>
+      <p>
+        Descargue e instale la aplicación oficial en su teléfono Android para recibir sus rutas asignadas y transmitir su ubicación GPS en tiempo real.
+      </p>
+
+      <a href="./apk/TransportesLaSolucion-Chofer.apk" download="TransportesLaSolucion-Chofer.apk" class="btn-download-apk" id="btnDownloadApk">
+        <i data-lucide="download"></i>
+        <div class="btn-text-block">
+          <span>Descargar App Android (.APK)</span>
+          <span class="btn-sub">Versión v1.0.0 Oficial (Instalación Directa)</span>
+        </div>
+      </a>
+
+      <!-- Guía Rápida de Instalación en 3 Pasos -->
+      <div class="driver-steps">
+        <div class="driver-step-item">
+          <strong>1. Descargar</strong>
+          <span>Toque el botón verde y acepte la descarga</span>
+        </div>
+        <div class="driver-step-item">
+          <strong>2. Instalar</strong>
+          <span>Abra el archivo descargado e instale</span>
+        </div>
+        <div class="driver-step-item">
+          <strong>3. Ubicación</strong>
+          <span>Permita el GPS "Todo el tiempo"</span>
+        </div>
+      </div>
+
+      <!-- Enlaces complementarios a versiones web -->
+      <div style="display: flex; gap: 0.6rem; margin-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 0.85rem;">
+        <a href="./chofer/" target="_blank" rel="noopener" style="flex: 1; text-align: center; text-decoration: none; padding: 0.7rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 0.85rem; font-size: 0.82rem; font-weight: 600; color: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: background 0.2s;">
+          <i data-lucide="smartphone"></i>
+          <span>App Web</span>
+        </a>
+        <a href="./admin/" target="_blank" rel="noopener" style="flex: 1; text-align: center; text-decoration: none; padding: 0.7rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 0.85rem; font-size: 0.82rem; font-weight: 600; color: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: background 0.2s;">
+          <i data-lucide="shield"></i>
+          <span>Panel Admin</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: SEPARADOR Y REPORTE DE AVERÍA / AUXILIO -->
+    <div class="driver-section-divider">
+      <span>🚨 Auxilio en Ruta / Avería</span>
+    </div>
+
+    <!-- FORMULARIO ULTRA SIMPLE: SOLO NOMBRE Y UBICACIÓN -->
+    <form id="supportForm">
+      <!-- 1. Nombre de la persona -->
+      <div class="form-group">
+        <label class="form-label" for="supportName" style="font-size: 1.1rem;">
+          <i data-lucide="user"></i>
+          Su Nombre
+        </label>
+        <input type="text" id="supportName" class="form-control form-control-emergency" required placeholder="Escriba su nombre aquí">
+      </div>
+
+      <!-- 2. Tipo de Vehículo: Carro o Buseta (Selector Visual Ultra Simple) -->
+      <div class="form-group" style="margin-top: 1.25rem;">
+        <label class="form-label" style="font-size: 1.1rem;">
+          <i data-lucide="truck"></i>
+          ¿Qué vehículo se varó?
+        </label>
+        <div class="vehicle-toggle-group">
+          <button type="button" class="vehicle-toggle-btn active" id="btnVehicleCar">
+            <span class="v-icon">🚗</span>
+            <span class="v-text">Carro</span>
+          </button>
+          <button type="button" class="vehicle-toggle-btn" id="btnVehicleBus">
+            <span class="v-icon">🚐</span>
+            <span class="v-text">Buseta</span>
+          </button>
+        </div>
+        <input type="hidden" id="supportVehicleType" value="Carro">
+      </div>
+
+      <!-- 2. Botón Grande de Ubicación (GPS) -->
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label class="form-label" style="font-size: 1.1rem;">
+          <i data-lucide="map-pin"></i>
+          Ubicación del Vehículo
+        </label>
+
+        <button type="button" class="btn-gps btn-gps-emergency" id="btnStartSupportGPS">
+          <i data-lucide="navigation"></i>
+          <span>Tocar Aquí para Fijar Ubicación</span>
+        </button>
+        <p class="gps-hint" id="supportGpsHint">Al tocar el botón, se localiza su posición exacta para enviarle ayuda.</p>
+
+        <!-- Radar de Calibración -->
+        <div class="radar-container" id="supportRadar" style="border-color: rgba(245, 158, 11, 0.5);">
+          <div class="radar-sweep" style="border-color: rgba(245, 158, 11, 0.3);">
+            <div class="radar-pulse-core" style="background: #f59e0b; box-shadow: 0 0 15px #f59e0b;"></div>
+          </div>
+          <div class="radar-timer" style="color: #fde68a;">
+            <i data-lucide="radio"></i>
+            <span id="supportRadarCountdown">Localizando... 30s</span>
+          </div>
+          <div class="radar-accuracy" id="supportRadarAccuracy">Afinando señal satelital...</div>
+          <button type="button" class="btn-manual-lock" id="btnLockSupportGPS">
+            <i data-lucide="crosshair"></i>
+            Fijar ahora
+          </button>
+        </div>
+
+        <!-- Estado de Éxito Consolidado -->
+        <div class="loc-success" id="supportGpsSuccess">
+          <i data-lucide="check-circle-2"></i>
+          <span>✓ Ubicación lista</span>
+        </div>
+
+        <!-- Señas sencillas opcionales -->
+        <textarea id="supportDetails" class="form-control form-control-emergency" placeholder="¿Qué le pasó o qué ve cerca? (Opcional)"></textarea>
+      </div>
+
+      <!-- 3. Botón Directo y Claro: Solicitar Asistencia -->
+      <button type="submit" class="btn-submit btn-submit-emergency">
+        <i data-lucide="send"></i>
+        <span>Solicitar Asistencia</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y ROBUSTA -->
+  <!-- ============================================================ -->
+  <script>
+    // DICCIONARIO VECTORIAL SVG INLINE (100% INMUNE A DESCONEXIONES O PROBLEMAS DE CDN)
+    const INLINE_SVGS = {
+      'calendar': '<svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
+      'user': '<svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+      'phone': '<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+      'map-pin': '<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+      'navigation': '<svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>',
+      'radio': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>',
+      'crosshair': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="6"/><line x1="12" x2="12" y1="18" y2="22"/></svg>',
+      'check-circle-2': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+      'minus': '<svg viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"/></svg>',
+      'plus': '<svg viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>',
+      'smile': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>',
+      'alert-triangle': '<svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>',
+      'x': '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      'briefcase': '<svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+      'send': '<svg viewBox="0 0 24 24"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+      'wrench': '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+      'download': '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>',
+      'truck': '<svg viewBox="0 0 24 24"><rect width="16" height="13" x="1" y="5" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+      'smartphone': '<svg viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>',
+      'shield': '<svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>'
+    };
+
+    function renderAppIcons() {
+      try {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      } catch (_e) {}
+
+      document.querySelectorAll('i[data-lucide]').forEach((el) => {
+        if (!el.querySelector('svg')) {
+          const iconName = el.getAttribute('data-lucide');
+          if (INLINE_SVGS[iconName]) {
+            el.innerHTML = INLINE_SVGS[iconName];
+          }
+        }
+      });
+    }
+
+    renderAppIcons();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAppIcons();
+
+      // Notyf Toasts
+      let notyf = {
+        success: (m) => alert(m),
+        error: (m) => alert(m),
+        open: (cfg) => alert(cfg.message)
+      };
+
+      if (typeof Notyf !== 'undefined') {
+        notyf = new Notyf({
+          duration: 3500,
+          position: { x: 'center', y: 'top' },
+          types: [
+            { type: 'success', background: '#10b981', icon: false },
+            { type: 'error', background: '#e11d48', icon: false },
+            { type: 'warning', background: '#f59e0b', icon: false }
+          ]
+        });
+      }
+
+      // Máscara de teléfono en reservas
+      const tripPhoneEl = document.getElementById('tripPhone');
+      if (typeof IMask !== 'undefined' && tripPhoneEl) {
+        IMask(tripPhoneEl, { mask: '0000-0000' });
+      }
+
+      // CONFIGURACIÓN OPERATIVA DINÁMICA (Obtenida desde el backend / app_configuration)
+      let platformConfig = {
+        company_whatsapp: '',
+        support_whatsapp: ''
+      };
+
+      async function fetchPlatformConfig() {
+        try {
+          const res = await fetch('/functions/v1/public-config');
+          if (res.ok) {
+            const data = await res.json();
+            platformConfig = { ...platformConfig, ...data };
+          }
+        } catch (_err) {
+          console.warn('Aviso: Ejecutando con configuración por defecto');
+        }
+      }
+      fetchPlatformConfig();
+
+      const MAX_PASSENGERS = 11;
+
+      // ============================================================
+      // MOTOR DE CALIBRACIÓN GPS (HASTA 30 SEGUNDOS)
+      // ============================================================
+      class GPSCalibrationEngine {
+        constructor() {
+          this.watchId = null;
+          this.timerInterval = null;
+          this.wakeLock = null;
+          this.bestSample = null;
+          this.secondsLeft = 30;
+          this.isScanning = false;
+        }
+
+        async startScan({ onProgress, onComplete, onError }) {
+          if (!navigator.geolocation) {
+            onError('La geolocalización no está disponible en su dispositivo.');
+            return;
+          }
+
+          this.stopScan();
+          this.isScanning = true;
+          this.bestSample = null;
+          this.secondsLeft = 30;
+
+          if ('wakeLock' in navigator) {
+            try {
+              this.wakeLock = await navigator.wakeLock.request('screen');
+            } catch (_err) {}
+          }
+
+          this.timerInterval = setInterval(() => {
+            this.secondsLeft--;
+            if (onProgress) {
+              onProgress({
+                secondsLeft: this.secondsLeft,
+                bestAccuracy: this.bestSample ? this.bestSample.coords.accuracy : null
+              });
+            }
+            if (this.secondsLeft <= 0) {
+              this.finish(onComplete, onError);
+            }
+          }, 1000);
+
+          try {
+            this.watchId = navigator.geolocation.watchPosition(
+              (position) => {
+                if (!this.bestSample || position.coords.accuracy < this.bestSample.coords.accuracy) {
+                  this.bestSample = position;
+                }
+                if (onProgress) {
+                  onProgress({
+                    secondsLeft: this.secondsLeft,
+                    bestAccuracy: this.bestSample.coords.accuracy
+                  });
+                }
+                // Si la precisión es óptima (<= 8m), salir de inmediato
+                if (position.coords.accuracy <= 8) {
+                  this.finish(onComplete, onError);
+                }
+              },
+              (_err) => {},
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          } catch (_e) {
+            this.finish(onComplete, onError);
+          }
+        }
+
+        finish(onComplete, onError) {
+          this.cleanup();
+          if (this.bestSample) {
+            onComplete(this.bestSample);
+          } else {
+            onError('No se detectó señal de ubicación. Escriba señas del lugar.');
+          }
+        }
+
+        manualLock(onComplete, onError) {
+          if (this.bestSample) {
+            this.finish(onComplete, onError);
+          } else {
+            onError('Aún esperando señal satelital.');
+          }
+        }
+
+        cleanup() {
+          this.isScanning = false;
+          if (this.watchId !== null) {
+            navigator.geolocation.clearWatch(this.watchId);
+            this.watchId = null;
+          }
+          if (this.timerInterval !== null) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+          }
+          if (this.wakeLock) {
+            try { this.wakeLock.release(); } catch (_e) {}
+            this.wakeLock = null;
+          }
+        }
+
+        stopScan() {
+          this.cleanup();
+        }
+      }
+
+      // Geocodificación Jerárquica Oficial: País -> Provincia -> Cantón -> Distrito -> [Lugar / Vía / Seña]
+      async function resolveLocationAddress(lat, lng) {
+        let country = '';
+        let province = '';
+        let canton = '';
+        let district = '';
+        let localPlace = '';
+
+        // 1. Nominatim OpenStreetMap (Alta fidelidad administrativa)
+        try {
+          const osmRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+            headers: { 'Accept-Language': 'es', 'User-Agent': 'TransportesLaSolucion/1.0' }
+          });
+          if (osmRes.ok) {
+            const osm = await osmRes.json();
+            const addr = osm.address || {};
+
+            country = addr.country || 'Costa Rica';
+            province = addr.state || '';
+            canton = addr.county || addr.municipality || '';
+            district = addr.district || addr.suburb || addr.village || addr.town || addr.city || '';
+
+            const specificPlaces = [
+              addr.industrial,     // Ej: Zona Franca Coyol
+              addr.neighbourhood,  // Ej: Llanos del Coyol / El Coyol
+              addr.residential,    // Ej: Condominio Royal Palm
+              addr.building,
+              addr.amenity,
+              addr.hamlet,
+              addr.road ? (addr.road + (addr.house_number ? ` #${addr.house_number}` : '')) : null
+            ].filter(Boolean);
+
+            if (specificPlaces.length > 0) {
+              localPlace = [...new Set(specificPlaces)].filter(p => 
+                p.toLowerCase() !== district.toLowerCase() && 
+                p.toLowerCase() !== canton.toLowerCase() && 
+                p.toLowerCase() !== province.toLowerCase()
+              ).join(', ');
+            }
+          }
+        } catch (_e) {}
+
+        // 2. Fallback complementario con BigDataCloud
+        if (!province || !district) {
+          try {
+            const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`);
+            if (bdcRes.ok) {
+              const bdc = await bdcRes.json();
+              if (!country) country = bdc.countryName || 'Costa Rica';
+              if (!province) province = bdc.principalSubdivision || '';
+              if (!district) district = bdc.locality || bdc.city || '';
+            }
+          } catch (_e) {}
+        }
+
+        // Orden jerárquico oficial establecido: País -> Provincia -> Cantón -> Distrito -> Detalle
+        const hierarchy = [
+          country || 'Costa Rica',
+          province,
+          canton,
+          district,
+          localPlace
+        ].filter(Boolean);
+
+        return hierarchy.length > 0 ? hierarchy.join(', ') : 'Costa Rica';
+      }
+
+      // Validación telefónica sencilla
+      function validateAndFormatPhone(rawVal) {
+        const digits = rawVal.replace(/\D/g, '');
+        try {
+          if (typeof libphonenumber !== 'undefined') {
+            const parsed = rawVal.startsWith('+')
+              ? libphonenumber.parsePhoneNumber(rawVal)
+              : libphonenumber.parsePhoneNumber(rawVal, 'CR');
+            if (parsed && parsed.isValid()) {
+              return { valid: true, e164: parsed.number.replace('+', ''), display: parsed.number };
+            }
+          }
+        } catch (_e) {}
+
+        if (digits.length === 8) {
+          return { valid: true, e164: '506' + digits, display: '+506 ' + digits };
+        }
+        if (digits.length >= 11) {
+          return { valid: true, e164: digits, display: '+' + digits };
+        }
+        return { valid: false, e164: digits, display: '+' + digits };
+      }
+
+      // ============================================================
+      // DISPARADOR OCULTO (10 TOQUES EN EL LOGO EN MENOS DE 3.5 SEGUNDOS)
+      // ABRE EXCLUSIVAMENTE EL MODO DE SOPORTE / REPORTAR AVERÍA
+      // ============================================================
+      let logoTaps = 0;
+      let logoTimer = null;
+      const logoContainer = document.getElementById('logoContainer');
+
+      if (logoContainer) {
+        logoContainer.addEventListener('pointerdown', () => {
+          logoTaps++;
+
+          if (logoTaps === 1) {
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(() => {
+              logoTaps = 0;
+            }, 3500);
+          } else if (logoTaps >= 10) {
+            clearTimeout(logoTimer);
+            logoTaps = 0;
+
+            // Vibración háptica de emergencia
+            if (navigator.vibrate) {
+              navigator.vibrate([100, 50, 100]);
+            }
+
+            closeTripModal();
+            openSupportModal();
+            notyf.open({
+              type: 'warning',
+              message: 'Ventana de Chofer activada'
+            });
+          }
+        });
+      }
+
+      // ============================================================
+      // MODALES
+      // ============================================================
+      // Modal 1: Viajes
+      const modalTrip = document.getElementById('modalTrip');
+      const overlayTrip = document.getElementById('overlayTrip');
+      const btnOpenTripModal = document.getElementById('btnOpenTripModal');
+      const btnCloseTripModal = document.getElementById('btnCloseTripModal');
+
+      const openTripModal = () => {
+        modalTrip.classList.add('active');
+        overlayTrip.classList.add('active');
+        renderAppIcons();
+      };
+      const closeTripModal = () => {
+        modalTrip.classList.remove('active');
+        overlayTrip.classList.remove('active');
+      };
+
+      if (btnOpenTripModal) btnOpenTripModal.addEventListener('click', openTripModal);
+      if (btnCloseTripModal) btnCloseTripModal.addEventListener('click', closeTripModal);
+      if (overlayTrip) overlayTrip.addEventListener('click', closeTripModal);
+
+      // Modal 2: Soporte / Reportar Avería (Oculto)
+      const modalSupport = document.getElementById('modalSupport');
+      const overlaySupport = document.getElementById('overlaySupport');
+      const btnCloseSupportModal = document.getElementById('btnCloseSupportModal');
+
+      const openSupportModal = () => {
+        modalSupport.classList.add('active');
+        overlaySupport.classList.add('active');
+        renderAppIcons();
+      };
+      const closeSupportModal = () => {
+        modalSupport.classList.remove('active');
+        overlaySupport.classList.remove('active');
+      };
+
+      if (btnCloseSupportModal) btnCloseSupportModal.addEventListener('click', closeSupportModal);
+      if (overlaySupport) overlaySupport.addEventListener('click', closeSupportModal);
+
+      // Botón directo a Ventana de Chofer desde el hub de accesos
+      const btnOpenDriverModalDirect = document.getElementById('btnOpenDriverModalDirect');
+      if (btnOpenDriverModalDirect) {
+        btnOpenDriverModalDirect.addEventListener('click', openSupportModal);
+      }
+
+      // Apertura por hash en la URL (#chofer, #soporte, #reserva)
+      if (window.location.hash === '#chofer' || window.location.hash === '#soporte') {
+        openSupportModal();
+      } else if (window.location.hash === '#reserva') {
+        openTripModal();
+      }
+
+      // Selector de Vehículo en Modo Soporte (Carro / Buseta)
+      const btnVehicleCar = document.getElementById('btnVehicleCar');
+      const btnVehicleBus = document.getElementById('btnVehicleBus');
+      const supportVehicleType = document.getElementById('supportVehicleType');
+
+      if (btnVehicleCar && btnVehicleBus && supportVehicleType) {
+        btnVehicleCar.addEventListener('click', () => {
+          btnVehicleCar.classList.add('active');
+          btnVehicleBus.classList.remove('active');
+          supportVehicleType.value = 'Carro';
+          if (navigator.vibrate) navigator.vibrate(30);
+        });
+
+        btnVehicleBus.addEventListener('click', () => {
+          btnVehicleBus.classList.add('active');
+          btnVehicleCar.classList.remove('active');
+          supportVehicleType.value = 'Buseta';
+          if (navigator.vibrate) navigator.vibrate(30);
+        });
+      }
+
+      // Fecha Mínima en Viajes
+      const tripDateInput = document.getElementById('tripDate');
+      if (tripDateInput) {
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        tripDateInput.min = todayStr;
+        tripDateInput.value = todayStr;
+      }
+
+      // Selector de Destinos (Viajes)
+      const destGroup = document.getElementById('destinationGroup');
+      const nicGroup = document.getElementById('nicaraguaDestinations');
+      const nicCity = document.getElementById('nicaraguaCity');
+      const otherGroup = document.getElementById('otherDestination');
+      const otherDestText = document.getElementById('otherDestText');
+
+      const handleDestinations = () => {
+        const val = destGroup.value;
+        const nicVal = nicCity ? nicCity.value : '';
+
+        if (nicGroup) nicGroup.style.display = (val === 'Nicaragua') ? 'block' : 'none';
+        if (nicCity) nicCity.required = (val === 'Nicaragua');
+
+        if (val === 'Otro' || (val === 'Nicaragua' && nicVal === 'Otro')) {
+          if (otherGroup) otherGroup.style.display = 'block';
+          if (otherDestText) otherDestText.required = true;
+        } else {
+          if (otherGroup) otherGroup.style.display = 'none';
+          if (otherDestText) otherDestText.required = false;
+        }
+      };
+
+      if (destGroup) destGroup.addEventListener('change', handleDestinations);
+      if (nicCity) nicCity.addEventListener('change', handleDestinations);
+
+      // Pasajeros (Viajes)
+      let adultsCount = 1;
+      let minorsCount = 0;
+      const valAdultsEl = document.getElementById('valAdults');
+      const valMinorsEl = document.getElementById('valMinors');
+      const btnSubAdults = document.getElementById('btnSubAdults');
+      const btnSubMinors = document.getElementById('btnSubMinors');
+      const btnAddAdults = document.getElementById('btnAddAdults');
+      const btnAddMinors = document.getElementById('btnAddMinors');
+      const cardAdults = document.getElementById('cardAdults');
+      const cardMinors = document.getElementById('cardMinors');
+
+      const updatePassengerUI = () => {
+        if (valAdultsEl) valAdultsEl.textContent = adultsCount;
+        if (valMinorsEl) valMinorsEl.textContent = minorsCount;
+
+        if (btnSubAdults) btnSubAdults.disabled = (adultsCount <= 1);
+        if (btnSubMinors) btnSubMinors.disabled = (minorsCount <= 0);
+
+        const canAdd = (adultsCount + minorsCount) < MAX_PASSENGERS;
+        if (btnAddAdults) btnAddAdults.disabled = !canAdd;
+        if (btnAddMinors) btnAddMinors.disabled = !canAdd;
+
+        if (cardAdults) cardAdults.classList.toggle('active', adultsCount > 0);
+        if (cardMinors) cardMinors.classList.toggle('active', minorsCount > 0);
+      };
+
+      const triggerShake = (btn) => {
+        if (!btn) return;
+        btn.classList.remove('shake');
+        void btn.offsetWidth;
+        btn.classList.add('shake');
+        if (navigator.vibrate) navigator.vibrate(50);
+        notyf.open({ type: 'warning', message: 'Límite de 11 pasajeros alcanzado.' });
+      };
+
+      if (btnAddAdults) {
+        btnAddAdults.addEventListener('click', () => {
+          if (adultsCount + minorsCount < MAX_PASSENGERS) {
+            adultsCount++;
+            updatePassengerUI();
+          } else {
+            triggerShake(btnAddAdults);
+          }
+        });
+      }
+      if (btnSubAdults) {
+        btnSubAdults.addEventListener('click', () => {
+          if (adultsCount > 1) {
+            adultsCount--;
+            updatePassengerUI();
+          }
+        });
+      }
+      if (btnAddMinors) {
+        btnAddMinors.addEventListener('click', () => {
+          if (adultsCount + minorsCount < MAX_PASSENGERS) {
+            minorsCount++;
+            updatePassengerUI();
+          } else {
+            triggerShake(btnAddMinors);
+          }
+        });
+      }
+      if (btnSubMinors) {
+        btnSubMinors.addEventListener('click', () => {
+          if (minorsCount > 0) {
+            minorsCount--;
+            updatePassengerUI();
+          }
+        });
+      }
+      updatePassengerUI();
+
+      // ============================================================
+      // GPS EN MODAL 1 (VIAJES)
+      // ============================================================
+      const tripGpsEngine = new GPSCalibrationEngine();
+      let tripCoords = null;
+      let tripAddressText = '';
+
+      const btnStartTripGPS = document.getElementById('btnStartTripGPS');
+      const tripGpsHint = document.getElementById('tripGpsHint');
+      const tripRadar = document.getElementById('tripRadar');
+      const tripRadarCountdown = document.getElementById('tripRadarCountdown');
+      const tripRadarAccuracy = document.getElementById('tripRadarAccuracy');
+      const btnLockTripGPS = document.getElementById('btnLockTripGPS');
+      const tripGpsSuccess = document.getElementById('tripGpsSuccess');
+
+      if (btnStartTripGPS) {
+        btnStartTripGPS.addEventListener('click', () => {
+          btnStartTripGPS.style.display = 'none';
+          if (tripGpsHint) tripGpsHint.style.display = 'none';
+          tripRadar.style.display = 'flex';
+
+          tripGpsEngine.startScan({
+            onProgress: ({ secondsLeft, bestAccuracy }) => {
+              tripRadarCountdown.textContent = `Buscando satélites... ${secondsLeft}s`;
+              tripRadarAccuracy.textContent = bestAccuracy
+                ? `Lectura actual: ±${Math.round(bestAccuracy)}m`
+                : 'Buscando satélites...';
+            },
+            onComplete: async (pos) => {
+              tripRadar.style.display = 'none';
+              tripGpsSuccess.style.display = 'flex';
+              tripCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación fijada correctamente.');
+              tripAddressText = await resolveLocationAddress(tripCoords.lat, tripCoords.lng);
+            },
+            onError: (errMsg) => {
+              tripRadar.style.display = 'none';
+              btnStartTripGPS.style.display = 'flex';
+              if (tripGpsHint) tripGpsHint.style.display = 'block';
+              notyf.error(errMsg);
+            }
+          });
+        });
+      }
+
+      if (btnLockTripGPS) {
+        btnLockTripGPS.addEventListener('click', () => {
+          tripGpsEngine.manualLock(
+            async (pos) => {
+              tripRadar.style.display = 'none';
+              tripGpsSuccess.style.display = 'flex';
+              tripCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación consolidada.');
+              tripAddressText = await resolveLocationAddress(tripCoords.lat, tripCoords.lng);
+            },
+            (err) => notyf.open({ type: 'warning', message: err })
+          );
+        });
+      }
+
+      // ============================================================
+      // GPS EN MODAL 2 (SOPORTE / AVERÍA)
+      // ============================================================
+      const supportGpsEngine = new GPSCalibrationEngine();
+      let supportCoords = null;
+      let supportAddressText = '';
+
+      const btnStartSupportGPS = document.getElementById('btnStartSupportGPS');
+      const supportGpsHint = document.getElementById('supportGpsHint');
+      const supportRadar = document.getElementById('supportRadar');
+      const supportRadarCountdown = document.getElementById('supportRadarCountdown');
+      const supportRadarAccuracy = document.getElementById('supportRadarAccuracy');
+      const btnLockSupportGPS = document.getElementById('btnLockSupportGPS');
+      const supportGpsSuccess = document.getElementById('supportGpsSuccess');
+
+      if (btnStartSupportGPS) {
+        btnStartSupportGPS.addEventListener('click', () => {
+          btnStartSupportGPS.style.display = 'none';
+          if (supportGpsHint) supportGpsHint.style.display = 'none';
+          supportRadar.style.display = 'flex';
+
+          supportGpsEngine.startScan({
+            onProgress: ({ secondsLeft, bestAccuracy }) => {
+              supportRadarCountdown.textContent = `Localizando... ${secondsLeft}s`;
+              supportRadarAccuracy.textContent = bestAccuracy
+                ? `Lectura: ±${Math.round(bestAccuracy)}m`
+                : 'Conectando con satélites...';
+            },
+            onComplete: async (pos) => {
+              supportRadar.style.display = 'none';
+              supportGpsSuccess.style.display = 'flex';
+              supportCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación lista.');
+              supportAddressText = await resolveLocationAddress(supportCoords.lat, supportCoords.lng);
+            },
+            onError: (errMsg) => {
+              supportRadar.style.display = 'none';
+              btnStartSupportGPS.style.display = 'flex';
+              if (supportGpsHint) supportGpsHint.style.display = 'block';
+              notyf.error(errMsg);
+            }
+          });
+        });
+      }
+
+      if (btnLockSupportGPS) {
+        btnLockSupportGPS.addEventListener('click', () => {
+          supportGpsEngine.manualLock(
+            async (pos) => {
+              supportRadar.style.display = 'none';
+              supportGpsSuccess.style.display = 'flex';
+              supportCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación fijada.');
+              supportAddressText = await resolveLocationAddress(supportCoords.lat, supportCoords.lng);
+            },
+            (err) => notyf.open({ type: 'warning', message: err })
+          );
+        });
+      }
+
+      // ============================================================
+      // ENVÍO DEL FORMULARIO 1: VIAJES (ÁLVARO SCOTT: +50672094457)
+      // ============================================================
+      const tripForm = document.getElementById('tripForm');
+      if (tripForm) {
+        tripForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('tripName').value.trim();
+          const phoneRaw = document.getElementById('tripPhone').value.trim();
+          const phoneValidation = validateAndFormatPhone(phoneRaw);
+
+          if (!phoneValidation.valid) {
+            notyf.error('Por favor revise su número de teléfono.');
+            return;
+          }
+
+          let finalDest = destGroup.value;
+          if (finalDest === 'Nicaragua') {
+            const city = nicCity ? nicCity.value : '';
+            const custom = otherDestText ? otherDestText.value.trim() : '';
+            finalDest = `Nicaragua (${city === 'Otro' ? custom : city})`;
+          } else if (finalDest === 'Otro') {
+            finalDest = otherDestText ? otherDestText.value.trim() : 'Otro destino';
+          }
+
+          const [y, m, d] = tripDateInput.value.split('-');
+          const dateFormatted = `${d}/${m}/${y}`;
+          const luggage = document.getElementById('tripLuggage').checked ? 'Sí' : 'No';
+
+          let wazeLink = 'No disponible';
+          let gmapsLink = 'No disponible';
+
+          if (tripCoords) {
+            wazeLink = `https://waze.com/ul?ll=${tripCoords.lat},${tripCoords.lng}&navigate=yes`;
+            gmapsLink = `https://www.google.com/maps?q=${tripCoords.lat},${tripCoords.lng}`;
+          }
+
+          const addressFinal = tripAddressText || (tripCoords ? 'Ubicación satelital confirmada' : 'No se compartió GPS');
+          const senias = document.getElementById('tripLocationDetails').value.trim();
+          const seniasBlock = senias ? `▪ *Señas / Ref:* ${senias}\n` : '';
+          const pasajerosText = minorsCount > 0 
+            ? `${adultsCount} Adulto(s) + ${minorsCount} Niño(s)` 
+            : `${adultsCount} Adulto(s)`;
+
+          // 1. Envío seguro al backend antes de cualquier apertura de WhatsApp
+          const btnSubmit = tripForm.querySelector('button[type="submit"]');
+          if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span>Registrando solicitud oficial...</span>';
+          }
+
+          const requestPayload = {
+            customerName: name,
+            customerPhone: phoneValidation.e164,
+            customerWhatsapp: phoneValidation.e164,
+            tripDate: `${y}-${m}-${d}`,
+            destinationAddress: finalDest,
+            originAddress: addressFinal,
+            adultsCount: adultsCount,
+            minorsCount: minorsCount,
+            hasLuggage: luggage === 'Sí',
+            specialNotes: senias || undefined,
+            pickupLatitude: tripCoords ? tripCoords.lat : undefined,
+            pickupLongitude: tripCoords ? tripCoords.lng : undefined,
+            pickupAccuracyMeters: tripCoords ? tripCoords.acc : undefined,
+            pickupCanton: tripAdminDivision ? tripAdminDivision.canton : undefined,
+            pickupDistrict: tripAdminDivision ? tripAdminDivision.distrito : undefined
+          };
+
+          try {
+            const response = await fetch('/functions/v1/create-transport-request', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestPayload)
+            });
+
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData.error || 'No fue posible registrar la solicitud en el servidor.');
+            }
+
+            const data = await response.json();
+            const officialRequestNum = data.requestNumber;
+
+            if (!officialRequestNum) {
+              throw new Error('Respuesta inválida del servidor: falta número de solicitud');
+            }
+
+            // Formato Estético de WhatsApp con N° de Solicitud Oficial Verificado
+            const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
+*SOLICITUD DE VIAJE:* ${officialRequestNum}
+━━━━━━━━━━━━━━━━━━━━
+
+*👤 DATOS DEL CLIENTE*
+▪ *Nombre:* ${name}
+▪ *Teléfono:* ${phoneValidation.display}
+▪ *Chat directo:* https://wa.me/${phoneValidation.e164}
+
+━━━━━━━━━━━━━━━━━━━━
+*🗺️ DETALLES DEL TRAYECTO*
+▪ *Destino:* ${finalDest}
+▪ *Fecha del viaje:* ${dateFormatted}
+▪ *Pasajeros:* ${pasajerosText}
+▪ *Lleva equipaje:* ${luggage}
+
+━━━━━━━━━━━━━━━━━━━━
+*📍 PUNTO DE RECOGIDA*
+▪ *Dirección:* ${addressFinal}
+${seniasBlock}━━━━━━━━━━━━━━━━━━━━
+*🧭 NAVEGACIÓN PARA EL CHOFER*
+▪ *Waze:* ${wazeLink}
+▪ *Google Maps:* ${gmapsLink}
+━━━━━━━━━━━━━━━━━━━━`;
+
+            if (typeof confetti !== 'undefined') {
+              confetti({ particleCount: 100, spread: 70, origin: { y: 0.65 } });
+            }
+
+            notyf.success(`Solicitud ${officialRequestNum} registrada. Abriendo WhatsApp...`);
+
+            const targetPhone = platformConfig.company_whatsapp || '50688888888';
+            setTimeout(() => {
+              window.location.href = `https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`;
+            }, 600);
+
+          } catch (err) {
+            console.error('Fallo al registrar solicitud:', err);
+            notyf.error(err.message || 'Error al conectar con el servidor. Por favor verifique su conexión e intente nuevamente.');
+            if (btnSubmit) {
+              btnSubmit.disabled = false;
+              btnSubmit.innerHTML = '<span>Solicitar Viaje por WhatsApp</span>';
+            }
+          }
+        });
+      }
+
+      // ============================================================
+      // ENVÍO DEL FORMULARIO 2: SOPORTE / AVERÍA (VENTANA DE CHOFER)
+      // ============================================================
+      const supportForm = document.getElementById('supportForm');
+      if (supportForm) {
+        supportForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('supportName').value.trim();
+          const vehicleType = document.getElementById('supportVehicleType').value || 'Carro';
+          const senias = document.getElementById('supportDetails').value.trim();
+
+          let wazeLink = 'No disponible';
+          let gmapsLink = 'No disponible';
+
+          if (supportCoords) {
+            wazeLink = `https://waze.com/ul?ll=${supportCoords.lat},${supportCoords.lng}&navigate=yes`;
+            gmapsLink = `https://www.google.com/maps?q=${supportCoords.lat},${supportCoords.lng}`;
+          }
+
+          const addressFinal = supportAddressText || (supportCoords ? 'Ubicación satelital confirmada' : 'Sin señal GPS');
+          const seniasBlock = senias ? `▪ *Detalle del percance:* ${senias}\n` : '';
+
+          // Formato Estético de WhatsApp para Reporte de Avería
+          const msg = `*🚨 REPORTE DE AVERÍA / ASISTENCIA*
+━━━━━━━━━━━━━━━━━━━━
+
+*👤 CONTACTO EN CARRETERA*
+▪ *Conductor:* ${name}
+
+━━━━━━━━━━━━━━━━━━━━
+*🚙 VEHÍCULO VARADO*
+▪ *Tipo de unidad:* ${vehicleType}
+${seniasBlock}━━━━━━━━━━━━━━━━━━━━
+*📍 UBICACIÓN DEL PERCANCE*
+▪ *Zona:* ${addressFinal}
+
+━━━━━━━━━━━━━━━━━━━━
+*🧭 RUTA DIRECTA DE AUXILIO*
+▪ *Waze:* ${wazeLink}
+▪ *Google Maps:* ${gmapsLink}
+━━━━━━━━━━━━━━━━━━━━`;
+
+          const supportPhone = platformConfig.support_whatsapp || platformConfig.company_whatsapp || '50688888888';
+          window.location.href = `https://wa.me/${supportPhone}?text=${encodeURIComponent(msg)}`;
+        });
+      }
+    });
+  </script>
 </body>
 </html>

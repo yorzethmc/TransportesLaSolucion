@@ -1,0 +1,34 @@
+{
+  "destinations": [
+    {
+      "id": "Los Chiles",
+      "label": "Los Chiles (Costa Rica)",
+      "type": "direct"
+    },
+    {
+      "id": "Tablillas",
+      "label": "Tablillas (Frontera)",
+      "type": "direct"
+    },
+    {
+      "id": "Nicaragua",
+      "label": "Nicaragua (Elegir ciudad)",
+      "type": "country",
+      "cities": [
+        "Managua",
+        "El Boaco",
+        "Rivas",
+        "Granada",
+        "Masaya",
+        "León",
+        "Estelí",
+        "Otro"
+      ]
+    },
+    {
+      "id": "Otro",
+      "label": "Otro destino...",
+      "type": "custom"
+    }
+  ]
+}
