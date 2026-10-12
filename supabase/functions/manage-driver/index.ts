@@ -1,7 +1,7 @@
 // ==============================================================================
 // EDGE FUNCTION: MANAGE-DRIVER (GESTIÓN ADMINISTRATIVA SEGURA DE CONDUCTORES)
-// Transportes La Solución - V1.1
-// Solo ejecutable por usuarios autenticados con rol 'admin'.
+// Transportes La Solución - V1.2
+// Autorización: Exclusivo para usuarios autenticados con rol 'admin'
 // ==============================================================================
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -12,10 +12,23 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface CreateDriverPayload {
+interface BaseRequest {
+  action:
+    | "create"
+    | "update"
+    | "activate"
+    | "deactivate"
+    | "reset_password"
+    | "revoke_sessions"
+    | "register_device"
+    | "revoke_device"
+    | "assign_vehicle";
+}
+
+interface CreateDriverPayload extends BaseRequest {
   action: "create";
   fullName: string;
-  phoneNumber: string; // Ej: 50688888888 o 8888-8888
+  phoneNumber: string;
   whatsappNumber?: string;
   identificationNumber: string;
   licenseNumber: string;
@@ -24,7 +37,7 @@ interface CreateDriverPayload {
   assignedVehicleId?: string;
 }
 
-interface UpdateDriverPayload {
+interface UpdateDriverPayload extends BaseRequest {
   action: "update";
   driverId: string;
   fullName?: string;
@@ -35,23 +48,64 @@ interface UpdateDriverPayload {
   assignedVehicleId?: string;
 }
 
-interface ToggleActivePayload {
-  action: "toggle_active";
+interface ToggleStatusPayload extends BaseRequest {
+  action: "activate" | "deactivate";
   driverId: string;
-  active: boolean;
 }
 
-interface ResetPasswordPayload {
+interface ResetPasswordPayload extends BaseRequest {
   action: "reset_password";
   driverId: string;
   newTemporaryPassword: string;
 }
 
-type ManageDriverRequest = 
-  | CreateDriverPayload 
-  | UpdateDriverPayload 
-  | ToggleActivePayload 
-  | ResetPasswordPayload;
+interface RevokeSessionsPayload extends BaseRequest {
+  action: "revoke_sessions";
+  driverId: string;
+}
+
+interface RegisterDevicePayload extends BaseRequest {
+  action: "register_device";
+  driverId: string;
+  deviceId: string;
+  deviceName?: string;
+  platform?: string;
+  appVersion?: string;
+  publicKey?: string;
+}
+
+interface RevokeDevicePayload extends BaseRequest {
+  action: "revoke_device";
+  driverId: string;
+  deviceId: string;
+}
+
+interface AssignVehiclePayload extends BaseRequest {
+  action: "assign_vehicle";
+  driverId: string;
+  vehicleId: string | null;
+}
+
+type ManageDriverPayload =
+  | CreateDriverPayload
+  | UpdateDriverPayload
+  | ToggleStatusPayload
+  | ResetPasswordPayload
+  | RevokeSessionsPayload
+  | RegisterDevicePayload
+  | RevokeDevicePayload
+  | AssignVehiclePayload;
+
+function normalizePhoneNumber(input: string): string {
+  const digits = input.replace(/\D/g, "");
+  if (digits.startsWith("506") && digits.length === 11) return digits;
+  if (digits.length === 8) return `506${digits}`;
+  return digits;
+}
+
+function technicalEmailForPhone(normalizedPhone: string): string {
+  return `${normalizedPhone}@drivers.internal`;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -60,222 +114,322 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const authHeader = req.headers.get("Authorization");
 
+    // 1. Validar encabezado de autorización sin revelar detalles
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Falta cabecera Authorization" }), {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // 1. Cliente público con el token del usuario para verificar que es ADMIN
-    const clientUser = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+    // 2. Validar JWT llamando a auth.getUser
+    const clientUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: userError } = await clientUser.auth.getUser();
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Sesión inválida o expirada" }), {
+    const {
+      data: { user: callerUser },
+      error: userError,
+    } = await clientUser.auth.getUser();
+
+    if (userError || !callerUser) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Verificar rol admin en base de datos
-    const { data: roleCheck } = await clientUser
+    // 3. Cliente privilegiado del servidor para comprobación de rol y operaciones seguras
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { persistSession: false },
+    });
+
+    // 4. Verificar rol 'admin' desde el servidor en la tabla user_roles
+    const { data: roleRecord, error: roleError } = await adminClient
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
+      .eq("user_id", callerUser.id)
       .eq("role", "admin")
       .maybeSingle();
 
-    if (!roleCheck) {
-      return new Response(JSON.stringify({ error: "Acceso denegado: se requiere rol de administrador" }), {
+    if (roleError || !roleRecord) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // 2. Cliente de servicio interno (SERVICE_ROLE) para operaciones privilegiadas
-    const clientAdmin = createClient(supabaseUrl, supabaseServiceKey);
-    const body: ManageDriverRequest = await req.json();
+    // 5. Leer y validar payload
+    const body: ManageDriverPayload = await req.json();
+    if (!body || !body.action) {
+      return new Response(JSON.stringify({ error: "Bad Request" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    // =========================================================================
-    // ACCIÓN: CREAR CONDUCTOR
-    // =========================================================================
-    if (body.action === "create") {
-      const cleanPhone = body.phoneNumber.replace(/\D/g, "");
-      const normalizedPhone = cleanPhone.length === 8 ? `506${cleanPhone}` : cleanPhone;
-      const technicalEmail = `${normalizedPhone}@drivers.internal`;
+    let auditDetails: Record<string, unknown> = {};
 
-      // Verificar duplicados de teléfono en drivers
-      const { data: existingDriver } = await clientAdmin
-        .from("drivers")
-        .select("id")
-        .eq("phone_number", normalizedPhone)
-        .maybeSingle();
+    // 6. Enrutamiento de acciones
+    switch (body.action) {
+      case "create": {
+        const payload = body as CreateDriverPayload;
+        const normalizedPhone = normalizePhoneNumber(payload.phoneNumber);
+        const normalizedWhatsapp = payload.whatsappNumber
+          ? normalizePhoneNumber(payload.whatsappNumber)
+          : normalizedPhone;
+        const techEmail = technicalEmailForPhone(normalizedPhone);
 
-      if (existingDriver) {
-        return new Response(JSON.stringify({ error: "Ya existe un conductor con este número telefónico." }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+        // Crear usuario en Supabase Auth
+        const { data: authCreated, error: createAuthError } =
+          await adminClient.auth.admin.createUser({
+            email: techEmail,
+            password: payload.temporaryPassword,
+            email_confirm: true,
+            user_metadata: {
+              phone_number: normalizedPhone,
+              full_name: payload.fullName,
+              must_change_password: true,
+            },
+          });
 
-      // Crear usuario en Supabase Auth
-      const { data: authCreated, error: createAuthError } = await clientAdmin.auth.admin.createUser({
-        email: technicalEmail,
-        password: body.temporaryPassword,
-        email_confirm: true,
-        user_metadata: {
-          full_name: body.fullName,
+        if (createAuthError || !authCreated.user) {
+          return new Response(
+            JSON.stringify({ error: "Error creating driver auth account", details: createAuthError?.message }),
+            { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        const newUserId = authCreated.user.id;
+
+        // Crear perfil
+        await adminClient.from("profiles").upsert({
+          id: newUserId,
+          full_name: payload.fullName,
           phone: normalizedPhone,
-        },
-      });
-
-      if (createAuthError || !authCreated.user) {
-        return new Response(JSON.stringify({ error: `Error en Auth: ${createAuthError?.message}` }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-      }
 
-      const newUserId = authCreated.user.id;
-
-      // Asignar rol 'driver'
-      await clientAdmin.from("user_roles").insert({
-        user_id: newUserId,
-        role: "driver",
-        assigned_by: user.id,
-      });
-
-      // Crear ficha en drivers
-      const { data: driverRow, error: driverError } = await clientAdmin
-        .from("drivers")
-        .insert({
+        // Asignar rol 'driver'
+        await adminClient.from("user_roles").upsert({
           user_id: newUserId,
-          full_name: body.fullName,
-          identification_number: body.identificationNumber,
-          license_number: body.licenseNumber,
-          license_expires_at: body.licenseExpiresAt,
-          phone: normalizedPhone,
-          phone_number: normalizedPhone,
-          whatsapp_number: body.whatsappNumber ? body.whatsappNumber.replace(/\D/g, "") : normalizedPhone,
-          current_vehicle_id: body.assignedVehicleId || null,
+          role: "driver",
+        });
+
+        // Crear registro en tabla drivers
+        const { data: driverRecord, error: driverInsertError } = await adminClient
+          .from("drivers")
+          .insert({
+            auth_user_id: newUserId,
+            full_name: payload.fullName,
+            phone_number: normalizedPhone,
+            whatsapp_number: normalizedWhatsapp,
+            identification_number: payload.identificationNumber,
+            license_number: payload.licenseNumber,
+            license_expires_at: payload.licenseExpiresAt,
+            assigned_vehicle_id: payload.assignedVehicleId || null,
+            active: true,
+            must_change_password: true,
+          })
+          .select()
+          .single();
+
+        if (driverInsertError) {
+          // Rollback de cuenta auth si falla la inserción
+          await adminClient.auth.admin.deleteUser(newUserId);
+          return new Response(
+            JSON.stringify({ error: "Failed to create driver profile" }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        auditDetails = { action: "create", driverId: driverRecord.id, phone: normalizedPhone };
+        break;
+      }
+
+      case "update": {
+        const payload = body as UpdateDriverPayload;
+        const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+        if (payload.fullName) updates.full_name = payload.fullName;
+        if (payload.phoneNumber) updates.phone_number = normalizePhoneNumber(payload.phoneNumber);
+        if (payload.whatsappNumber) updates.whatsapp_number = normalizePhoneNumber(payload.whatsappNumber);
+        if (payload.licenseNumber) updates.license_number = payload.licenseNumber;
+        if (payload.licenseExpiresAt) updates.license_expires_at = payload.licenseExpiresAt;
+        if (payload.assignedVehicleId !== undefined) updates.assigned_vehicle_id = payload.assignedVehicleId;
+
+        const { error: updateError } = await adminClient
+          .from("drivers")
+          .update(updates)
+          .eq("id", payload.driverId);
+
+        if (updateError) {
+          return new Response(JSON.stringify({ error: "Update failed" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        auditDetails = { action: "update", driverId: payload.driverId, fields: Object.keys(updates) };
+        break;
+      }
+
+      case "activate":
+      case "deactivate": {
+        const payload = body as ToggleStatusPayload;
+        const isActive = payload.action === "activate";
+        const { error } = await adminClient
+          .from("drivers")
+          .update({ active: isActive, updated_at: new Date().toISOString() })
+          .eq("id", payload.driverId);
+
+        if (error) {
+          return new Response(JSON.stringify({ error: "Status update failed" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        auditDetails = { action: payload.action, driverId: payload.driverId, active: isActive };
+        break;
+      }
+
+      case "reset_password": {
+        const payload = body as ResetPasswordPayload;
+        const { data: driver } = await adminClient
+          .from("drivers")
+          .select("auth_user_id")
+          .eq("id", payload.driverId)
+          .single();
+
+        if (!driver?.auth_user_id) {
+          return new Response(JSON.stringify({ error: "Driver not found" }), {
+            status: 404,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        await adminClient.auth.admin.updateUserById(driver.auth_user_id, {
+          password: payload.newTemporaryPassword,
+          user_metadata: { must_change_password: true },
+        });
+
+        await adminClient
+          .from("drivers")
+          .update({ must_change_password: true, updated_at: new Date().toISOString() })
+          .eq("id", payload.driverId);
+
+        auditDetails = { action: "reset_password", driverId: payload.driverId };
+        break;
+      }
+
+      case "revoke_sessions": {
+        const payload = body as RevokeSessionsPayload;
+        const { data: driver } = await adminClient
+          .from("drivers")
+          .select("auth_user_id")
+          .eq("id", payload.driverId)
+          .single();
+
+        if (driver?.auth_user_id) {
+          await adminClient.auth.admin.signOut(driver.auth_user_id);
+        }
+
+        auditDetails = { action: "revoke_sessions", driverId: payload.driverId };
+        break;
+      }
+
+      case "register_device": {
+        const payload = body as RegisterDevicePayload;
+        const { error } = await adminClient.from("driver_devices").insert({
+          driver_id: payload.driverId,
+          device_id: payload.deviceId,
+          device_name: payload.deviceName || "Dispositivo Móvil",
+          platform: payload.platform || "android",
+          app_version: payload.appVersion || "1.0.0",
+          public_key: payload.publicKey || null,
           active: true,
-          must_change_password: true,
-        })
-        .select()
-        .single();
+          registered_at: new Date().toISOString(),
+        });
 
-      if (driverError) {
-        // Rollback de auth si falla
-        await clientAdmin.auth.admin.deleteUser(newUserId);
-        return new Response(JSON.stringify({ error: `Error en registro de conductor: ${driverError.message}` }), {
+        if (error) {
+          return new Response(JSON.stringify({ error: "Device registration failed" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        auditDetails = { action: "register_device", driverId: payload.driverId, deviceId: payload.deviceId };
+        break;
+      }
+
+      case "revoke_device": {
+        const payload = body as RevokeDevicePayload;
+        const { error } = await adminClient
+          .from("driver_devices")
+          .update({ active: false, revoked_at: new Date().toISOString() })
+          .eq("driver_id", payload.driverId)
+          .eq("device_id", payload.deviceId);
+
+        if (error) {
+          return new Response(JSON.stringify({ error: "Device revocation failed" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        auditDetails = { action: "revoke_device", driverId: payload.driverId, deviceId: payload.deviceId };
+        break;
+      }
+
+      case "assign_vehicle": {
+        const payload = body as AssignVehiclePayload;
+        const { error } = await adminClient
+          .from("drivers")
+          .update({
+            assigned_vehicle_id: payload.vehicleId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", payload.driverId);
+
+        if (error) {
+          return new Response(JSON.stringify({ error: "Vehicle assignment failed" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        auditDetails = { action: "assign_vehicle", driverId: payload.driverId, vehicleId: payload.vehicleId };
+        break;
+      }
+
+      default:
+        return new Response(JSON.stringify({ error: "Invalid action" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-      }
-
-      // Auditoría
-      await clientAdmin.from("audit_logs").insert({
-        user_id: user.id,
-        action: "CREATE_DRIVER",
-        entity_name: "drivers",
-        entity_id: driverRow.id,
-        new_data: { driver: driverRow },
-      });
-
-      return new Response(JSON.stringify({ success: true, driver: driverRow }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
-    // =========================================================================
-    // ACCIÓN: ACTIVAR / DESACTIVAR CONDUCTOR
-    // =========================================================================
-    if (body.action === "toggle_active") {
-      const { data: updatedDriver, error: toggleError } = await clientAdmin
-        .from("drivers")
-        .update({ active: body.active })
-        .eq("id", body.driverId)
-        .select()
-        .single();
-
-      if (toggleError) {
-        return new Response(JSON.stringify({ error: toggleError.message }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // Si se desactiva, revocar sesiones en Auth
-      if (!body.active && updatedDriver?.user_id) {
-        await clientAdmin.auth.admin.signOut(updatedDriver.user_id);
-      }
-
-      await clientAdmin.from("audit_logs").insert({
-        user_id: user.id,
-        action: body.active ? "ACTIVATE_DRIVER" : "DEACTIVATE_DRIVER",
+    // Registrar en audit_logs de forma no bloqueante
+    try {
+      await adminClient.from("audit_logs").insert({
+        actor_user_id: callerUser.id,
+        action: `manage_driver_${body.action}`,
         entity_name: "drivers",
-        entity_id: body.driverId,
+        details: auditDetails,
       });
-
-      return new Response(JSON.stringify({ success: true, driver: updatedDriver }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    } catch (_auditErr) {
+      // Registrar log sin interrumpir la operación exitosa
     }
 
-    // =========================================================================
-    // ACCIÓN: RESTABLECER CONTRASEÑA
-    // =========================================================================
-    if (body.action === "reset_password") {
-      const { data: driverData } = await clientAdmin
-        .from("drivers")
-        .select("user_id")
-        .eq("id", body.driverId)
-        .single();
-
-      if (!driverData) {
-        return new Response(JSON.stringify({ error: "Conductor no encontrado" }), {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      await clientAdmin.auth.admin.updateUserById(driverData.user_id, {
-        password: body.newTemporaryPassword,
-      });
-
-      await clientAdmin
-        .from("drivers")
-        .update({ must_change_password: true })
-        .eq("id", body.driverId);
-
-      await clientAdmin.from("audit_logs").insert({
-        user_id: user.id,
-        action: "RESET_DRIVER_PASSWORD",
-        entity_name: "drivers",
-        entity_id: body.driverId,
-      });
-
-      return new Response(JSON.stringify({ success: true, message: "Contraseña temporal restablecida" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify({ error: "Acción no reconocida" }), {
-      status: 400,
+    return new Response(JSON.stringify({ success: true, details: auditDetails }), {
+      status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ error: `Error interno: ${message}` }), {
+  } catch (_e) {
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

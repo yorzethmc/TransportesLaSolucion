@@ -1,11 +1,15 @@
 {
   "name": "@transportes-la-solucion/validation",
-  "version": "1.0.0",
+  "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc -b",
-    "test": "node test/validation.test.js",
+    "test": "vitest run",
     "clean": "rm -rf dist"
   },
   "dependencies": {

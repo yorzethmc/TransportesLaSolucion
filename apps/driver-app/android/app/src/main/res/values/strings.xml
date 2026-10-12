@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">La Solucion Chofer</string>
+    <string name="title_activity_main">La Solucion Chofer</string>
+    <string name="package_name">com.transporteslasolucion.chofer</string>
+    <string name="custom_url_scheme">com.transporteslasolucion.chofer</string>
+</resources>

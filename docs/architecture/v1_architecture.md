@@ -53,6 +53,6 @@ TransportesLaSolucion/
 
 1. **Separación de Tablas:**
    - `driver_current_location`: Contiene 1 fila por conductor mediante `UPSERT`. Alimenta el mapa en vivo sin escanear históricos.
-   - `driver_location_history`: Inserciones por lote. Retención de 90 días, indexado espacialmente con `GIST`.
+   - `driver_location_history`: Inserciones por lote. Retención basada en consolidación y purga mensual del mes calendario cerrado, indexado espacialmente con `GIST`.
 2. **Idempotencia:** Campo `device_event_id` único por evento capturado en el dispositivo móvil, previniendo duplicados durante reconexiones.
 3. **Filtro de Ruido:** Puntos con error satelital superior a 50 metros o velocidades mayores a 45 m/s (~160 km/h) son rechazados.

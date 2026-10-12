@@ -1,5 +1,5 @@
+import { describe, it, expect } from 'vitest';
 import { 
-  validateEmail, 
   validatePassword, 
   validateGpsSample,
   normalizePhoneNumber,
@@ -8,73 +8,86 @@ import {
 } from '../src/index.js';
 import type { GpsLocationSample, CreateTransportRequestInput } from '@transportes-la-solucion/types';
 
-function runTests() {
-  let passed = 0;
-  let failed = 0;
+describe('Batería de Validación de Negocio (Transportes La Solución)', () => {
+  describe('Normalización y Validación Telefónica (E.164)', () => {
+    it('normaliza número local de 8 dígitos con prefijo internacional 506', () => {
+      expect(normalizePhoneNumber('8888-8888')).toBe('50688888888');
+    });
 
-  function assert(condition: boolean, testName: string) {
-    if (condition) {
-      console.log(`  ✓ PASSED: ${testName}`);
-      passed++;
-    } else {
-      console.error(`  ✗ FAILED: ${testName}`);
-      failed++;
-    }
-  }
+    it('normaliza número con formato y espacios', () => {
+      expect(normalizePhoneNumber('+506 8729 2124')).toBe('50687292124');
+    });
 
-  console.log('\n--- Ejecutando Batería de Pruebas Unitarias de Validación (V1.1) ---');
+    it('valida teléfono válido de 8 dígitos', () => {
+      expect(validatePhoneNumber('8888-8888')).toBe(true);
+    });
 
-  // Test 1: Validar Emails
-  assert(validateEmail('admin@transporteslasolucion.com') === true, 'Email corporativo válido');
-  assert(validateEmail('invalido-sin-arroba') === false, 'Rechaza email sin arroba');
+    it('rechaza teléfono menor a 8 dígitos', () => {
+      expect(validatePhoneNumber('123')).toBe(false);
+    });
+  });
 
-  // Test 2: Normalización Telefónica E.164
-  assert(normalizePhoneNumber('8888-8888') === '50688888888', 'Normaliza número local 8 dígitos a prefijo 506');
-  assert(normalizePhoneNumber('+506 8729 2124') === '50687292124', 'Normaliza número con formato y espacios');
-  assert(validatePhoneNumber('8888-8888') === true, 'Valida teléfono de 8 dígitos');
-  assert(validatePhoneNumber('123') === false, 'Rechaza teléfono demasiado corto');
+  describe('Validación de Contraseñas Seguras', () => {
+    it('aprueba contraseñas seguras con letra y número', () => {
+      const res = validatePassword('ChoferVIP2026!');
+      expect(res.success).toBe(true);
+      expect(res.data).toBe('ChoferVIP2026!');
+    });
 
-  // Test 3: Validar Contraseñas
-  assert(validatePassword('ChoferVIP2026!').success === true, 'Contraseña segura aprobada');
-  assert(validatePassword('abc').success === false, 'Rechaza contraseña menor a 8 caracteres');
+    it('rechaza contraseñas con menos de 8 caracteres', () => {
+      const res = validatePassword('abc');
+      expect(res.success).toBe(false);
+      expect(res.errors).toContain('La contraseña debe tener al menos 8 caracteres.');
+    });
+  });
 
-  // Test 4: Validar Muestra GPS Válida
-  const validSample: GpsLocationSample = {
-    deviceEventId: 'evt-test-uuid-001',
-    driverId: 'd0000000-0000-0000-0000-000000000001',
-    vehicleId: 'v0000000-0000-0000-0000-000000000001',
-    latitude: 10.0754,
-    longitude: -84.2441,
-    accuracyMeters: 12.5,
-    speedMps: 11.2,
-    headingDegrees: 180.0,
-    provider: 'gps',
-    isMocked: false,
-    capturedAt: new Date().toISOString(),
-  };
-  assert(validateGpsSample(validSample).success === true, 'Muestra satelital en Poás aprobada');
+  describe('Validación de Muestras Satelitales GPS', () => {
+    const validSample: GpsLocationSample = {
+      deviceEventId: 'evt-test-uuid-001',
+      driverId: 'd0000000-0000-0000-0000-000000000001',
+      vehicleId: 'v0000000-0000-0000-0000-000000000001',
+      latitude: 10.0754,
+      longitude: -84.2441,
+      accuracyMeters: 12.5,
+      speedMps: 11.2,
+      headingDegrees: 180.0,
+      provider: 'gps',
+      isMocked: false,
+      capturedAt: new Date().toISOString(),
+    };
 
-  // Test 5: Muestra GPS con coordenadas corruptas o velocidad imposible
-  assert(validateGpsSample({ ...validSample, latitude: 195.0 }).success === false, 'Rechaza latitud fuera de rango');
-  assert(validateGpsSample({ ...validSample, speedMps: 120.0 }).success === false, 'Rechaza velocidad imposible (> 150 km/h)');
+    it('aprueba muestra GPS válida dentro de los rangos operacionales', () => {
+      const res = validateGpsSample(validSample);
+      expect(res.success).toBe(true);
+    });
 
-  // Test 6: Validar Solicitud Pública de Transporte
-  const requestInput: CreateTransportRequestInput = {
-    customerName: 'Mario Vargas',
-    customerPhone: '8888-1234',
-    tripDate: '2026-11-01',
-    originAddress: 'San Pedro de Poás, Alajuela',
-    destinationAddress: 'Aeropuerto Juan Santamaría (SJO)',
-    adultsCount: 2,
-    minorsCount: 0,
-    hasLuggage: true,
-  };
-  const reqVal = validateTransportRequestInput(requestInput);
-  assert(reqVal.success === true, 'Solicitud de transporte válida aprobada');
-  assert(reqVal.data?.customerPhone === '50688881234', 'Teléfono de solicitud normalizado a 50688881234');
+    it('rechaza latitud fuera de rango (-90 a 90)', () => {
+      const res = validateGpsSample({ ...validSample, latitude: 195.0 });
+      expect(res.success).toBe(false);
+    });
 
-  console.log(`\nResumen de Pruebas: ${passed} superadas, ${failed} fallidas.\n`);
-  if (failed > 0) process.exit(1);
-}
+    it('rechaza velocidad imposible (> 45 m/s o 162 km/h)', () => {
+      const res = validateGpsSample({ ...validSample, speedMps: 120.0 });
+      expect(res.success).toBe(false);
+    });
+  });
 
-runTests();
+  describe('Validación de Solicitudes Públicas de Transporte', () => {
+    it('aprueba y normaliza solicitud con datos requeridos', () => {
+      const requestInput: CreateTransportRequestInput = {
+        customerName: 'Mario Vargas',
+        customerPhone: '8888-1234',
+        tripDate: '2026-11-01',
+        originAddress: 'San Pedro de Poás, Alajuela',
+        destinationAddress: 'Aeropuerto Juan Santamaría (SJO)',
+        adultsCount: 2,
+        minorsCount: 0,
+        hasLuggage: true,
+      };
+
+      const res = validateTransportRequestInput(requestInput);
+      expect(res.success).toBe(true);
+      expect(res.data?.customerPhone).toBe('50688881234');
+    });
+  });
+});

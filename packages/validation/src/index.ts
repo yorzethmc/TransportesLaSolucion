@@ -27,13 +27,6 @@ export function validatePhoneNumber(phone: string): boolean {
   return normalized.length >= 8 && normalized.length <= 15;
 }
 
-/**
- * Valida un correo electrónico según formato estándar RFC 5322 simplificado.
- */
-export function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim());
-}
 
 /**
  * Valida contraseña del conductor/admin:

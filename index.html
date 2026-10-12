@@ -1336,9 +1336,25 @@
         IMask(tripPhoneEl, { mask: '0000-0000' });
       }
 
-      // NÚMEROS DE ENRUTAMIENTO DIRECTO (SE GESTIONAN INTERNAMENTE)
-      const PHONE_TRIPS = '50672094457';   // Álvaro Scott (Viajes)
-      const PHONE_SUPPORT = '50687292124'; // Línea de Soporte / Averías (Oculto)
+      // CONFIGURACIÓN OPERATIVA DINÁMICA (Obtenida desde el backend / app_configuration)
+      let platformConfig = {
+        company_whatsapp: '',
+        support_whatsapp: ''
+      };
+
+      async function fetchPlatformConfig() {
+        try {
+          const res = await fetch('/functions/v1/public-config');
+          if (res.ok) {
+            const data = await res.json();
+            platformConfig = { ...platformConfig, ...data };
+          }
+        } catch (_err) {
+          console.warn('Aviso: Ejecutando con configuración por defecto');
+        }
+      }
+      fetchPlatformConfig();
+
       const MAX_PASSENGERS = 11;
 
       // ============================================================
@@ -1925,35 +1941,53 @@
             ? `${adultsCount} Adulto(s) + ${minorsCount} Niño(s)` 
             : `${adultsCount} Adulto(s)`;
 
-          // Generación de número de solicitud y persistencia antes de WhatsApp
-          const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-          const localReqNum = `TLS-${nowStr}-${Math.floor(1000 + Math.random() * 9000)}`;
+          // 1. Envío seguro al backend antes de cualquier apertura de WhatsApp
+          const btnSubmit = tripForm.querySelector('button[type="submit"]');
+          if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span>Registrando solicitud oficial...</span>';
+          }
 
-          // Registro persistente en almacenamiento local para no depender de WhatsApp
-          const requestRecord = {
-            requestNumber: localReqNum,
+          const requestPayload = {
             customerName: name,
             customerPhone: phoneValidation.e164,
+            customerWhatsapp: phoneValidation.e164,
             tripDate: `${y}-${m}-${d}`,
-            destination: finalDest,
-            passengers: { adults: adultsCount, minors: minorsCount },
-            luggage: luggage,
+            destinationAddress: finalDest,
             originAddress: addressFinal,
-            notes: senias,
-            coords: tripCoords,
-            createdAt: new Date().toISOString(),
-            status: 'whatsapp_opened'
+            adultsCount: adultsCount,
+            minorsCount: minorsCount,
+            hasLuggage: luggage === 'Sí',
+            specialNotes: senias || undefined,
+            pickupLatitude: tripCoords ? tripCoords.lat : undefined,
+            pickupLongitude: tripCoords ? tripCoords.lng : undefined,
+            pickupAccuracyMeters: tripCoords ? tripCoords.acc : undefined,
+            pickupCanton: tripAdminDivision ? tripAdminDivision.canton : undefined,
+            pickupDistrict: tripAdminDivision ? tripAdminDivision.distrito : undefined
           };
 
           try {
-            const stored = JSON.parse(localStorage.getItem('tls_transport_requests') || '[]');
-            stored.push(requestRecord);
-            localStorage.setItem('tls_transport_requests', JSON.stringify(stored));
-          } catch (_e) {}
+            const response = await fetch('/functions/v1/create-transport-request', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestPayload)
+            });
 
-          // Formato Estético de WhatsApp con Separadores Uniformes y N° de Solicitud Oficial
-          const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
-*SOLICITUD DE VIAJE:* ${localReqNum}
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData.error || 'No fue posible registrar la solicitud en el servidor.');
+            }
+
+            const data = await response.json();
+            const officialRequestNum = data.requestNumber;
+
+            if (!officialRequestNum) {
+              throw new Error('Respuesta inválida del servidor: falta número de solicitud');
+            }
+
+            // Formato Estético de WhatsApp con N° de Solicitud Oficial Verificado
+            const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
+*SOLICITUD DE VIAJE:* ${officialRequestNum}
 ━━━━━━━━━━━━━━━━━━━━
 
 *👤 DATOS DEL CLIENTE*
@@ -1977,19 +2011,30 @@ ${seniasBlock}━━━━━━━━━━━━━━━━━━━━
 ▪ *Google Maps:* ${gmapsLink}
 ━━━━━━━━━━━━━━━━━━━━`;
 
-          if (typeof confetti !== 'undefined') {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.65 } });
-          }
+            if (typeof confetti !== 'undefined') {
+              confetti({ particleCount: 100, spread: 70, origin: { y: 0.65 } });
+            }
 
-          setTimeout(() => {
-            window.location.href = `https://wa.me/${PHONE_TRIPS}?text=${encodeURIComponent(msg)}`;
-          }, 450);
+            notyf.success(`Solicitud ${officialRequestNum} registrada. Abriendo WhatsApp...`);
+
+            const targetPhone = platformConfig.company_whatsapp || '50688888888';
+            setTimeout(() => {
+              window.location.href = `https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`;
+            }, 600);
+
+          } catch (err) {
+            console.error('Fallo al registrar solicitud:', err);
+            notyf.error(err.message || 'Error al conectar con el servidor. Por favor verifique su conexión e intente nuevamente.');
+            if (btnSubmit) {
+              btnSubmit.disabled = false;
+              btnSubmit.innerHTML = '<span>Solicitar Viaje por WhatsApp</span>';
+            }
+          }
         });
       }
 
       // ============================================================
-      // ENVÍO DEL FORMULARIO 2: SOPORTE / AVERÍA (LÍNEA: +50687292124)
-      // ULTRA SENCILLO Y SIN EXPONER COORDENADAS CRUDAS
+      // ENVÍO DEL FORMULARIO 2: SOPORTE / AVERÍA (VENTANA DE CHOFER)
       // ============================================================
       const supportForm = document.getElementById('supportForm');
       if (supportForm) {
@@ -2031,7 +2076,8 @@ ${seniasBlock}━━━━━━━━━━━━━━━━━━━━
 ▪ *Google Maps:* ${gmapsLink}
 ━━━━━━━━━━━━━━━━━━━━`;
 
-          window.location.href = `https://wa.me/${PHONE_SUPPORT}?text=${encodeURIComponent(msg)}`;
+          const supportPhone = platformConfig.support_whatsapp || platformConfig.company_whatsapp || '50688888888';
+          window.location.href = `https://wa.me/${supportPhone}?text=${encodeURIComponent(msg)}`;
         });
       }
     });

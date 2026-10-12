@@ -1,7 +1,7 @@
 // ==============================================================================
 // EDGE FUNCTION: CREATE-TRANSPORT-REQUEST (ENDPOINT PÚBLICO SEGURO DE SOLICITUDES)
-// Transportes La Solución - V1.1
-// Valida server-side, crea correlativo TLS-YYYYMMDD-XXXX y devuelve confirmación.
+// Transportes La Solución - V1.2
+// Valida server-side, aplica rate limiting por IP/Teléfono, persiste y devuelve correlativo.
 // ==============================================================================
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -11,6 +11,33 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Rate limiter en memoria por ventana deslizante (10 minutos)
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 5;
+const requestAttempts = new Map<string, { count: number; firstAttempt: number }>();
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const record = requestAttempts.get(key);
+
+  if (!record) {
+    requestAttempts.set(key, { count: 1, firstAttempt: now });
+    return false;
+  }
+
+  if (now - record.firstAttempt > RATE_LIMIT_WINDOW_MS) {
+    requestAttempts.set(key, { count: 1, firstAttempt: now });
+    return false;
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+
+  record.count += 1;
+  return false;
+}
 
 interface CreateRequestPayload {
   customerName: string;
@@ -38,37 +65,57 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const client = createClient(supabaseUrl, supabaseAnonKey);
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const client = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Obtener IP del cliente para rate limiting
+    const clientIp =
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      "unknown-ip";
+
+    if (isRateLimited(`ip:${clientIp}`)) {
+      return new Response(JSON.stringify({ error: "Demasiadas solicitudes. Intente más tarde." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const body: CreateRequestPayload = await req.json();
 
-    // 1. Validación server-side
+    // 1. Validación server-side estricta
     const cleanPhone = (body.customerPhone || "").replace(/\D/g, "");
     const normalizedPhone = cleanPhone.length === 8 ? `506${cleanPhone}` : cleanPhone;
 
+    if (isRateLimited(`phone:${normalizedPhone}`)) {
+      return new Response(JSON.stringify({ error: "Demasiadas solicitudes para este número telefónico." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (!body.customerName || body.customerName.trim().length < 2) {
-      return new Response(JSON.stringify({ error: "Nombre inválido" }), {
+      return new Response(JSON.stringify({ error: "Nombre inválido (mínimo 2 caracteres)" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (normalizedPhone.length < 8) {
-      return new Response(JSON.stringify({ error: "Teléfono inválido" }), {
+      return new Response(JSON.stringify({ error: "Número telefónico inválido" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (!body.originAddress || !body.destinationAddress || !body.tripDate) {
-      return new Response(JSON.stringify({ error: "Origen, destino y fecha son obligatorios" }), {
+      return new Response(JSON.stringify({ error: "Origen, destino y fecha de viaje son obligatorios" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // 2. Inserción en base de datos PostgreSQL
+    // 2. Inserción segura en PostgreSQL utilizando el servicio
     const { data, error } = await client
       .from("transport_requests")
       .insert({
@@ -94,24 +141,26 @@ serve(async (req) => {
       .single();
 
     if (error) {
-      return new Response(JSON.stringify({ error: `Error al persistir solicitud: ${error.message}` }), {
+      return new Response(JSON.stringify({ error: "No fue posible registrar la solicitud" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      id: data.id,
-      requestNumber: data.request_number,
-      createdAt: data.created_at,
-    }), {
-      status: 201,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ error: `Error interno: ${message}` }), {
+    return new Response(
+      JSON.stringify({
+        success: true,
+        id: data.id,
+        requestNumber: data.request_number,
+        createdAt: data.created_at,
+      }),
+      {
+        status: 201,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (_err) {
+    return new Response(JSON.stringify({ error: "Error interno al procesar solicitud" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
