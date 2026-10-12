@@ -709,6 +709,49 @@
       animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
     }
 
+    /* SELECTOR VISUAL DE VEHÍCULO (CARRO / BUSETA) */
+    .vehicle-toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 0.35rem;
+    }
+
+    .vehicle-toggle-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.95rem 0.5rem;
+      background: var(--input-bg);
+      border: 2px solid var(--surface-border);
+      border-radius: 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .vehicle-toggle-btn .v-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .vehicle-toggle-btn .v-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .vehicle-toggle-btn.active {
+      border-color: var(--secondary);
+      background: rgba(245, 158, 11, 0.15);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    }
+
     @keyframes shake {
       10%, 90% { transform: translate3d(-2px, 0, 0); }
       20%, 80% { transform: translate3d(3px, 0, 0); }
@@ -978,6 +1021,25 @@
           Su Nombre
         </label>
         <input type="text" id="supportName" class="form-control form-control-emergency" required placeholder="Escriba su nombre aquí">
+      </div>
+
+      <!-- 2. Tipo de Vehículo: Carro o Buseta (Selector Visual Ultra Simple) -->
+      <div class="form-group" style="margin-top: 1.25rem;">
+        <label class="form-label" style="font-size: 1.1rem;">
+          <i data-lucide="truck"></i>
+          ¿Qué vehículo se varó?
+        </label>
+        <div class="vehicle-toggle-group">
+          <button type="button" class="vehicle-toggle-btn active" id="btnVehicleCar">
+            <span class="v-icon">🚗</span>
+            <span class="v-text">Carro</span>
+          </button>
+          <button type="button" class="vehicle-toggle-btn" id="btnVehicleBus">
+            <span class="v-icon">🚐</span>
+            <span class="v-text">Buseta</span>
+          </button>
+        </div>
+        <input type="hidden" id="supportVehicleType" value="Carro">
       </div>
 
       <!-- 2. Botón Grande de Ubicación (GPS) -->
@@ -1376,6 +1438,27 @@
       if (btnCloseSupportModal) btnCloseSupportModal.addEventListener('click', closeSupportModal);
       if (overlaySupport) overlaySupport.addEventListener('click', closeSupportModal);
 
+      // Selector de Vehículo en Modo Soporte (Carro / Buseta)
+      const btnVehicleCar = document.getElementById('btnVehicleCar');
+      const btnVehicleBus = document.getElementById('btnVehicleBus');
+      const supportVehicleType = document.getElementById('supportVehicleType');
+
+      if (btnVehicleCar && btnVehicleBus && supportVehicleType) {
+        btnVehicleCar.addEventListener('click', () => {
+          btnVehicleCar.classList.add('active');
+          btnVehicleBus.classList.remove('active');
+          supportVehicleType.value = 'Carro';
+          if (navigator.vibrate) navigator.vibrate(30);
+        });
+
+        btnVehicleBus.addEventListener('click', () => {
+          btnVehicleBus.classList.add('active');
+          btnVehicleCar.classList.remove('active');
+          supportVehicleType.value = 'Buseta';
+          if (navigator.vibrate) navigator.vibrate(30);
+        });
+      }
+
       // Fecha Mínima en Viajes
       const tripDateInput = document.getElementById('tripDate');
       if (tripDateInput) {
@@ -1651,19 +1734,22 @@
           const dateFormatted = `${d}/${m}/${y}`;
           const luggage = document.getElementById('tripLuggage').checked ? 'Sí' : 'No';
 
-          let coordsStr = 'No indicadas';
           let wazeLink = 'No disponible';
           let gmapsLink = 'No disponible';
 
           if (tripCoords) {
-            coordsStr = `${tripCoords.lat.toFixed(6)}, ${tripCoords.lng.toFixed(6)} (±${Math.round(tripCoords.accuracy)}m)`;
             wazeLink = `https://waze.com/ul?ll=${tripCoords.lat},${tripCoords.lng}&navigate=yes`;
             gmapsLink = `https://www.google.com/maps?q=${tripCoords.lat},${tripCoords.lng}`;
           }
 
-          const addressFinal = tripAddressText || (tripCoords ? 'Coordenadas satelitales' : 'No se compartió GPS');
+          const addressFinal = tripAddressText || (tripCoords ? 'Ubicación satelital confirmada' : 'No se compartió GPS');
           const senias = document.getElementById('tripLocationDetails').value.trim();
+          const seniasBlock = senias ? `▪ *Señas / Ref:* ${senias}\n` : '';
+          const pasajerosText = minorsCount > 0 
+            ? `${adultsCount} Adulto(s) + ${minorsCount} Niño(s)` 
+            : `${adultsCount} Adulto(s)`;
 
+          // Formato Estético de WhatsApp con Separadores Uniformes (Sin coordenadas crudas en texto)
           const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
 *SOLICITUD DE RESERVA*
 ━━━━━━━━━━━━━━━━━━━━
@@ -1671,19 +1757,19 @@
 *👤 DATOS DEL CLIENTE*
 ▪ *Nombre:* ${name}
 ▪ *Teléfono:* ${phoneValidation.display}
-▪ *WhatsApp:* https://wa.me/${phoneValidation.e164}
+▪ *Chat directo:* https://wa.me/${phoneValidation.e164}
 
+━━━━━━━━━━━━━━━━━━━━
 *🗺️ DETALLES DEL TRAYECTO*
 ▪ *Destino:* ${finalDest}
-▪ *Fecha:* ${dateFormatted}
-▪ *Pasajeros:* ${adultsCount} Adulto(s), ${minorsCount} Niño(s)
-▪ *Lleva Equipaje:* ${luggage}
+▪ *Fecha del viaje:* ${dateFormatted}
+▪ *Pasajeros:* ${pasajerosText}
+▪ *Lleva equipaje:* ${luggage}
 
+━━━━━━━━━━━━━━━━━━━━
 *📍 PUNTO DE RECOGIDA*
-▪ *Zona / Dirección:* ${addressFinal}
-▪ *Coordenadas:* ${coordsStr}
-▪ *Señas:* ${senias || 'Sin señas adicionales'}
-
+▪ *Dirección:* ${addressFinal}
+${seniasBlock}━━━━━━━━━━━━━━━━━━━━
 *🧭 NAVEGACIÓN PARA EL CHOFER*
 ▪ *Waze:* ${wazeLink}
 ▪ *Google Maps:* ${gmapsLink}
@@ -1701,7 +1787,7 @@
 
       // ============================================================
       // ENVÍO DEL FORMULARIO 2: SOPORTE / AVERÍA (LÍNEA: +50687292124)
-      // ULTRA SENCILLO Y SIN PEDIR DATOS INNECESARIOS
+      // ULTRA SENCILLO Y SIN EXPONER COORDENADAS CRUDAS
       // ============================================================
       const supportForm = document.getElementById('supportForm');
       if (supportForm) {
@@ -1709,36 +1795,40 @@
           e.preventDefault();
 
           const name = document.getElementById('supportName').value.trim();
+          const vehicleType = document.getElementById('supportVehicleType').value || 'Carro';
           const senias = document.getElementById('supportDetails').value.trim();
 
-          let coordsStr = 'No capturadas';
           let wazeLink = 'No disponible';
           let gmapsLink = 'No disponible';
 
           if (supportCoords) {
-            coordsStr = `${supportCoords.lat.toFixed(6)}, ${supportCoords.lng.toFixed(6)} (±${Math.round(supportCoords.accuracy)}m)`;
             wazeLink = `https://waze.com/ul?ll=${supportCoords.lat},${supportCoords.lng}&navigate=yes`;
             gmapsLink = `https://www.google.com/maps?q=${supportCoords.lat},${supportCoords.lng}`;
           }
 
-          const addressFinal = supportAddressText || (supportCoords ? 'Coordenadas satelitales' : 'Sin señal GPS');
+          const addressFinal = supportAddressText || (supportCoords ? 'Ubicación satelital confirmada' : 'Sin señal GPS');
+          const seniasBlock = senias ? `▪ *Detalle del percance:* ${senias}\n` : '';
 
+          // Formato Estético de WhatsApp para Reporte de Avería
           const msg = `*🚨 REPORTE DE AVERÍA / ASISTENCIA*
 ━━━━━━━━━━━━━━━━━━━━
 
-*👤 PERSONA:* ${name}
+*👤 CONTACTO EN CARRETERA*
+▪ *Conductor:* ${name}
 
-*📍 UBICACIÓN DEL VEHÍCULO*
-▪ *Lugar / Referencia:* ${addressFinal}
-▪ *Coordenadas:* ${coordsStr}
-▪ *Detalle:* ${senias || 'En espera de auxilio en el punto marcado'}
+━━━━━━━━━━━━━━━━━━━━
+*🚙 VEHÍCULO VARADO*
+▪ *Tipo de unidad:* ${vehicleType}
+${seniasBlock}━━━━━━━━━━━━━━━━━━━━
+*📍 UBICACIÓN DEL PERCANCE*
+▪ *Zona:* ${addressFinal}
 
+━━━━━━━━━━━━━━━━━━━━
 *🧭 RUTA DIRECTA DE AUXILIO*
 ▪ *Waze:* ${wazeLink}
 ▪ *Google Maps:* ${gmapsLink}
 ━━━━━━━━━━━━━━━━━━━━`;
 
-          // Enviar directo al número de soporte sin exponer números técnicos al usuario
           window.location.href = `https://wa.me/${PHONE_SUPPORT}?text=${encodeURIComponent(msg)}`;
         });
       }
