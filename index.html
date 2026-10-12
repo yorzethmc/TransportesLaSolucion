@@ -3,34 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transportes La Solución - Reservas Premium & Asistencia</title>
-  <meta name="description" content="Servicio de transporte privado VIP y asistencia en carretera. Rápido, seguro y confiable.">
+  <title>Transportes La Solución - Reservas VIP & Asistencia en Carretera</title>
+  <meta name="description" content="Servicio de transporte privado VIP y auxilio vial en carretera. Rápido, seguro y confiable.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- CDN Dependencias Open-Source -->
-  <!-- 1. Notyf (Estilos de notificaciones Toast) -->
+  <!-- 1. Notyf CSS (Toast notifications) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-  <!-- 2. Lucide Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
-  <!-- 3. libphonenumber-js -->
+  
+  <!-- 2. Lucide Icons (Versión latest verificada y con fallbacks) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  
+  <!-- 3. libphonenumber-js (Validación estricta móvil para Costa Rica y Nicaragua) -->
   <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.49/bundle/libphonenumber-js.min.js"></script>
-  <!-- 4. IMask.js -->
+  
+  <!-- 4. IMask.js (Máscara en tiempo real) -->
   <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
+  
   <!-- 5. Notyf JS -->
   <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+  
   <!-- 6. canvas-confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     :root {
-      --primary: #e11d48; /* Premium Red */
+      --primary: #e11d48; /* Crimson Red */
       --primary-glow: rgba(225, 29, 72, 0.45);
-      --secondary: #f59e0b; /* Amber / Warning */
-      --secondary-glow: rgba(245, 158, 11, 0.4);
+      --secondary: #f59e0b; /* Amber */
+      --secondary-glow: rgba(245, 158, 11, 0.35);
+      --emergency: #dc2626; /* Rescue Red */
+      --emergency-glow: rgba(220, 38, 38, 0.45);
       --bg: #0b0f19; /* Deep Space Dark */
       --surface: #111827; /* Dark Glass Surface */
       --surface-border: rgba(255, 255, 255, 0.08);
@@ -59,7 +66,7 @@
       position: relative;
     }
 
-    /* Lucide icons alignment helper */
+    /* Lucide icons alignment */
     i[data-lucide] {
       display: inline-flex;
       align-items: center;
@@ -78,14 +85,15 @@
       animation: drift 20s infinite alternate ease-in-out;
       transform: translate3d(0, 0, 0);
       will-change: transform;
+      pointer-events: none;
     }
 
     .orb-1 {
       top: -10%;
       left: -10%;
-      width: 50vw;
-      height: 50vw;
-      background: rgba(225, 29, 72, 0.15);
+      width: 55vw;
+      height: 55vw;
+      background: rgba(225, 29, 72, 0.16);
     }
 
     .orb-2 {
@@ -93,7 +101,7 @@
       right: -10%;
       width: 60vw;
       height: 60vw;
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(245, 158, 11, 0.12);
       animation-delay: -5s;
     }
 
@@ -114,9 +122,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1.5rem;
+      padding: 2.2rem 1.25rem;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
     }
 
@@ -128,6 +136,7 @@
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    /* LOGO CONTAINER CON VAN NÍTIDO Y RESPUESTA TÁCTIL */
     .logo-container {
       position: relative;
       width: 120px;
@@ -138,30 +147,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       border: 1px solid var(--surface-border);
       animation: float 6s ease-in-out infinite;
       cursor: pointer;
       user-select: none;
       touch-action: manipulation;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
 
     .logo-container:active {
       transform: scale(0.92);
+      box-shadow: 0 10px 25px rgba(225, 29, 72, 0.3);
     }
 
-    .logo-container i[data-lucide] {
-      width: 3.5rem;
-      height: 3.5rem;
-      color: #f8fafc;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    .logo-icon {
+      font-size: 3.8rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
       pointer-events: none;
+      display: block;
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-8px); }
     }
 
     @keyframes fadeUp {
@@ -171,204 +181,267 @@
 
     .hero h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 2.8rem;
+      font-size: 2.75rem;
       font-weight: 900;
       letter-spacing: -1px;
       margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #fff, #cbd5e1);
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      line-height: 1.15;
     }
 
     .hero h1 span {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #fb7185, #f43f5e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .hero p {
       color: var(--text-muted);
-      font-size: 1.15rem;
+      font-size: 1.05rem;
+      max-width: 440px;
+      margin: 0 auto 1.5rem;
       font-weight: 400;
     }
 
     .warning-box {
-      margin-top: 1.5rem;
-      padding: 1rem 1.25rem;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
       border-radius: 1rem;
-      color: #fcd34d;
-      font-size: 0.95rem;
+      padding: 0.95rem 1.1rem;
+      margin: 0 auto;
       text-align: left;
+      font-size: 0.88rem;
+      color: #fde68a;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
     }
 
-    /* CTA BUTTONS */
-    .btn-cta {
-      position: relative;
+    /* PANEL DE DOS SERVICIOS INDEPENDIENTES EN PÁGINA PRINCIPAL */
+    .services-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .service-card {
       width: 100%;
       padding: 1.35rem;
-      border-radius: 1.25rem;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), #be123c);
-      border: none;
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.15rem;
+      text-align: left;
       cursor: pointer;
+      position: relative;
       overflow: hidden;
+      border: 1px solid var(--surface-border);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .service-card:active {
+      transform: scale(0.98);
+    }
+
+    /* Tarjeta 1: Viajes Regulares */
+    .service-card-trip {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border-color: rgba(225, 29, 72, 0.3);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .service-card-trip:hover {
+      border-color: var(--primary);
       box-shadow: 0 15px 35px var(--primary-glow);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Tarjeta 2: Asistencia Vial & Grúa */
+    .service-card-tow {
+      background: linear-gradient(135deg, rgba(39, 24, 15, 0.85), rgba(15, 23, 42, 0.95));
+      border-color: rgba(245, 158, 11, 0.35);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .service-card-tow:hover {
+      border-color: var(--secondary);
+      box-shadow: 0 15px 35px var(--secondary-glow);
+    }
+
+    .service-icon-box {
+      width: 58px;
+      height: 58px;
+      border-radius: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      flex-shrink: 0;
+      font-size: 1.9rem;
     }
 
-    .btn-cta::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transform: skewX(-20deg);
-      animation: shine 4s infinite;
+    .service-icon-trip {
+      background: rgba(225, 29, 72, 0.15);
+      border: 1px solid rgba(225, 29, 72, 0.3);
+      color: #fb7185;
     }
 
-    @keyframes shine {
-      0% { left: -100%; }
-      20%, 100% { left: 200%; }
+    .service-icon-tow {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
     }
 
-    .btn-cta:active {
-      transform: scale(0.96);
-      box-shadow: 0 5px 15px var(--primary-glow);
+    .service-info {
+      flex: 1;
     }
 
-    /* MODAL OVERLAY & CONTAINER (Glassmorphism) */
+    .service-badge {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2rem;
+      display: inline-block;
+      margin-bottom: 0.35rem;
+    }
+
+    .badge-trip {
+      background: rgba(225, 29, 72, 0.2);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.3);
+    }
+
+    .badge-tow {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .service-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+
+    .service-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .service-arrow {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .service-card:hover .service-arrow {
+      transform: translateX(4px);
+      color: white;
+    }
+
+    /* MODALES ESTILO GLASSMORPHISM */
     .modal-overlay {
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       opacity: 0;
-      visibility: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 40;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 998;
     }
 
     .modal-overlay.active {
       opacity: 1;
-      visibility: visible;
+      pointer-events: all;
     }
 
     .modal {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--surface-border);
-      border-radius: 2rem 2rem 0 0;
-      padding: 2rem 1.5rem 3rem;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -45%) scale(0.96);
+      width: 92%;
+      max-width: 480px;
       max-height: 90vh;
+      background: rgba(17, 24, 39, 0.94);
+      border: 1px solid var(--surface-border);
+      border-radius: 2rem;
+      padding: 2rem 1.6rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 50;
-      box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
     }
 
     .modal.active {
-      transform: translateY(0);
-    }
-
-    @media (min-width: 640px) {
-      .modal {
-        top: 50%;
-        bottom: auto;
-        left: 50%;
-        right: auto;
-        transform: translate(-50%, -45%) scale(0.95);
-        width: 100%;
-        max-width: 500px;
-        border-radius: 1.75rem;
-        border: 1px solid var(--surface-border);
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .modal.active {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-        pointer-events: auto;
-      }
+      opacity: 1;
+      pointer-events: all;
+      transform: translate(-50%, -50%) scale(1);
     }
 
     .modal-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.75rem;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--surface-border);
     }
 
     .modal-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.75rem;
+      font-size: 1.45rem;
       font-weight: 800;
-      color: white;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.65rem;
+      color: white;
+    }
+
+    .modal-header-emergency .modal-title {
+      color: #fbbf24;
     }
 
     .close-btn {
-      background: var(--input-bg);
-      border: 1px solid var(--surface-border);
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
       color: var(--text-muted);
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       transition: all 0.2s;
     }
 
-    .close-btn:active {
-      transform: scale(0.9);
-      background: var(--surface-border);
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
       color: white;
     }
 
-    /* EMERGENCY MODAL SPECIFICS */
-    .modal-emergency {
-      border-top-color: var(--secondary) !important;
-      box-shadow: 0 -20px 50px rgba(245, 158, 11, 0.2) !important;
-    }
-
-    @media (min-width: 640px) {
-      .modal-emergency {
-        border-color: rgba(245, 158, 11, 0.4) !important;
-      }
-    }
-
-    .modal-emergency .modal-title {
-      color: #fbbf24;
-    }
-
-    .btn-cta-emergency {
-      background: linear-gradient(135deg, #d97706, #b45309) !important;
-      box-shadow: 0 15px 35px var(--secondary-glow) !important;
-    }
-
-    /* FORM STYLING */
+    /* FORMULARIOS Y CONTROLES */
     .form-group {
-      margin-bottom: 1.4rem;
+      margin-bottom: 1.25rem;
     }
 
     .form-label {
@@ -376,43 +449,40 @@
       align-items: center;
       gap: 0.5rem;
       font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
+      font-size: 0.92rem;
       font-weight: 600;
+      color: #e2e8f0;
       margin-bottom: 0.5rem;
-      color: #cbd5e1;
     }
 
     .form-control {
       width: 100%;
-      padding: 1.1rem;
+      padding: 0.95rem 1.15rem;
       background: var(--input-bg);
       border: 1px solid var(--surface-border);
-      border-radius: 1rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 1.05rem;
+      border-radius: 1.1rem;
       color: white;
-      transition: all 0.2s;
-    }
-
-    .form-control::placeholder {
-      color: #64748b;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.25s;
     }
 
     .form-control:focus {
-      outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
-      background: #1e293b;
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25);
     }
 
-    .modal-emergency .form-control:focus {
+    .form-control-emergency:focus {
       border-color: var(--secondary);
-      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
     }
 
     textarea.form-control {
       resize: vertical;
-      min-height: 85px;
+      min-height: 80px;
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
 
     select.form-control {
@@ -420,7 +490,8 @@
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
       background-position: right 1rem center;
-      background-size: 1em;
+      background-size: 1.1em;
+      cursor: pointer;
     }
 
     select.form-control option {
@@ -428,7 +499,7 @@
       color: white;
     }
 
-    /* STEPPERS */
+    /* STEPPERS DE PASAJEROS */
     .stepper-card {
       display: flex;
       align-items: center;
@@ -436,66 +507,62 @@
       background: var(--input-bg);
       border: 1px solid var(--surface-border);
       border-radius: 1.25rem;
-      padding: 0.9rem 1rem;
-      margin-bottom: 0.9rem;
-      transition: all 0.3s;
+      padding: 0.9rem 1.15rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.25s;
     }
 
     .stepper-card.active {
-      border-color: var(--primary);
+      border-color: rgba(225, 29, 72, 0.5);
       background: rgba(225, 29, 72, 0.05);
     }
 
     .passenger-info {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.9rem;
     }
 
     .p-text strong {
       display: block;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: white;
     }
 
     .p-text span {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
     .stepper-controls {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 0.3rem;
-      border-radius: 2rem;
+      gap: 0.75rem;
     }
 
     .st-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      border: none;
-      background: var(--surface);
-      color: var(--text);
-      cursor: pointer;
+      border: 1px solid var(--surface-border);
+      background: #334155;
+      color: white;
+      font-size: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       transition: all 0.2s;
     }
 
-    .st-btn:active {
-      transform: scale(0.85);
+    .st-btn:hover:not(:disabled) {
       background: var(--primary);
-      color: white;
     }
 
     .st-btn:disabled {
-      opacity: 0.25;
-      pointer-events: none;
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .st-val {
@@ -506,7 +573,7 @@
       text-align: center;
     }
 
-    /* TOGGLE SWITCH */
+    /* TOGGLE SWITCH DE EQUIPAJE */
     .toggle-wrapper {
       display: flex;
       align-items: center;
@@ -514,7 +581,7 @@
       background: var(--input-bg);
       border: 1px solid var(--surface-border);
       border-radius: 1.25rem;
-      padding: 1.15rem 1rem;
+      padding: 1rem 1.15rem;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -522,7 +589,7 @@
 
     .t-label {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 600;
       color: white;
       display: flex;
@@ -532,18 +599,18 @@
 
     .t-switch {
       position: relative;
-      width: 56px;
-      height: 32px;
+      width: 54px;
+      height: 30px;
       background: #334155;
-      border-radius: 16px;
+      border-radius: 15px;
       transition: 0.3s;
     }
 
     .t-switch::after {
       content: '';
       position: absolute;
-      top: 4px;
-      left: 4px;
+      top: 3px;
+      left: 3px;
       width: 24px;
       height: 24px;
       background: white;
@@ -564,98 +631,85 @@
       transform: translateX(24px);
     }
 
-    /* GPS BUTTON & RADAR CALIBRATION MODULE */
+    /* GPS BOTÓN Y RADAR CALIBRACIÓN */
     .btn-gps {
       width: 100%;
-      padding: 1.15rem;
-      border-radius: 1rem;
+      padding: 1.1rem;
+      border-radius: 1.1rem;
       background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.35);
       color: #60a5fa;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.6rem;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .btn-gps:active {
-      transform: scale(0.97);
+      transform: scale(0.98);
     }
 
     .gps-hint {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
       text-align: center;
       margin-bottom: 0.75rem;
     }
 
-    /* RADAR CONTAINER */
+    /* RADAR CONTAINER CON ANIMACIÓN */
     .radar-container {
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1.4rem;
       background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      border-radius: 1.25rem;
-      margin-bottom: 0.75rem;
+      border: 1px dashed rgba(59, 130, 246, 0.4);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
       position: relative;
       overflow: hidden;
-      animation: fadeUp 0.3s ease;
     }
 
     .radar-sweep {
       position: relative;
-      width: 68px;
-      height: 68px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      border: 2px solid rgba(59, 130, 246, 0.5);
+      border: 2px solid rgba(59, 130, 246, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 0.8rem;
+      margin-bottom: 1rem;
     }
 
-    .radar-sweep::before,
-    .radar-sweep::after {
+    .radar-sweep::before {
       content: '';
       position: absolute;
-      inset: -8px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      animation: pulse-radar 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-    }
-
-    .radar-sweep::after {
-      inset: -18px;
-      animation-delay: 0.7s;
+      border: 2px solid #3b82f6;
+      animation: pulse-radar 2s infinite ease-out;
     }
 
     @keyframes pulse-radar {
-      0% { transform: scale(0.6); opacity: 0.9; }
-      50% { opacity: 0.4; }
-      100% { transform: scale(1.4); opacity: 0; }
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
     }
 
     .radar-pulse-core {
-      width: 14px;
-      height: 14px;
-      background: #3b82f6;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
+      background: #3b82f6;
       box-shadow: 0 0 15px #3b82f6;
-      animation: pulse-core 1.2s infinite alternate;
-    }
-
-    @keyframes pulse-core {
-      0% { transform: scale(0.8); box-shadow: 0 0 8px #3b82f6; }
-      100% { transform: scale(1.2); box-shadow: 0 0 20px #60a5fa; }
     }
 
     .radar-timer {
@@ -663,39 +717,38 @@
       font-size: 1.05rem;
       font-weight: 700;
       color: #93c5fd;
+      margin-bottom: 0.35rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
     }
 
     .radar-accuracy {
       font-size: 0.85rem;
-      color: #cbd5e1;
-      margin-top: 0.25rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
     }
 
     .btn-manual-lock {
-      margin-top: 0.85rem;
-      padding: 0.55rem 1.15rem;
-      border-radius: 0.85rem;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--surface-border);
       color: #e2e8f0;
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.82rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.85rem;
       cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 0.4rem;
+      transition: all 0.2s;
     }
 
-    .btn-manual-lock:active {
-      transform: scale(0.95);
-      background: rgba(255, 255, 255, 0.2);
+    .btn-manual-lock:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
     }
 
-    /* ESTADO DE ÉXITO MINIMALISTA */
+    /* ESTADO DE ÉXITO GPS (MINIMALISTA, SIN EXPONER COORDENADAS CRUDAS) */
     .loc-success {
       display: none;
       align-items: center;
@@ -705,11 +758,46 @@
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: #34d399;
       padding: 0.95rem 1rem;
-      border-radius: 1rem;
+      border-radius: 1.1rem;
       font-weight: 600;
       font-size: 0.95rem;
       margin-bottom: 0.75rem;
       animation: fadeUp 0.3s ease;
+    }
+
+    /* BOTONES DE ACCIÓN CTA */
+    .btn-cta {
+      width: 100%;
+      padding: 1.15rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, var(--primary), #be123c);
+      color: white;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px var(--primary-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-cta:active {
+      transform: scale(0.98);
+    }
+
+    .btn-cta-emergency {
+      background: linear-gradient(135deg, var(--secondary), #d97706);
+      box-shadow: 0 10px 25px var(--secondary-glow);
+      color: #0f172a;
+    }
+
+    .btn-cta-emergency:active {
+      transform: scale(0.98);
     }
 
     .shake {
@@ -733,34 +821,61 @@
   <!-- Vista Principal -->
   <main class="main-wrapper">
     <section class="hero">
-      <!-- Contenedor del Logo con Trigger Oculto de Emergencia (10 toques / 3.5s) -->
+      <!-- Contenedor del Logo Principal con Van Visible + Trigger Oculto de Emergencia (10 toques / 3.5s) -->
       <div class="logo-container" id="logoContainer" title="Transportes La Solución">
-        <i data-lucide="bus"></i>
+        <span class="logo-icon">🚐</span>
       </div>
       <h1>La <span>Solución</span></h1>
-      <p>Servicio de transporte privado. Rápido, VIP y totalmente seguro.</p>
+      <p>Transporte privado VIP y auxilio vial en carretera. Confiable, seguro y disponible 24/7.</p>
 
       <div class="warning-box">
-        <strong style="color: #fbbf24; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+        <strong style="color: #fbbf24; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
           <i data-lucide="alert-triangle"></i>
-          AVISO IMPORTANTE
+          CALIBRACIÓN POR SATÉLITE
         </strong>
-        Llene este formulario <strong>ÚNICAMENTE</strong> estando en el punto de recolección para calibrar su posición satelital por GPS.
+        <span>Para máxima precisión GPS, complete el formulario <strong>estando en el sitio exacto</strong> de recolección o percance.</span>
       </div>
     </section>
 
-    <!-- Botón Principal: Abre Modal 1 de Reservas -->
-    <button class="btn-cta" id="btnOpenTripModal" type="button">
-      <i data-lucide="calendar"></i>
-      Agendar Viaje
-    </button>
+    <!-- DOS SERVICIOS COMPLETAMENTE INDEPENDIENTES -->
+    <div class="services-grid">
+      <!-- SERVICIO 1: VIAJES REGULARES (ÁLVARO SCOTT: +50672094457) -->
+      <div class="service-card service-card-trip" id="btnOpenTripModal" role="button" tabindex="0">
+        <div class="service-icon-box service-icon-trip">
+          <i data-lucide="calendar"></i>
+        </div>
+        <div class="service-info">
+          <span class="service-badge badge-trip">Flujo de Viajes</span>
+          <h2 class="service-title">Reservar Viaje</h2>
+          <p class="service-desc">Turismo, traslados privados a Los Chiles, Tablillas o Nicaragua.</p>
+        </div>
+        <div class="service-arrow">
+          <i data-lucide="chevron-right"></i>
+        </div>
+      </div>
+
+      <!-- SERVICIO 2: ASISTENCIA VIAL & GRÚA (LÍNEA SOPORTE: +50687292124) -->
+      <div class="service-card service-card-tow" id="btnOpenTowModal" role="button" tabindex="0">
+        <div class="service-icon-box service-icon-tow">
+          <i data-lucide="wrench"></i>
+        </div>
+        <div class="service-info">
+          <span class="service-badge badge-tow">Soporte & Emergencia</span>
+          <h2 class="service-title">Asistencia Vial / Grúa</h2>
+          <p class="service-desc">Vehículo varado, batería, llanta estallada o avería mecánica.</p>
+        </div>
+        <div class="service-arrow">
+          <i data-lucide="chevron-right"></i>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- ============================================================ -->
-  <!-- MODAL 1: FLUJO REGULAR DE VIAJES (Álvaro Scott: +50672094457) -->
+  <!-- MODAL 1: FLUJO INDEPENDIENTE DE VIAJES (ÁLVARO SCOTT: +50672094457) -->
   <!-- ============================================================ -->
   <div class="modal-overlay" id="overlayTrip"></div>
-  <div class="modal" id="modalTrip" role="dialog" aria-labelledby="tripModalTitle">
+  <div class="modal" id="modalTrip" role="dialog" aria-labelledby="tripModalTitle" aria-modal="true">
     <div class="modal-header">
       <h2 class="modal-title" id="tripModalTitle">
         <i data-lucide="calendar"></i>
@@ -802,7 +917,7 @@
           <i data-lucide="navigation"></i>
           <span>Compartir GPS Actual</span>
         </button>
-        <p class="gps-hint" id="tripGpsHint">Toque para iniciar la calibración satelital de alta precisión.</p>
+        <p class="gps-hint" id="tripGpsHint">Toque para calibrar su posición satelital de alta precisión.</p>
 
         <!-- Radar de Calibración en Tiempo Real -->
         <div class="radar-container" id="tripRadar">
@@ -820,14 +935,14 @@
           </button>
         </div>
 
-        <!-- Estado de Éxito Consolidado -->
+        <!-- Estado de Éxito Consolidado (Sin coordenadas crudas en pantalla) -->
         <div class="loc-success" id="tripGpsSuccess">
           <i data-lucide="check-circle-2"></i>
           <span>Ubicación fijada con máxima precisión</span>
         </div>
 
         <!-- Señas Manuales -->
-        <textarea id="tripLocationDetails" class="form-control" placeholder="Señas o referencias físicas (Ej: Zona Franca Coyol edificio B14, casa blanca con portón negro, frente al parque...)"></textarea>
+        <textarea id="tripLocationDetails" class="form-control" placeholder="Señas o referencias físicas (Ej: Frente a fábrica Boston Scientific El Coyol, portón negro, casa esquinera...)"></textarea>
       </div>
 
       <!-- 4. Selector de Destinos Dinámico -->
@@ -933,22 +1048,22 @@
         <input type="date" id="tripDate" class="form-control" required>
       </div>
 
-      <!-- 8. Despacho a WhatsApp con Confetti -->
+      <!-- 8. Despacho a WhatsApp con Confetti a Álvaro Scott (+50672094457) -->
       <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
         <i data-lucide="send"></i>
-        Enviar Solicitud por WhatsApp
+        Enviar Solicitud a Álvaro Scott
       </button>
     </form>
   </div>
 
   <!-- ============================================================ -->
-  <!-- MODAL 2: ASISTENCIA VIAL / GRÚA (Línea Soporte: +50687292124) -->
+  <!-- MODAL 2: FLUJO INDEPENDIENTE DE ASISTENCIA / GRÚA (SOPORTE: +50687292124) -->
   <!-- ============================================================ -->
   <div class="modal-overlay" id="overlayTow"></div>
-  <div class="modal modal-emergency" id="modalTow" role="dialog" aria-labelledby="towModalTitle">
+  <div class="modal modal-emergency" id="modalTow" role="dialog" aria-labelledby="towModalTitle" aria-modal="true">
     <div class="modal-header modal-header-emergency">
       <h2 class="modal-title" id="towModalTitle">
-        <i data-lucide="truck"></i>
+        <i data-lucide="wrench"></i>
         Asistencia Vial & Grúa
       </h2>
       <button class="close-btn" id="btnCloseTowModal" type="button" aria-label="Cerrar modal">
@@ -963,7 +1078,7 @@
           <i data-lucide="user"></i>
           Nombre del Conductor / Afectado
         </label>
-        <input type="text" id="towName" class="form-control" required placeholder="Ej: Carlos Méndez">
+        <input type="text" id="towName" class="form-control form-control-emergency" required placeholder="Ej: Carlos Méndez">
       </div>
 
       <!-- 2. Teléfono de Contacto -->
@@ -972,7 +1087,7 @@
           <i data-lucide="phone"></i>
           Teléfono de Contacto
         </label>
-        <input type="tel" id="towPhone" class="form-control" required placeholder="8888-8888" style="letter-spacing: 1.5px;">
+        <input type="tel" id="towPhone" class="form-control form-control-emergency" required placeholder="8888-8888" style="letter-spacing: 1.5px;">
       </div>
 
       <!-- 3. Tipo de Avería -->
@@ -981,8 +1096,8 @@
           <i data-lucide="wrench"></i>
           Tipo de Avería
         </label>
-        <select id="towBreakdownType" class="form-control" required>
-          <option value="" disabled selected>Seleccione el problema...</option>
+        <select id="towBreakdownType" class="form-control form-control-emergency" required>
+          <option value="" disabled selected>Seleccione el percance...</option>
           <option value="Batería / No enciende">Batería / No enciende</option>
           <option value="Llanta estallada / Sin repuesto">Llanta estallada / Sin repuesto</option>
           <option value="Calentamiento / Avería de motor">Calentamiento / Avería de motor</option>
@@ -998,7 +1113,7 @@
           <i data-lucide="truck"></i>
           Datos del Vehículo (Placa, Modelo, Color)
         </label>
-        <input type="text" id="towVehicleDetails" class="form-control" required placeholder="Ej: ABC-123, Toyota Hilux blanco">
+        <input type="text" id="towVehicleDetails" class="form-control form-control-emergency" required placeholder="Ej: Placa ABC-123, Toyota Hilux blanco">
       </div>
 
       <!-- 5. Módulo GPS de Emergencia con Calibración de 30s -->
@@ -1009,15 +1124,15 @@
         </label>
 
         <!-- Botón Inicial -->
-        <button type="button" class="btn-gps" id="btnStartTowGPS">
+        <button type="button" class="btn-gps" id="btnStartTowGPS" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
           <i data-lucide="navigation"></i>
           <span>Compartir GPS de Emergencia</span>
         </button>
-        <p class="gps-hint" id="towGpsHint">Calibración de alta precisión para ruta de rescate vehicular.</p>
+        <p class="gps-hint" id="towGpsHint">Calibración de alta precisión para ruta directa de rescate vehicular.</p>
 
         <!-- Radar de Calibración -->
-        <div class="radar-container" id="towRadar">
-          <div class="radar-sweep">
+        <div class="radar-container" id="towRadar" style="border-color: rgba(245, 158, 11, 0.4);">
+          <div class="radar-sweep" style="border-color: rgba(245, 158, 11, 0.3);">
             <div class="radar-pulse-core" style="background: #f59e0b; box-shadow: 0 0 15px #f59e0b;"></div>
           </div>
           <div class="radar-timer" style="color: #fde68a;">
@@ -1038,37 +1153,50 @@
         </div>
 
         <!-- Señas de Ubicación en Carretera -->
-        <textarea id="towLocationDetails" class="form-control" placeholder="Puntos de referencia visibles en carretera, mojones kilométricos o comercios cercanos..."></textarea>
+        <textarea id="towLocationDetails" class="form-control form-control-emergency" placeholder="Puntos de referencia visibles en carretera, mojones kilométricos o comercios cercanos..."></textarea>
       </div>
 
-      <!-- 6. Despacho a Línea de Grúa -->
+      <!-- 6. Despacho a Línea de Soporte / Grúa (+50687292124) -->
       <button type="submit" class="btn-cta btn-cta-emergency" style="margin-top: 2rem; width: 100%;">
         <i data-lucide="send"></i>
-        Solicitar Grúa de Emergencia
+        Solicitar Grúa a Soporte (+506 8729-2124)
       </button>
     </form>
   </div>
 
   <!-- ============================================================ -->
-  <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y MODULAR -->
+  <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y ROBUSTA -->
   <!-- ============================================================ -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Inicialización de Lucide Icons
-      if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-      }
+      // 1. Inicialización Segura de Lucide Icons
+      const initIcons = () => {
+        try {
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+          }
+        } catch (_e) {}
+      };
+      initIcons();
 
       // 2. Inicialización de Notyf Toasts (Tema Oscuro)
-      const notyf = new Notyf({
-        duration: 3500,
-        position: { x: 'center', y: 'top' },
-        types: [
-          { type: 'success', background: '#10b981', icon: false },
-          { type: 'error', background: '#e11d48', icon: false },
-          { type: 'warning', background: '#f59e0b', icon: false }
-        ]
-      });
+      let notyf = {
+        success: (m) => alert(m),
+        error: (m) => alert(m),
+        open: (cfg) => alert(cfg.message)
+      };
+
+      if (typeof Notyf !== 'undefined') {
+        notyf = new Notyf({
+          duration: 3500,
+          position: { x: 'center', y: 'top' },
+          types: [
+            { type: 'success', background: '#10b981', icon: false },
+            { type: 'error', background: '#e11d48', icon: false },
+            { type: 'warning', background: '#f59e0b', icon: false }
+          ]
+        });
+      }
 
       // 3. Inicialización de Máscaras IMask.js
       const tripPhoneEl = document.getElementById('tripPhone');
@@ -1078,9 +1206,9 @@
         if (towPhoneEl) IMask(towPhoneEl, { mask: '0000-0000' });
       }
 
-      // Constantes de Enrutamiento
-      const PROD_PHONE = '50672094457'; // Álvaro Scott (Viajes)
-      const TOW_PHONE = '50687292124';  // Soporte de Carretera / Grúa
+      // Constantes Oficiales de Enrutamiento
+      const PROD_PHONE = '50672094457'; // Álvaro Scott (Reservas de Viajes)
+      const TOW_PHONE = '50687292124';  // Línea de Soporte / Grúa (Asistencia)
       const MAX_PASSENGERS = 11;
 
       // ============================================================
@@ -1107,7 +1235,7 @@
           this.bestSample = null;
           this.secondsLeft = 30;
 
-          // Screen Wake Lock API: Evita suspensión de sensores y apagado de pantalla
+          // Screen Wake Lock API: Evita suspensión de sensores y pantalla apagada en móvil
           if ('wakeLock' in navigator) {
             try {
               this.wakeLock = await navigator.wakeLock.request('screen');
@@ -1161,7 +1289,7 @@
           if (this.bestSample) {
             onComplete(this.bestSample);
           } else {
-            onError('No se pudo obtener señal satelital. Ingrese señas manuales.');
+            onError('No se detectó señal GPS óptima. Ingrese señas manuales detalladas.');
           }
         }
 
@@ -1169,7 +1297,7 @@
           if (this.bestSample) {
             this.finish(onComplete, onError);
           } else {
-            onError('Aún no se ha detectado señal satelital.');
+            onError('Aún no se ha recibido señal satelital.');
           }
         }
 
@@ -1194,7 +1322,7 @@
         }
       }
 
-      // Función de Geocodificación Silenciosa (BigDataCloud + Fallback Nominatim)
+      // Geocodificación Silenciosa (BigDataCloud + Fallback Nominatim multi-tag)
       async function resolveLocationAddress(lat, lng) {
         let addressText = '';
 
@@ -1211,7 +1339,7 @@
           }
         } catch (_e) {}
 
-        // 2. Nominatim OpenStreetMap (Extracción multinivel de zonas francas, calles y caseríos)
+        // 2. Nominatim OpenStreetMap (Extracción de zonas industriales como El Coyol, barrios y carreteras)
         try {
           const osmRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
             headers: { 'Accept-Language': 'es' }
@@ -1224,7 +1352,7 @@
               addr.amenity,
               addr.office,
               addr.commercial,
-              addr.residential,    // Ej: Condominio Royal Palm
+              addr.residential,
               addr.building,
               addr.neighbourhood,  // Ej: Llanos del Coyol / El Coyol
               addr.suburb,
@@ -1282,9 +1410,9 @@
           }
         } catch (_e) {}
 
-        // Fallback Costa Rica / Nicaragua
+        // Fallback para números de 8 dígitos de Costa Rica
         if (digits.length === 8) {
-          return { valid: true, e164: '506' + digits, display: '+506' + digits };
+          return { valid: true, e164: '506' + digits, display: '+506 ' + digits };
         }
         if (digits.length >= 11) {
           return { valid: true, e164: digits, display: '+' + digits };
@@ -1293,7 +1421,7 @@
       }
 
       // ============================================================
-      // DISPARADOR OCULTO (10 TOQUES / 3.5s EN EL LOGO -> MODAL 2 GRÚA)
+      // DISPARADOR OCULTO (10 TOQUES / 3.5s EN EL LOGO -> MODAL DE GRÚA)
       // ============================================================
       let logoTaps = 0;
       let logoTimer = null;
@@ -1301,7 +1429,6 @@
 
       if (logoContainer) {
         logoContainer.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
           logoTaps++;
 
           if (logoTaps === 1) {
@@ -1313,12 +1440,11 @@
             clearTimeout(logoTimer);
             logoTaps = 0;
 
-            // Vibración háptica [100, 50, 100]
+            // Vibración háptica de emergencia [100, 50, 100]
             if (navigator.vibrate) {
               navigator.vibrate([100, 50, 100]);
             }
 
-            // Cerrar Modal 1 si estuviese abierto y abrir Modal 2 de Grúa
             closeTripModal();
             openTowModal();
             notyf.open({
@@ -1330,9 +1456,9 @@
       }
 
       // ============================================================
-      // CONTROLADORES DE MODALES
+      // GESTIÓN DE MODALES INDEPENDIENTES
       // ============================================================
-      // Modal 1: Viajes
+      // Modal 1: Viajes Regulares
       const modalTrip = document.getElementById('modalTrip');
       const overlayTrip = document.getElementById('overlayTrip');
       const btnOpenTripModal = document.getElementById('btnOpenTripModal');
@@ -1341,30 +1467,34 @@
       const openTripModal = () => {
         modalTrip.classList.add('active');
         overlayTrip.classList.add('active');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        initIcons();
       };
       const closeTripModal = () => {
         modalTrip.classList.remove('active');
         overlayTrip.classList.remove('active');
       };
+
       if (btnOpenTripModal) btnOpenTripModal.addEventListener('click', openTripModal);
       if (btnCloseTripModal) btnCloseTripModal.addEventListener('click', closeTripModal);
       if (overlayTrip) overlayTrip.addEventListener('click', closeTripModal);
 
-      // Modal 2: Grúa
+      // Modal 2: Asistencia Vial & Grúa
       const modalTow = document.getElementById('modalTow');
       const overlayTow = document.getElementById('overlayTow');
+      const btnOpenTowModal = document.getElementById('btnOpenTowModal');
       const btnCloseTowModal = document.getElementById('btnCloseTowModal');
 
       const openTowModal = () => {
         modalTow.classList.add('active');
         overlayTow.classList.add('active');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        initIcons();
       };
       const closeTowModal = () => {
         modalTow.classList.remove('active');
         overlayTow.classList.remove('active');
       };
+
+      if (btnOpenTowModal) btnOpenTowModal.addEventListener('click', openTowModal);
       if (btnCloseTowModal) btnCloseTowModal.addEventListener('click', closeTowModal);
       if (overlayTow) overlayTow.addEventListener('click', closeTowModal);
 
@@ -1377,7 +1507,7 @@
         tripDateInput.value = todayStr;
       }
 
-      // Destinos Dinámicos (Modal 1)
+      // Selector de Destinos (Modal 1)
       const destGroup = document.getElementById('destinationGroup');
       const nicGroup = document.getElementById('nicaraguaDestinations');
       const nicCity = document.getElementById('nicaraguaCity');
@@ -1399,6 +1529,7 @@
           if (otherDestText) otherDestText.required = false;
         }
       };
+
       if (destGroup) destGroup.addEventListener('change', handleDestinations);
       if (nicCity) nicCity.addEventListener('change', handleDestinations);
 
@@ -1477,7 +1608,7 @@
       updatePassengerUI();
 
       // ============================================================
-      // INTEGRACIÓN DE GPS EN MODAL 1 (VIAJES)
+      // GPS EN MODAL 1: RESERVAS DE VIAJES
       // ============================================================
       const tripGpsEngine = new GPSCalibrationEngine();
       let tripCoords = null;
@@ -1545,7 +1676,7 @@
       }
 
       // ============================================================
-      // INTEGRACIÓN DE GPS EN MODAL 2 (ASISTENCIA / GRÚA)
+      // GPS EN MODAL 2: ASISTENCIA VIAL & GRÚA
       // ============================================================
       const towGpsEngine = new GPSCalibrationEngine();
       let towCoords = null;
@@ -1613,7 +1744,7 @@
       }
 
       // ============================================================
-      // ENVÍO DEL FORMULARIO 1: VIAJES (ÁLVARO SCOTT: 50672094457)
+      // ENVÍO DEL FORMULARIO 1: VIAJES (ÁLVARO SCOTT: +50672094457)
       // ============================================================
       const tripForm = document.getElementById('tripForm');
       if (tripForm) {
@@ -1646,7 +1777,7 @@
           // Equipaje
           const luggage = document.getElementById('tripLuggage').checked ? 'Sí' : 'No';
 
-          // Coordenadas y Enlaces
+          // Coordenadas y Enlaces de Navegación
           let coordsStr = 'No capturadas';
           let wazeLink = 'No disponible (sin GPS)';
           let gmapsLink = 'No disponible (sin GPS)';
@@ -1660,7 +1791,7 @@
           const addressFinal = tripAddressText || (tripCoords ? 'Coordenadas satelitales consolidadas' : 'No se compartió GPS');
           const senias = document.getElementById('tripLocationDetails').value.trim();
 
-          // Serialización estética del Mensaje 1
+          // Serialización estética del Mensaje 1 (Separadores exactos ━━━━━━━━━━━━━━━━━━━━)
           const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
 *SOLICITUD DE RESERVA*
 ━━━━━━━━━━━━━━━━━━━━
@@ -1686,7 +1817,7 @@
 ▪ *Google Maps:* ${gmapsLink}
 ━━━━━━━━━━━━━━━━━━━━`;
 
-          // Confeti visual de confirmación
+          // Efecto de Confeti Visual
           if (typeof confetti !== 'undefined') {
             confetti({
               particleCount: 100,
@@ -1695,7 +1826,7 @@
             });
           }
 
-          // Redirección directa por window.location.href
+          // Redirección directa por window.location.href a Álvaro Scott (+50672094457)
           setTimeout(() => {
             window.location.href = `https://wa.me/${PROD_PHONE}?text=${encodeURIComponent(msg)}`;
           }, 450);
@@ -1703,7 +1834,7 @@
       }
 
       // ============================================================
-      // ENVÍO DEL FORMULARIO 2: ASISTENCIA VIAL / GRÚA (50687292124)
+      // ENVÍO DEL FORMULARIO 2: ASISTENCIA VIAL & GRÚA (+50687292124)
       // ============================================================
       const towForm = document.getElementById('towForm');
       if (towForm) {
@@ -1735,7 +1866,7 @@
           const addressFinal = towAddressText || (towCoords ? 'Coordenadas satelitales de rescate' : 'No se compartió GPS');
           const senias = document.getElementById('towLocationDetails').value.trim();
 
-          // Serialización estética del Mensaje 2
+          // Serialización estética del Mensaje 2 (Separadores exactos ━━━━━━━━━━━━━━━━━━━━)
           const msg = `*🚨 ASISTENCIA VIAL / SERVICIO DE GRÚA*
 *REPORTE DE VEHÍCULO VARADO*
 ━━━━━━━━━━━━━━━━━━━━
@@ -1759,7 +1890,7 @@
 ▪ *Google Maps:* ${gmapsLink}
 ━━━━━━━━━━━━━━━━━━━━`;
 
-          // Redirección directa por window.location.href a la línea de grúa
+          // Redirección directa por window.location.href a la Línea de Soporte (+50687292124)
           window.location.href = `https://wa.me/${TOW_PHONE}?text=${encodeURIComponent(msg)}`;
         });
       }
