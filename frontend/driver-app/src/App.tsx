@@ -83,7 +83,7 @@ export default function App() {
           .eq('id', currentUser.driverId);
       }
 
-      setCurrentUser((prev) => prev ? { ...prev, mustChangePassword: false } : null);
+      setCurrentUser((prev: AuthSessionUser | null) => prev ? { ...prev, mustChangePassword: false } : null);
     } catch (err: any) {
       alert(`Error al actualizar contraseña: ${err.message}`);
     }

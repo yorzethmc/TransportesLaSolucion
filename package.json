@@ -4,14 +4,16 @@
   "private": true,
   "description": "Plataforma de transporte privado VIP y gestión de flotas para Transportes La Solución",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "frontend/*",
+    "shared/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build:shared": "npm run build --workspace=shared/types && npm run build --workspace=shared/validation && npm run build --workspace=shared/configuration && npm run build --workspace=shared/api-client",
+    "build:frontend": "npm run build --workspace=frontend/admin-dashboard && npm run build --workspace=frontend/driver-app",
+    "build": "npm run build:shared && npm run build:frontend",
     "test": "vitest run",
-    "test:all": "vitest run && npx supabase test db",
-    "test:db": "npx supabase test db",
+    "test:all": "vitest run && npx supabase --workdir backend test db",
+    "test:db": "npx supabase --workdir backend test db",
     "lint": "npm run lint --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present"
   },
