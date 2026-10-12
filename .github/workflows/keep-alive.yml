@@ -1,0 +1,39 @@
+name: Supabase Free Tier Keep-Alive
+
+on:
+  schedule:
+    # Ejecutar cada 3 días a las 06:00 UTC (evita la pausa automática por 7 días de inactividad)
+    - cron: '0 6 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping-health-check:
+    name: Ping RPC health_check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar RPC health_check (Solo Lectura)
+        run: |
+          if [ -z "${{ secrets.SUPABASE_URL }}" ] || [ -z "${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" ]; then
+            echo "::warning::Secretos SUPABASE_URL o SUPABASE_PUBLISHABLE_KEY no configurados en GitHub Secrets."
+            exit 0
+          fi
+
+          echo "Pinging public.health_check RPC en Supabase..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/health_check" \
+            -H "apikey: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "HTTP Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Error invocando health_check RPC. HTTP Status: $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "✅ Keep-alive ejecutado con éxito. Proyecto Supabase activo."

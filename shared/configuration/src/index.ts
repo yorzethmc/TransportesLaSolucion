@@ -44,4 +44,11 @@ export const APP_CONFIG = {
     LOCATION_HISTORY_DAYS: 90, // Purgar histórico GPS de más de 90 días a resúmenes
     AUDIT_LOGS_DAYS: 180,
   },
+
+  // Estándar oficial Supabase 2026: Publishable & Secret Keys
+  SUPABASE_KEYS: {
+    HEADER_APIKEY: 'apikey',
+    HEADER_AUTH: 'Authorization',
+    BEARER_PREFIX: 'Bearer',
+  },
 } as const;

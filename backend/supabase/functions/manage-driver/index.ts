@@ -114,8 +114,8 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabasePublishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
+    const supabaseSecretKey = Deno.env.get("SUPABASE_SECRET_KEY") ?? "";
     const authHeader = req.headers.get("Authorization");
 
     // 1. Validar encabezado de autorización sin revelar detalles
@@ -126,8 +126,8 @@ serve(async (req) => {
       });
     }
 
-    // 2. Validar JWT llamando a auth.getUser
-    const clientUser = createClient(supabaseUrl, supabaseAnonKey, {
+    // 2. Validar JWT llamando a auth.getUser con Publishable Key
+    const clientUser = createClient(supabaseUrl, supabasePublishableKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
@@ -143,8 +143,8 @@ serve(async (req) => {
       });
     }
 
-    // 3. Cliente privilegiado del servidor para comprobación de rol y operaciones seguras
-    const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+    // 3. Cliente privilegiado del servidor con Secret Key para comprobación de rol y operaciones seguras
+    const adminClient = createClient(supabaseUrl, supabaseSecretKey, {
       auth: { persistSession: false },
     });
 

@@ -65,8 +65,8 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    const client = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseSecretKey = Deno.env.get("SUPABASE_SECRET_KEY") ?? "";
+    const client = createClient(supabaseUrl, supabaseSecretKey);
 
     // Obtener IP del cliente para rate limiting
     const clientIp =

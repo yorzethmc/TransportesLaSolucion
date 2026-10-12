@@ -16,7 +16,7 @@ import {
 
 export interface TransportesClientOptions {
   supabaseUrl: string;
-  supabaseAnonKey: string;
+  supabasePublishableKey: string;
   storage?: Storage;
 }
 
@@ -33,7 +33,7 @@ export class TransportesApiClient {
   private client: SupabaseClient;
 
   constructor(options: TransportesClientOptions) {
-    this.client = createClient(options.supabaseUrl, options.supabaseAnonKey, {
+    this.client = createClient(options.supabaseUrl, options.supabasePublishableKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,

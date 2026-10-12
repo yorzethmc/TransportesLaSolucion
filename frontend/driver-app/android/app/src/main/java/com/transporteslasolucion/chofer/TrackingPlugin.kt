@@ -24,7 +24,7 @@ class TrackingPlugin : Plugin() {
         val tripId = call.getString("tripId")
         val authToken = call.getString("authToken")
         val supabaseUrl = call.getString("supabaseUrl")
-        val anonKey = call.getString("anonKey")
+        val publishableKey = call.getString("publishableKey") ?: call.getString("anonKey")
 
         if (driverId.isNullOrEmpty()) {
             call.reject("driverId es obligatorio para iniciar turno")
@@ -49,7 +49,7 @@ class TrackingPlugin : Plugin() {
                 prefs.edit()
                     .putString("auth_token", authToken)
                     .putString("supabase_url", supabaseUrl)
-                    .putString("supabase_anon_key", anonKey ?: "")
+                    .putString("supabase_publishable_key", publishableKey ?: "")
                     .apply()
             } catch (_e: Exception) {}
         }

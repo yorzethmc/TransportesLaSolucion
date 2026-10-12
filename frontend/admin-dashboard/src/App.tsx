@@ -4,11 +4,11 @@ import { TransportesApiClient } from '@transportes-la-solucion/api-client';
 type Tab = 'operaciones' | 'solicitudes' | 'viajes' | 'conductores' | 'metricas';
 
 const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'http://127.0.0.1:54321';
-const supabaseAnonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy';
+const supabasePublishableKey = (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_dummy_for_build';
 
 const apiClient = new TransportesApiClient({
   supabaseUrl,
-  supabaseAnonKey,
+  supabasePublishableKey,
 });
 
 export default function App() {

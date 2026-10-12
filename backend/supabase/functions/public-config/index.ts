@@ -19,10 +19,10 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabaseSecretKey = Deno.env.get("SUPABASE_SECRET_KEY") ?? "";
+    const supabasePublishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
 
-    const client = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey);
+    const client = createClient(supabaseUrl, supabaseSecretKey || supabasePublishableKey);
 
     const { data, error } = await client
       .from("app_configuration")

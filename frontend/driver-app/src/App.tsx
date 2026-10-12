@@ -8,7 +8,7 @@ import { ExternalNavigationService } from './services/externalNavigation.js';
 // Cliente configurado
 const apiClient = new TransportesApiClient({
   supabaseUrl: (window as any).VITE_SUPABASE_URL || 'https://xyzcompany.supabase.co',
-  supabaseAnonKey: (window as any).VITE_SUPABASE_ANON_KEY || 'anon-key-placeholder',
+  supabasePublishableKey: (window as any).VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_dummy_for_build',
 });
 
 GpsTrackingService.initialize(apiClient);

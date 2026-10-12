@@ -58,8 +58,8 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabasePublishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
+    const supabaseSecretKey = Deno.env.get("SUPABASE_SECRET_KEY") ?? "";
 
     const clientIp =
       req.headers.get("cf-connecting-ip") ||
@@ -95,8 +95,8 @@ serve(async (req) => {
 
     const technicalEmail = `${normalizedPhone}@drivers.internal`;
 
-    // 1. Intentar inicio de sesión mediante cliente anónimo público
-    const publicClient = createClient(supabaseUrl, supabaseAnonKey);
+    // 1. Intentar inicio de sesión mediante cliente público con Publishable Key
+    const publicClient = createClient(supabaseUrl, supabasePublishableKey);
     const { data: authData, error: authError } = await publicClient.auth.signInWithPassword({
       email: technicalEmail,
       password: String(password),
@@ -112,7 +112,7 @@ serve(async (req) => {
     }
 
     // 2. Comprobar que el usuario tenga rol 'driver' y esté activo
-    const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
+    const serviceClient = createClient(supabaseUrl, supabaseSecretKey);
     const { data: driverRecord } = await serviceClient
       .from("drivers")
       .select("id, active, must_change_password, full_name, assigned_vehicle_id")

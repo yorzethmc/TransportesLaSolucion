@@ -112,7 +112,7 @@ class GpsSyncWorker(
             Triple(
                 prefs.getString("auth_token", null),
                 prefs.getString("supabase_url", null),
-                prefs.getString("supabase_anon_key", null)
+                prefs.getString("supabase_publishable_key", null)
             )
         } catch (_e: Exception) {
             Triple(null, null, null)

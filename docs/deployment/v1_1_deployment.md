@@ -15,10 +15,10 @@
 ## 2. Variables de Entorno Requeridas (.env)
 
 ```ini
-# Supabase
+# Supabase (Estándar 2026: Publishable & Secret Keys)
 SUPABASE_URL=https://[YOUR_PROJECT_ID].supabase.co
-SUPABASE_ANON_KEY=[YOUR_ANON_KEY]
-SUPABASE_SERVICE_ROLE_KEY=[YOUR_SERVICE_ROLE_KEY]
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_[YOUR_KEY]
+SUPABASE_SECRET_KEY=sb_secret_[YOUR_KEY]
 
 # Configuración Operativa
 DEFAULT_GPS_INTERVAL_MS=300000
