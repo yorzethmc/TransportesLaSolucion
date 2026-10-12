@@ -1,0 +1,25 @@
+{
+  "name": "@transportes-la-solucion/admin-dashboard",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Panel de control administrativo y despacho para Transportes La Solución",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@transportes-la-solucion/api-client": "*",
+    "@transportes-la-solucion/configuration": "*",
+    "@transportes-la-solucion/types": "*",
+    "@transportes-la-solucion/validation": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}
