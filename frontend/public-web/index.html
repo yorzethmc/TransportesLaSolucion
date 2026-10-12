@@ -1060,53 +1060,6 @@
       <span>Agendar Viaje</span>
     </button>
 
-    <!-- ACCESOS OPERATIVOS A TODA LA PLATAFORMA (PAGES) -->
-    <div class="platform-hub">
-      <div class="hub-header">
-        <span>Accesos de la Plataforma</span>
-      </div>
-      <div class="hub-grid">
-        <a href="./admin/" class="hub-card" title="Panel Administrativo" target="_blank" rel="noopener">
-          <div class="hub-icon hub-icon-admin">
-            <i data-lucide="shield"></i>
-          </div>
-          <div class="hub-info">
-            <strong>Panel Admin</strong>
-            <span>Gestión y Monitoreo</span>
-          </div>
-        </a>
-
-        <a href="./chofer/" class="hub-card" title="App Conductor (Versión Web)" target="_blank" rel="noopener">
-          <div class="hub-icon hub-icon-driver">
-            <i data-lucide="smartphone"></i>
-          </div>
-          <div class="hub-info">
-            <strong>App Conductor</strong>
-            <span>Versión Web</span>
-          </div>
-        </a>
-
-        <a href="https://raw.githubusercontent.com/yorzethmc/TransportesLaSolucion/main/apk/TransportesLaSolucion-Chofer.apk" class="hub-card hub-card-apk" download="TransportesLaSolucion-Chofer.apk" title="Descargar APK Android">
-          <div class="hub-icon hub-icon-apk">
-            <i data-lucide="download"></i>
-          </div>
-          <div class="hub-info">
-            <strong>Descargar APK</strong>
-            <span>Android v1.0</span>
-          </div>
-        </a>
-
-        <button type="button" class="hub-card hub-card-support" id="btnOpenDriverModalDirect" title="Ventana de Chofer y Auxilio">
-          <div class="hub-icon hub-icon-support">
-            <i data-lucide="wrench"></i>
-          </div>
-          <div class="hub-info">
-            <strong>Ventana Chofer</strong>
-            <span>Auxilio y Avería</span>
-          </div>
-        </button>
-      </div>
-    </div>
   </main>
 
   <!-- ============================================================ -->
@@ -1440,6 +1393,77 @@
   </div>
 
   <!-- ============================================================ -->
+  <!-- MODAL SECRETO: CENTRO DE OPERACIONES (10 TOQUES EN LOGO) -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="overlaySecretStaff"></div>
+  <div class="modal" id="modalSecretStaff" role="dialog" aria-labelledby="secretModalTitle" aria-modal="true">
+    <div class="modal-header" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));">
+      <h2 class="modal-title" id="secretModalTitle" style="color: #f8fafc;">
+        <i data-lucide="shield"></i>
+        Centro de Operaciones y Control
+      </h2>
+      <button class="modal-close" id="btnCloseSecretModal" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <div style="padding: 1rem 0;">
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.45;">
+        Acceso restringido para administración, despacho y conductores de <strong>Transportes La Solución</strong>.
+      </p>
+
+      <div class="hub-grid" style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+        <a href="./admin/" class="hub-card" title="Panel Administrativo" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-admin">
+            <i data-lucide="shield"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Panel Administrativo (Web)</strong>
+            <span>Gestión de flota, conductores y despacho (admin / alvaro)</span>
+          </div>
+        </a>
+
+        <a href="./chofer/" class="hub-card" title="App Conductor (Versión Web)" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-driver">
+            <i data-lucide="smartphone"></i>
+          </div>
+          <div class="hub-info">
+            <strong>App Conductor (Modo Web)</strong>
+            <span>Navegación, turno y GPS en vivo (Chofer 88888888 sin clave)</span>
+          </div>
+        </a>
+
+        <a href="https://raw.githubusercontent.com/yorzethmc/TransportesLaSolucion/main/apk/TransportesLaSolucion-Chofer.apk" class="hub-card hub-card-apk" download="TransportesLaSolucion-Chofer.apk" title="Descargar APK Android">
+          <div class="hub-icon hub-icon-apk">
+            <i data-lucide="download"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Descargar APK Android</strong>
+            <span>Instalador oficial para teléfonos móviles</span>
+          </div>
+        </a>
+
+        <button type="button" class="hub-card hub-card-support" id="btnOpenDriverModalFromSecret" title="Auxilio y Avería">
+          <div class="hub-icon hub-icon-support">
+            <i data-lucide="wrench"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Asistencia Técnica y Avería</strong>
+            <span>Reporte inmediato de auxilio mecánico en carretera</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Credenciales y Guía de Operación -->
+      <div style="margin-top: 1.25rem; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 8px; font-size: 0.8rem; color: #cbd5e1;">
+        <strong style="color: #38bdf8; display: block; margin-bottom: 6px;">Credenciales de Acceso:</strong>
+        <div style="margin-bottom: 3px;">▪ <strong>Super Admin:</strong> usuario <code>admin</code> / clave: <code>admin</code></div>
+        <div style="margin-bottom: 3px;">▪ <strong>Admin Regular:</strong> usuario <code>alvaro</code> / clave: <code>alvaro123</code></div>
+        <div>▪ <strong>Conductor Testing:</strong> teléfono <code>88888888</code> (sin contraseña)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================ -->
   <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y ROBUSTA -->
   <!-- ============================================================ -->
   <script>
@@ -1732,37 +1756,36 @@
       }
 
       // ============================================================
-      // DISPARADOR OCULTO (10 TOQUES EN EL LOGO EN MENOS DE 3.5 SEGUNDOS)
-      // ABRE EXCLUSIVAMENTE EL MODO DE SOPORTE / REPORTAR AVERÍA
+      // DISPARADOR OCULTO (10 TOQUES EN EL LOGO)
+      // ABRE EL PANEL INTERNO DE OPERACIONES (ADMIN / CHOFER / APK / ASISTENCIA)
       // ============================================================
       let logoTaps = 0;
       let logoTimer = null;
       const logoContainer = document.getElementById('logoContainer');
 
       if (logoContainer) {
+        logoContainer.style.cursor = 'pointer';
         logoContainer.addEventListener('pointerdown', () => {
           logoTaps++;
+          clearTimeout(logoTimer);
 
-          if (logoTaps === 1) {
-            clearTimeout(logoTimer);
-            logoTimer = setTimeout(() => {
-              logoTaps = 0;
-            }, 3500);
-          } else if (logoTaps >= 10) {
-            clearTimeout(logoTimer);
+          if (logoTaps >= 10) {
             logoTaps = 0;
-
-            // Vibración háptica de emergencia
-            if (navigator.vibrate) {
-              navigator.vibrate([100, 50, 100]);
-            }
-
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             closeTripModal();
-            openSupportModal();
+            closeSupportModal();
+            openSecretModal();
             notyf.open({
               type: 'warning',
-              message: 'Ventana de Chofer activada'
+              message: 'Panel Operativo Desbloqueado'
             });
+          } else {
+            // Feedback háptico en toques avanzados
+            if (logoTaps === 5 && navigator.vibrate) navigator.vibrate(25);
+            if (logoTaps === 8 && navigator.vibrate) navigator.vibrate(35);
+            logoTimer = setTimeout(() => {
+              logoTaps = 0;
+            }, 3000);
           }
         });
       }
@@ -1808,15 +1831,40 @@
       if (btnCloseSupportModal) btnCloseSupportModal.addEventListener('click', closeSupportModal);
       if (overlaySupport) overlaySupport.addEventListener('click', closeSupportModal);
 
-      // Botón directo a Ventana de Chofer desde el hub de accesos
-      const btnOpenDriverModalDirect = document.getElementById('btnOpenDriverModalDirect');
-      if (btnOpenDriverModalDirect) {
-        btnOpenDriverModalDirect.addEventListener('click', openSupportModal);
+      // Modal 3: Secreto Operativo / Staff (10 Toques en el Logo)
+      const modalSecretStaff = document.getElementById('modalSecretStaff');
+      const overlaySecretStaff = document.getElementById('overlaySecretStaff');
+      const btnCloseSecretModal = document.getElementById('btnCloseSecretModal');
+      const btnOpenDriverModalFromSecret = document.getElementById('btnOpenDriverModalFromSecret');
+
+      const openSecretModal = () => {
+        if (modalSecretStaff && overlaySecretStaff) {
+          modalSecretStaff.classList.add('active');
+          overlaySecretStaff.classList.add('active');
+          renderAppIcons();
+        }
+      };
+      const closeSecretModal = () => {
+        if (modalSecretStaff && overlaySecretStaff) {
+          modalSecretStaff.classList.remove('active');
+          overlaySecretStaff.classList.remove('active');
+        }
+      };
+
+      if (btnCloseSecretModal) btnCloseSecretModal.addEventListener('click', closeSecretModal);
+      if (overlaySecretStaff) overlaySecretStaff.addEventListener('click', closeSecretModal);
+      if (btnOpenDriverModalFromSecret) {
+        btnOpenDriverModalFromSecret.addEventListener('click', () => {
+          closeSecretModal();
+          openSupportModal();
+        });
       }
 
-      // Apertura por hash en la URL (#chofer, #soporte, #reserva)
+      // Apertura por hash en la URL (#chofer, #soporte, #reserva, #admin)
       if (window.location.hash === '#chofer' || window.location.hash === '#soporte') {
         openSupportModal();
+      } else if (window.location.hash === '#admin' || window.location.hash === '#staff') {
+        openSecretModal();
       } else if (window.location.hash === '#reserva') {
         openTripModal();
       }
@@ -2092,7 +2140,7 @@
       // ============================================================
       const tripForm = document.getElementById('tripForm');
       if (tripForm) {
-        tripForm.addEventListener('submit', (e) => {
+        tripForm.addEventListener('submit', async (e) => {
           e.preventDefault();
 
           const name = document.getElementById('tripName').value.trim();
