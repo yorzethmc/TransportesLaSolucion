@@ -1,0 +1,4 @@
+include:
+  - apk
+  - apk/TransportesLaSolucion-Chofer.apk
+  - .nojekyll
