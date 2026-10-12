@@ -252,6 +252,124 @@
       transform: scale(0.97);
     }
 
+    /* PLATFORM HUB - ACCESOS DIRECTOS A TODA LA PLATAFORMA */
+    .platform-hub {
+      width: 100%;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      animation: fadeUp 1s ease forwards;
+    }
+
+    .hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .hub-header span {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .hub-card {
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid var(--surface-border);
+      border-radius: 1rem;
+      padding: 0.85rem 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.22s ease;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .hub-card:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+    }
+
+    .hub-card:active {
+      transform: scale(0.97);
+    }
+
+    .hub-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hub-icon-admin {
+      background: rgba(99, 102, 241, 0.18);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+
+    .hub-icon-driver {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .hub-icon-apk {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .hub-icon-support {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .hub-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .hub-info strong {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .hub-info span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
     /* MODALES ESTILO GLASSMORPHISM */
     .modal-overlay {
       position: fixed;
@@ -941,6 +1059,54 @@
       <i data-lucide="calendar"></i>
       <span>Agendar Viaje</span>
     </button>
+
+    <!-- ACCESOS OPERATIVOS A TODA LA PLATAFORMA (PAGES) -->
+    <div class="platform-hub">
+      <div class="hub-header">
+        <span>Accesos de la Plataforma</span>
+      </div>
+      <div class="hub-grid">
+        <a href="./admin/" class="hub-card" title="Panel Administrativo" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-admin">
+            <i data-lucide="shield"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Panel Admin</strong>
+            <span>Gestión y Monitoreo</span>
+          </div>
+        </a>
+
+        <a href="./chofer/" class="hub-card" title="App Conductor (Versión Web)" target="_blank" rel="noopener">
+          <div class="hub-icon hub-icon-driver">
+            <i data-lucide="smartphone"></i>
+          </div>
+          <div class="hub-info">
+            <strong>App Conductor</strong>
+            <span>Versión Web</span>
+          </div>
+        </a>
+
+        <a href="./apk/TransportesLaSolucion-Chofer.apk" class="hub-card hub-card-apk" download="TransportesLaSolucion-Chofer.apk" title="Descargar APK Android">
+          <div class="hub-icon hub-icon-apk">
+            <i data-lucide="download"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Descargar APK</strong>
+            <span>Android v1.0</span>
+          </div>
+        </a>
+
+        <button type="button" class="hub-card hub-card-support" id="btnOpenDriverModalDirect" title="Ventana de Chofer y Auxilio">
+          <div class="hub-icon hub-icon-support">
+            <i data-lucide="wrench"></i>
+          </div>
+          <div class="hub-info">
+            <strong>Ventana Chofer</strong>
+            <span>Auxilio y Avería</span>
+          </div>
+        </button>
+      </div>
+    </div>
   </main>
 
   <!-- ============================================================ -->
@@ -1176,6 +1342,18 @@
           <strong>3. Ubicación</strong>
           <span>Permita el GPS "Todo el tiempo"</span>
         </div>
+      </div>
+
+      <!-- Enlaces complementarios a versiones web -->
+      <div style="display: flex; gap: 0.6rem; margin-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 0.85rem;">
+        <a href="./chofer/" target="_blank" rel="noopener" style="flex: 1; text-align: center; text-decoration: none; padding: 0.7rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 0.85rem; font-size: 0.82rem; font-weight: 600; color: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: background 0.2s;">
+          <i data-lucide="smartphone"></i>
+          <span>App Web</span>
+        </a>
+        <a href="./admin/" target="_blank" rel="noopener" style="flex: 1; text-align: center; text-decoration: none; padding: 0.7rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 0.85rem; font-size: 0.82rem; font-weight: 600; color: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: background 0.2s;">
+          <i data-lucide="shield"></i>
+          <span>Panel Admin</span>
+        </a>
       </div>
     </div>
 
@@ -1629,6 +1807,19 @@
 
       if (btnCloseSupportModal) btnCloseSupportModal.addEventListener('click', closeSupportModal);
       if (overlaySupport) overlaySupport.addEventListener('click', closeSupportModal);
+
+      // Botón directo a Ventana de Chofer desde el hub de accesos
+      const btnOpenDriverModalDirect = document.getElementById('btnOpenDriverModalDirect');
+      if (btnOpenDriverModalDirect) {
+        btnOpenDriverModalDirect.addEventListener('click', openSupportModal);
+      }
+
+      // Apertura por hash en la URL (#chofer, #soporte, #reserva)
+      if (window.location.hash === '#chofer' || window.location.hash === '#soporte') {
+        openSupportModal();
+      } else if (window.location.hash === '#reserva') {
+        openTripModal();
+      }
 
       // Selector de Vehículo en Modo Soporte (Carro / Buseta)
       const btnVehicleCar = document.getElementById('btnVehicleCar');

@@ -23,18 +23,8 @@ jobs:
     - name: Instalar dependencias del monorepo
       run: npm install
 
-    - name: Compilar paquetes y aplicaciones
-      run: |
-        npx tsc -p packages/types/tsconfig.json
-        npx tsc -p packages/configuration/tsconfig.json
-        npx tsc -p packages/validation/tsconfig.json
-        npx tsc -p packages/api-client/tsconfig.json
-        npx tsc -p apps/driver-app/tsconfig.json
-        npx tsc -p apps/admin-dashboard/tsconfig.json
+    - name: Compilar paquetes compartidos y aplicaciones
+      run: npm run build
 
-    - name: Ejecutar pruebas unitarias e integración
-      run: |
-        npx tsc packages/validation/test/validation.test.ts --module NodeNext --moduleResolution NodeNext --target ES2022
-        node packages/validation/test/validation.test.js
-        npx tsc packages/validation/test/integration.test.ts --module NodeNext --moduleResolution NodeNext --target ES2022
-        node packages/validation/test/integration.test.js
+    - name: Ejecutar pruebas unitarias e integración (Vitest)
+      run: npm test

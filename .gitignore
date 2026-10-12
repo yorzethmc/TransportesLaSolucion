@@ -4,11 +4,16 @@ node_modules/
 
 # Compilación y builds
 dist/
+dist-pages/
 build/
 .cache/
 *.tsbuildinfo
 
 # Android / Capacitor
+frontend/driver-app/android/.gradle/
+frontend/driver-app/android/build/
+frontend/driver-app/android/app/build/
+frontend/driver-app/android/captures/
 apps/driver-app/android/.gradle/
 apps/driver-app/android/build/
 apps/driver-app/android/app/build/

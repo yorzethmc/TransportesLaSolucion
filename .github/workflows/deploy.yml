@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Platform & Android APK to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "fix/**"]
   workflow_dispatch:
 
 permissions:
@@ -15,20 +15,73 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout del repositorio
         uses: actions/checkout@v4
-      - name: Setup Pages
+
+      - name: Configurar Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Configurar Java 17 (JDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Instalar dependencias del monorepo
+        run: npm ci || npm install
+
+      - name: Ejecutar suite de pruebas (Vitest)
+        run: npm test
+
+      - name: Compilar paquetes compartidos y aplicaciones web
+        run: npm run build
+
+      - name: Sincronizar assets web a proyecto nativo Android
+        run: |
+          cd frontend/driver-app
+          npx cap copy android
+
+      - name: Otorgar permisos de ejecución a gradlew
+        run: chmod +x frontend/driver-app/android/gradlew
+
+      - name: Compilar APK Android Oficial (Debug)
+        run: |
+          cd frontend/driver-app/android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Ensamblar paquete completo para GitHub Pages
+        run: |
+          npm run stage:pages
+          mkdir -p dist-pages/apk
+          cp frontend/driver-app/android/app/build/outputs/apk/debug/app-debug.apk dist-pages/apk/TransportesLaSolucion-Chofer.apk
+          ls -la dist-pages
+          ls -la dist-pages/apk
+
+      - name: Publicar artefacto descargable del APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TransportesLaSolucion-Chofer-APK
+          path: dist-pages/apk/TransportesLaSolucion-Chofer.apk
+          retention-days: 30
+
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      - name: Subir artefacto de GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
-      - name: Deploy to GitHub Pages
+          path: 'dist-pages'
+
+      - name: Desplegar a GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
