@@ -15,7 +15,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  deploy-pages:
+    name: Desplegar Web y Dashboards a GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,15 +31,6 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Configurar Java 17 (JDK)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Instalar dependencias del monorepo
         run: npm ci || npm install
 
@@ -48,43 +40,13 @@ jobs:
       - name: Compilar paquetes compartidos y aplicaciones web
         run: npm run build
 
-      - name: Sincronizar assets web a proyecto nativo Android
-        run: |
-          cd frontend/driver-app
-          npx cap sync android
-
-      - name: Otorgar permisos de ejecución a gradlew
-        run: chmod +x frontend/driver-app/android/gradlew
-
-      - name: Aceptar licencias del SDK de Android
-        run: yes | sdkmanager --licenses || true
-
-      - name: Compilar APK Android Oficial (Debug)
-        id: build_apk
-        continue-on-error: true
-        run: |
-          cd frontend/driver-app/android
-          ./gradlew assembleDebug --no-daemon --stacktrace
-
-      - name: Ensamblar paquete completo para GitHub Pages
+      - name: Ensamblar paquete para GitHub Pages
         run: |
           npm run stage:pages
-          mkdir -p dist-pages/apk
-          if [ -f "frontend/driver-app/android/app/build/outputs/apk/debug/app-debug.apk" ]; then
-            cp frontend/driver-app/android/app/build/outputs/apk/debug/app-debug.apk dist-pages/apk/TransportesLaSolucion-Chofer.apk
-            echo "✅ APK nativo generado y copiado a dist-pages/apk/"
-          else
-            echo "ℹ️ APK nativo en proceso; estructura lista para despliegue web."
-          fi
           touch dist-pages/.nojekyll
-
-      - name: Publicar artefacto descargable del APK
-        if: hashFiles('dist-pages/apk/TransportesLaSolucion-Chofer.apk') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: TransportesLaSolucion-Chofer-APK
-          path: dist-pages/apk/TransportesLaSolucion-Chofer.apk
-          retention-days: 30
+          ls -la dist-pages
+          ls -la dist-pages/admin
+          ls -la dist-pages/chofer
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -97,3 +59,42 @@ jobs:
       - name: Desplegar a GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  build-android-apk:
+    name: Compilar APK Android de Chofer (Gradle)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17 (JDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar dependencias del monorepo
+        run: npm ci || npm install
+
+      - name: Sincronizar assets web a proyecto nativo Android
+        run: |
+          npm run build
+          cd frontend/driver-app
+          npx cap sync android
+
+      - name: Otorgar permisos de ejecución a gradlew
+        run: chmod +x frontend/driver-app/android/gradlew
+
+      - name: Compilar APK Android Debug
+        run: |
+          cd frontend/driver-app/android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Publicar artefacto descargable del APK en GitHub Actions
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TransportesLaSolucion-Chofer-APK
+          path: frontend/driver-app/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
