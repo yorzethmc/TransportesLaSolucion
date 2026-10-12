@@ -752,11 +752,138 @@
       box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
     }
 
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(3px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
-      40%, 60% { transform: translate3d(5px, 0, 0); }
+    /* ============================================================ */
+    /* VENTANA DE CHOFER & DESCARGA DE APP ANDROID (.APK)            */
+    /* ============================================================ */
+    .driver-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+      padding: 0.35rem 0.85rem;
+      border-radius: 2rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .driver-download-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 1.35rem;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .driver-download-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .driver-download-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.45;
+    }
+
+    .btn-download-apk {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      text-decoration: none;
+      padding: 1.1rem 1.25rem;
+      border-radius: 1.15rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn-download-apk:active {
+      transform: scale(0.98);
+    }
+
+    .btn-download-apk svg {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .btn-download-apk .btn-text-block {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .btn-download-apk .btn-sub {
+      font-size: 0.76rem;
+      font-weight: 600;
+      opacity: 0.9;
+      color: #a7f3d0;
+    }
+
+    .driver-steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.55rem;
+      margin-top: 1rem;
+      padding-top: 0.95rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .driver-step-item {
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .driver-step-item strong {
+      color: #fde68a;
+      font-weight: 700;
+    }
+
+    .driver-section-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.5rem 0 1.15rem 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .driver-section-divider::before,
+    .driver-section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--surface-border);
     }
   </style>
 </head>
@@ -997,19 +1124,64 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- MODAL 2: MODO OCULTO DE SOPORTE (REPORTAR AVERÍA / ASISTENCIA) -->
+  <!-- MODAL 2: VENTANA DE CHOFER (DESCARGA DE APP & AUXILIO)       -->
   <!-- ACTIVA TRAS 10 TOQUES EN EL LOGO EN MENOS DE 3.5 SEGUNDOS    -->
   <!-- ============================================================ -->
   <div class="modal-overlay" id="overlaySupport"></div>
   <div class="modal" id="modalSupport" role="dialog" aria-labelledby="supportModalTitle" aria-modal="true">
     <div class="modal-header modal-header-emergency">
-      <h2 class="modal-title" id="supportModalTitle">
-        <i data-lucide="wrench"></i>
-        Reportar Avería
-      </h2>
+      <div>
+        <span class="driver-badge">
+          <i data-lucide="shield"></i> Panel Operativo
+        </span>
+        <h2 class="modal-title" id="supportModalTitle" style="margin-top: 0.15rem;">
+          <i data-lucide="truck"></i>
+          Ventana de Chofer
+        </h2>
+      </div>
       <button class="close-btn" id="btnCloseSupportModal" type="button" aria-label="Cerrar">
         <i data-lucide="x"></i>
       </button>
+    </div>
+
+    <!-- SECCIÓN 1: DESCARGA DIRECTA DE LA APP MÓVIL (ANDROID APK) -->
+    <div class="driver-download-card">
+      <h3>
+        <i data-lucide="smartphone"></i>
+        App Móvil para Choferes
+      </h3>
+      <p>
+        Descargue e instale la aplicación oficial en su teléfono Android para recibir sus rutas asignadas y transmitir su ubicación GPS en tiempo real.
+      </p>
+
+      <a href="./apk/TransportesLaSolucion-Chofer.apk" download="TransportesLaSolucion-Chofer.apk" class="btn-download-apk" id="btnDownloadApk">
+        <i data-lucide="download"></i>
+        <div class="btn-text-block">
+          <span>Descargar App Android (.APK)</span>
+          <span class="btn-sub">Versión v1.0.0 Oficial (Instalación Directa)</span>
+        </div>
+      </a>
+
+      <!-- Guía Rápida de Instalación en 3 Pasos -->
+      <div class="driver-steps">
+        <div class="driver-step-item">
+          <strong>1. Descargar</strong>
+          <span>Toque el botón verde y acepte la descarga</span>
+        </div>
+        <div class="driver-step-item">
+          <strong>2. Instalar</strong>
+          <span>Abra el archivo descargado e instale</span>
+        </div>
+        <div class="driver-step-item">
+          <strong>3. Ubicación</strong>
+          <span>Permita el GPS "Todo el tiempo"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: SEPARADOR Y REPORTE DE AVERÍA / AUXILIO -->
+    <div class="driver-section-divider">
+      <span>🚨 Auxilio en Ruta / Avería</span>
     </div>
 
     <!-- FORMULARIO ULTRA SIMPLE: SOLO NOMBRE Y UBICACIÓN -->
@@ -1110,7 +1282,11 @@
       'x': '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
       'briefcase': '<svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
       'send': '<svg viewBox="0 0 24 24"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
-      'wrench': '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'
+      'wrench': '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+      'download': '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>',
+      'truck': '<svg viewBox="0 0 24 24"><rect width="16" height="13" x="1" y="5" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+      'smartphone': '<svg viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>',
+      'shield': '<svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>'
     };
 
     function renderAppIcons() {
@@ -1391,7 +1567,7 @@
             openSupportModal();
             notyf.open({
               type: 'warning',
-              message: 'Modo de asistencia activado'
+              message: 'Ventana de Chofer activada'
             });
           }
         });
@@ -1749,9 +1925,35 @@
             ? `${adultsCount} Adulto(s) + ${minorsCount} Niño(s)` 
             : `${adultsCount} Adulto(s)`;
 
-          // Formato Estético de WhatsApp con Separadores Uniformes (Sin coordenadas crudas en texto)
+          // Generación de número de solicitud y persistencia antes de WhatsApp
+          const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+          const localReqNum = `TLS-${nowStr}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+          // Registro persistente en almacenamiento local para no depender de WhatsApp
+          const requestRecord = {
+            requestNumber: localReqNum,
+            customerName: name,
+            customerPhone: phoneValidation.e164,
+            tripDate: `${y}-${m}-${d}`,
+            destination: finalDest,
+            passengers: { adults: adultsCount, minors: minorsCount },
+            luggage: luggage,
+            originAddress: addressFinal,
+            notes: senias,
+            coords: tripCoords,
+            createdAt: new Date().toISOString(),
+            status: 'whatsapp_opened'
+          };
+
+          try {
+            const stored = JSON.parse(localStorage.getItem('tls_transport_requests') || '[]');
+            stored.push(requestRecord);
+            localStorage.setItem('tls_transport_requests', JSON.stringify(stored));
+          } catch (_e) {}
+
+          // Formato Estético de WhatsApp con Separadores Uniformes y N° de Solicitud Oficial
           const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
-*SOLICITUD DE RESERVA*
+*SOLICITUD DE VIAJE:* ${localReqNum}
 ━━━━━━━━━━━━━━━━━━━━
 
 *👤 DATOS DEL CLIENTE*
