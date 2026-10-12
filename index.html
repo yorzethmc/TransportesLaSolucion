@@ -4,349 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transportes La Solución - Reservas Premium</title>
-  <meta name="description" content="Servicio de transporte privado. Rápido, seguro y confiable.">
+  <meta name="description" content="Servicio de transporte privado VIP. Rápido, seguro y confiable en Costa Rica y Nicaragua.">
+  
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #e11d48; /* Premium Red */
-      --primary-glow: rgba(225, 29, 72, 0.5);
-      --secondary: #f59e0b; /* Premium Yellow/Gold */
-      --bg: #0b0f19; /* Deep Space Dark */
-      --surface: #111827; /* Dark Surface */
-      --surface-border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.3);
-      --input-bg: #1f2937;
-    }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    /* Background Ambient Orbs */
-    .ambient-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(100px);
-      z-index: -1;
-      animation: drift 20s infinite alternate;
-    }
-    .orb-1 {
-      top: -10%; left: -10%;
-      width: 50vw; height: 50vw;
-      background: rgba(225, 29, 72, 0.15);
-    }
-    .orb-2 {
-      bottom: -20%; right: -10%;
-      width: 60vw; height: 60vw;
-      background: rgba(245, 158, 11, 0.1);
-      animation-delay: -5s;
-    }
-
-    @keyframes drift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(5%, 10%); }
-    }
-
-    .top-bar {
-      width: 100%; height: 6px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-    }
-
-    .main-wrapper {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem 1.5rem;
-      width: 100%; max-width: 500px;
-      margin: 0 auto;
-    }
-
-    /* PREMIUM HERO SECTION */
-    .hero {
-      text-align: center;
-      width: 100%;
-      margin-bottom: 2rem;
-      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .logo-container {
-      position: relative;
-      width: 120px; height: 120px;
-      margin: 0 auto 1.5rem;
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border-radius: 2rem;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-      border: 1px solid var(--surface-border);
-      transform-style: preserve-3d;
-      animation: float 6s ease-in-out infinite;
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-    }
-
-    .logo-icon {
-      font-size: 4rem;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-      pointer-events: none;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotateX(0); }
-      50% { transform: translateY(-10px) rotateX(5deg); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.8rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #fff, #cbd5e1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .hero h1 span {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      color: var(--text-muted);
-      font-size: 1.15rem;
-      font-weight: 400;
-    }
-
-    .warning-box {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 1rem;
-      color: #fcd34d;
-      font-size: 0.95rem;
-      text-align: left;
-    }
-
-    /* CTA BUTTON */
-    .btn-cta {
-      position: relative;
-      width: 100%;
-      padding: 1.4rem;
-      border-radius: 1.25rem;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), #be123c);
-      border: none;
-      cursor: pointer;
-      overflow: hidden;
-      box-shadow: 0 15px 35px var(--primary-glow);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
-    }
-    
-    .btn-cta::after {
-      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transform: skewX(-20deg);
-      animation: shine 4s infinite;
-    }
-    
-    @keyframes shine {
-      0% { left: -100%; }
-      20%, 100% { left: 200%; }
-    }
-
-    .btn-cta:active { transform: scale(0.95); box-shadow: 0 5px 15px var(--primary-glow); }
-
-    /* MODAL (GLASSMORPHISM) */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      opacity: 0; visibility: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 40;
-    }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
-    
-    .modal {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--surface-border);
-      border-radius: 2rem 2rem 0 0;
-      padding: 2rem 1.5rem 3rem;
-      max-height: 90vh;
-      overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 50;
-      box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
-    }
-    .modal.active { transform: translateY(0); }
-    
-    @media (min-width: 640px) {
-      .modal {
-        top: 50%; bottom: auto; left: 50%; right: auto;
-        transform: translate(-50%, -45%) scale(0.95);
-        width: 100%; max-width: 500px;
-        border-radius: 1.5rem;
-        border: 1px solid var(--surface-border);
-        opacity: 0; pointer-events: none;
-      }
-      .modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
-    }
-    
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .modal-title { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: white; }
-    .close-btn { 
-      background: var(--input-bg); border: 1px solid var(--surface-border); 
-      font-size: 1.5rem; color: var(--text-muted); cursor: pointer; 
-      width: 40px; height: 40px; border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
-    }
-    .close-btn:active { transform: scale(0.9); background: var(--surface-border); color: white; }
-
-    /* FORMS */
-    .form-group { margin-bottom: 1.5rem; }
-    .form-label { 
-      display: block; font-family: 'Outfit', sans-serif; font-size: 1.05rem; 
-      font-weight: 600; margin-bottom: 0.5rem; color: #cbd5e1; 
-    }
-    .form-control {
-      width: 100%; padding: 1.15rem;
-      background: var(--input-bg);
-      border: 1px solid var(--surface-border);
-      border-radius: 1rem;
-      font-family: 'Inter', sans-serif; font-size: 1.05rem;
-      color: white; transition: all 0.2s;
-    }
-    .form-control::placeholder { color: #64748b; }
-    .form-control:focus { 
-      outline: none; border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
-      background: #1e293b;
-    }
-    textarea.form-control { resize: vertical; min-height: 80px; }
-    select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
-    select.form-control option { background: var(--surface); color: white; }
-
-    /* STEPPERS */
-    .stepper-card {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--input-bg); border: 1px solid var(--surface-border);
-      border-radius: 1.25rem; padding: 1rem; margin-bottom: 1rem;
-      transition: all 0.3s;
-    }
-    .stepper-card.active { border-color: var(--primary); background: rgba(225,29,72,0.05); }
-    .passenger-info { display: flex; align-items: center; gap: 1rem; }
-    .p-icon { font-size: 2rem; }
-    .p-text strong { display: block; font-family: 'Outfit', sans-serif; font-size: 1.15rem; color: white; }
-    .p-text span { font-size: 0.85rem; color: var(--text-muted); }
-    
-    .stepper-controls {
-      display: flex; align-items: center; gap: 0.5rem;
-      background: rgba(0,0,0,0.2); padding: 0.3rem; border-radius: 2rem;
-    }
-    .st-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: none;
-      background: var(--surface); color: var(--text);
-      font-size: 1.5rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
-    }
-    .st-btn:active { transform: scale(0.85); background: var(--primary); color: white; }
-    .st-btn:disabled { opacity: 0.3; pointer-events: none; }
-    .st-val { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; width: 24px; text-align: center; }
-
-    /* TOGGLE SWITCH */
-    .toggle-wrapper {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--input-bg); border: 1px solid var(--surface-border);
-      border-radius: 1.25rem; padding: 1.25rem 1rem; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .t-label { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; color: white; }
-    .t-switch {
-      position: relative; width: 56px; height: 32px;
-      background: #334155; border-radius: 16px; transition: 0.3s;
-    }
-    .t-switch::after {
-      content: ''; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px;
-      background: white; border-radius: 50%; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    input[type="checkbox"] { display: none; }
-    input[type="checkbox"]:checked ~ .t-switch { background: var(--success); box-shadow: 0 0 12px var(--success-glow); }
-    input[type="checkbox"]:checked ~ .t-switch::after { transform: translateX(24px); }
-
-    /* GPS BUTTON & LOCATOR */
-    .btn-gps {
-      width: 100%; padding: 1.15rem; border-radius: 1rem;
-      background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #60a5fa; font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem;
-    }
-    .btn-gps:active { transform: scale(0.97); }
-    .btn-gps:disabled { opacity: 0.6; cursor: wait; }
-    .gps-hint { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 0.75rem; }
-    
-    .loc-success {
-      display: none; align-items: center; justify-content: center; gap: 0.6rem;
-      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #34d399; padding: 0.9rem 1rem; border-radius: 1rem; font-weight: 600;
-      font-size: 0.95rem; margin-bottom: 0.75rem; animation: fadeUp 0.3s ease;
-    }
-
-    .spin-icon {
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(3px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
-      40%, 60% { transform: translate3d(5px, 0, 0); }
-    }
-  </style>
+  
+  <!-- Modular Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Ambient Graphic Elements -->
   <div class="ambient-orb orb-1"></div>
   <div class="ambient-orb orb-2"></div>
   <div class="top-bar"></div>
   
-  <div class="main-wrapper">
-    <div class="hero">
+  <!-- Main View Wrapper -->
+  <main class="main-wrapper">
+    <section class="hero">
       <div class="logo-container" id="logoContainer" title="Transportes La Solución">
         <span class="logo-icon">🚐</span>
       </div>
@@ -360,9 +36,9 @@
         </strong>
         Llene esto <strong>ÚNICAMENTE</strong> estando en el punto de recolección para ubicarlo por GPS.
       </div>
-    </div>
+    </section>
     
-    <button class="btn-cta" id="btnOpenModal">
+    <button class="btn-cta" id="btnOpenModal" type="button">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
@@ -371,29 +47,31 @@
       </svg>
       Agendar Viaje
     </button>
-  </div>
+  </main>
 
+  <!-- Glassmorphism Booking Modal -->
   <div class="modal-overlay" id="overlay"></div>
   <div class="modal" id="modal">
     <div class="modal-header">
-      <h2 class="modal-title">Detalles del Viaje</h2>
-      <button class="close-btn" id="btnCloseModal">
+      <h2 class="modal-title" id="modalTitle">Detalles del Viaje</h2>
+      <button class="close-btn" id="btnCloseModal" type="button" aria-label="Cerrar modal">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
     </div>
     
     <form id="bookingForm">
+      <!-- Datos Básicos -->
       <div class="form-group">
-        <label class="form-label">Nombre Completo</label>
+        <label class="form-label" for="name">Nombre Completo</label>
         <input type="text" id="name" class="form-control" required placeholder="Ej: Juan Pérez">
       </div>
       
       <div class="form-group">
-        <label class="form-label">Teléfono</label>
+        <label class="form-label" for="phone1">Teléfono</label>
         <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888" style="letter-spacing: 2px;">
       </div>
 
-      <!-- MÓDULO GPS & RECOLECCIÓN (POSICIONADO AL INICIO) -->
+      <!-- Módulo GPS & Recolección (Inicio del modal) -->
       <div class="form-group" style="margin-top: 1.5rem;">
         <label class="form-label">📍 Punto de Recogida</label>
         
@@ -411,9 +89,9 @@
         <textarea id="manualLocation" class="form-control" placeholder="Señas o referencias adicionales (Ej: Zona Franca Coyol edificio B14, casa blanca con portón negro...)"></textarea>
       </div>
       
-      <!-- DESTINOS -->
+      <!-- Destinos Dinámicos -->
       <div class="form-group" style="margin-top: 1.5rem;">
-        <label class="form-label">🗺️ Destino</label>
+        <label class="form-label" for="destinationGroup">🗺️ Destino</label>
         <select id="destinationGroup" class="form-control" required>
           <option value="" disabled selected>Seleccione...</option>
           <option value="Los Chiles">Los Chiles (Costa Rica)</option>
@@ -424,8 +102,9 @@
       </div>
 
       <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -1rem;">
+        <label class="form-label" for="nicaraguaCity" style="font-size: 0.95rem; color: var(--secondary);">Ciudad en Nicaragua</label>
         <select id="nicaraguaCity" class="form-control">
-          <option value="" disabled selected>Ciudad en Nicaragua...</option>
+          <option value="" disabled selected>Seleccione la ciudad...</option>
           <option value="Managua">Managua</option>
           <option value="El Boaco">El Boaco</option>
           <option value="Rivas">Rivas</option>
@@ -438,10 +117,11 @@
       </div>
 
       <div class="form-group" id="otherDestination" style="display: none; margin-top: -1rem;">
+        <label class="form-label" for="otherDestText" style="font-size: 0.95rem; color: var(--secondary);">Lugar exacto</label>
         <input type="text" id="otherDestText" class="form-control" placeholder="Escriba lugar exacto...">
       </div>
 
-      <!-- PASAJEROS -->
+      <!-- Pasajeros (Máximo 11) -->
       <div class="form-group" style="margin-top: 2rem;">
         <label class="form-label" style="text-align: center; margin-bottom: 1rem;">Pasajeros (Máx 11)</label>
         
@@ -451,9 +131,9 @@
             <div class="p-text"><strong>Adultos</strong><span>> 5 años</span></div>
           </div>
           <div class="stepper-controls">
-            <button type="button" class="st-btn" id="btnSubAdults">-</button>
+            <button type="button" class="st-btn" id="btnSubAdults" aria-label="Disminuir adultos">-</button>
             <span class="st-val" id="valAdults">1</span>
-            <button type="button" class="st-btn" id="btnAddAdults">+</button>
+            <button type="button" class="st-btn" id="btnAddAdults" aria-label="Aumentar adultos">+</button>
           </div>
         </div>
 
@@ -463,439 +143,39 @@
             <div class="p-text"><strong>Niños/Bebés</strong><span>< 5 años</span></div>
           </div>
           <div class="stepper-controls">
-            <button type="button" class="st-btn" id="btnSubMinors">-</button>
+            <button type="button" class="st-btn" id="btnSubMinors" aria-label="Disminuir niños">-</button>
             <span class="st-val" id="valMinors">0</span>
-            <button type="button" class="st-btn" id="btnAddMinors">+</button>
+            <button type="button" class="st-btn" id="btnAddMinors" aria-label="Aumentar niños">+</button>
           </div>
         </div>
       </div>
 
-      <!-- EQUIPAJE TOGGLE BINARIO -->
+      <!-- Equipaje Toggle Binario -->
       <div class="form-group">
-        <label class="toggle-wrapper">
+        <label class="toggle-wrapper" for="hasLuggage">
           <span class="t-label">🧳 ¿Lleva equipaje?</span>
           <input type="checkbox" id="hasLuggage">
           <div class="t-switch"></div>
         </label>
       </div>
       
+      <!-- Fecha -->
       <div class="form-group">
-        <label class="form-label">Fecha del viaje</label>
+        <label class="form-label" for="date">Fecha del viaje</label>
         <input type="date" id="date" class="form-control" required>
       </div>
       
+      <!-- Despacho -->
       <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
         Enviar por WhatsApp
       </button>
     </form>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Configuración de enrutamiento telefónico
-      const PROD_PHONE = '50672094457'; // Álvaro Scott
-      const TEST_PHONE = '50687292124'; // Número de Pruebas / QA
-      
-      // Estado en memoria de la sesión (cero persistencia en localStorage/cookies)
-      let isTestMode = false;
-      let internalGeoData = ""; 
-      let userCoords = null;
-
-      // ==========================================
-      // FEATURE FLAG: MODO TESTER OCULTO (10 taps / 3.5s)
-      // ==========================================
-      let testerTaps = 0;
-      let testerTimer = null;
-      const logoEl = document.getElementById('logoContainer');
-
-      if (logoEl) {
-        logoEl.addEventListener('click', () => {
-          testerTaps++;
-          if (testerTaps === 1) {
-            clearTimeout(testerTimer);
-            testerTimer = setTimeout(() => {
-              testerTaps = 0;
-            }, 3500);
-          } else if (testerTaps >= 10) {
-            clearTimeout(testerTimer);
-            testerTaps = 0;
-            isTestMode = !isTestMode;
-            if (navigator.vibrate) {
-              navigator.vibrate([100, 50, 100]);
-            }
-          }
-        });
-      }
-
-      // ==========================================
-      // MODAL CONTROLLER
-      // ==========================================
-      const modal = document.getElementById('modal');
-      const overlay = document.getElementById('overlay');
-      
-      document.getElementById('btnOpenModal').addEventListener('click', () => {
-        modal.classList.add('active'); 
-        overlay.classList.add('active');
-      });
-      const closeModal = () => { 
-        modal.classList.remove('active'); 
-        overlay.classList.remove('active'); 
-      };
-      document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-      overlay.addEventListener('click', closeModal);
-
-      // ==========================================
-      // FECHA MÍNIMA (Hoy en adelante)
-      // ==========================================
-      const dateInput = document.getElementById('date');
-      const now = new Date();
-      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      dateInput.min = today; 
-      dateInput.value = today;
-
-      // ==========================================
-      // LÓGICA DE DESTINOS DINÁMICOS
-      // ==========================================
-      const destGroup = document.getElementById('destinationGroup');
-      const nicGroup = document.getElementById('nicaraguaDestinations');
-      const nicCity = document.getElementById('nicaraguaCity');
-      const otherGroup = document.getElementById('otherDestination');
-      const otherDestText = document.getElementById('otherDestText');
-
-      const checkDestinations = () => {
-        const val = destGroup.value;
-        const nicVal = nicCity.value;
-        
-        nicGroup.style.display = val === 'Nicaragua' ? 'block' : 'none';
-        nicCity.required = (val === 'Nicaragua');
-
-        if (val === 'Otro' || (val === 'Nicaragua' && nicVal === 'Otro')) {
-          otherGroup.style.display = 'block';
-          otherDestText.required = true;
-        } else {
-          otherGroup.style.display = 'none';
-          otherDestText.required = false;
-        }
-      };
-
-      destGroup.addEventListener('change', checkDestinations);
-      nicCity.addEventListener('change', checkDestinations);
-
-      // ==========================================
-      // CONTROL DE PASAJEROS (Máximo 11 combinado)
-      // ==========================================
-      let adultsCount = 1;
-      let minorsCount = 0;
-      const MAX_PASSENGERS = 11;
-      
-      const updateCounters = () => {
-        document.getElementById('valAdults').textContent = adultsCount;
-        document.getElementById('valMinors').textContent = minorsCount;
-        
-        document.getElementById('btnSubAdults').disabled = adultsCount <= 1;
-        document.getElementById('btnSubMinors').disabled = minorsCount <= 0;
-        
-        const canAdd = (adultsCount + minorsCount) < MAX_PASSENGERS;
-        document.getElementById('btnAddAdults').disabled = !canAdd;
-        document.getElementById('btnAddMinors').disabled = !canAdd;
-        
-        document.getElementById('cardAdults').classList.toggle('active', adultsCount > 0);
-        document.getElementById('cardMinors').classList.toggle('active', minorsCount > 0);
-      };
-
-      const triggerLimitFeedback = (btnId) => {
-        const btn = document.getElementById(btnId);
-        btn.classList.remove('shake'); 
-        void btn.offsetWidth; 
-        btn.classList.add('shake');
-        if (navigator.vibrate) {
-          navigator.vibrate(50);
-        }
-      };
-
-      document.getElementById('btnAddAdults').addEventListener('click', () => { 
-        if ((adultsCount + minorsCount) < MAX_PASSENGERS) { 
-          adultsCount++; 
-          updateCounters(); 
-        } else {
-          triggerLimitFeedback('btnAddAdults'); 
-        }
-      });
-      document.getElementById('btnSubAdults').addEventListener('click', () => { 
-        if (adultsCount > 1) { 
-          adultsCount--; 
-          updateCounters(); 
-        } 
-      });
-      document.getElementById('btnAddMinors').addEventListener('click', () => { 
-        if ((adultsCount + minorsCount) < MAX_PASSENGERS) { 
-          minorsCount++; 
-          updateCounters(); 
-        } else {
-          triggerLimitFeedback('btnAddMinors'); 
-        }
-      });
-      document.getElementById('btnSubMinors').addEventListener('click', () => { 
-        if (minorsCount > 0) { 
-          minorsCount--; 
-          updateCounters(); 
-        } 
-      });
-      updateCounters();
-
-      // ==========================================
-      // CAPTURA DE ALTA PRECISIÓN Y GEOCODIFICACIÓN DETALLADA
-      // ==========================================
-      const locationBtn = document.getElementById('locationBtn');
-      const locationSuccess = document.getElementById('locationSuccess');
-      const gpsHint = document.getElementById('gpsHint');
-
-      // Función para procesar y resolver la dirección de máxima precisión
-      const resolveDetailedAddress = async (coords) => {
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`, {
-            headers: { 'Accept-Language': 'es' }
-          });
-          if (!res.ok) return;
-          const data = await res.json();
-          const addr = data.address || {};
-
-          // 1. Lugares específicos, complejos industriales, parques empresariales, residenciales y comercios
-          const placeNames = [
-            addr.industrial,     // Ej: "Zona Franca Coyol"
-            addr.amenity,        // Ej: Nombre de empresa, hospital, escuela
-            addr.office,         // Ej: Oficinas corporativas
-            addr.commercial,     // Ej: Centro comercial
-            addr.residential,    // Ej: "Condominio Royal Palm"
-            addr.building,       // Ej: Nombre del edificio
-            addr.neighbourhood,  // Ej: "Llanos del Coyol" o "El Coyol"
-            addr.suburb,         // Ej: "El Coyol"
-            addr.hamlet,         // Ej: Caseríos rurales
-            addr.quarter,
-            addr.locality
-          ].filter(Boolean);
-
-          // 2. Vía o calle exacta con número de inmueble si existe
-          const roadNames = [
-            addr.road || addr.pedestrian || addr.highway || addr.path,
-            addr.house_number ? `#${addr.house_number}` : null
-          ].filter(Boolean);
-
-          // 3. Distrito / Poblado / Ciudad
-          const districtNames = [
-            addr.district,
-            addr.village,
-            addr.town,
-            addr.city
-          ].filter(Boolean);
-
-          // 4. Cantón y Provincia
-          const cantonName = addr.county || addr.municipality || '';
-          const provinceName = addr.state || '';
-
-          // Ensamblar elementos jerárquicos deduplicados
-          const elements = [];
-
-          if (placeNames.length > 0) {
-            const uniquePlaces = [...new Set(placeNames)];
-            elements.push(uniquePlaces.join(', '));
-          }
-
-          if (roadNames.length > 0) {
-            const roadStr = roadNames.join(' ');
-            if (!elements.some(el => el.toLowerCase().includes(roadStr.toLowerCase()))) {
-              elements.push(roadStr);
-            }
-          }
-
-          if (districtNames.length > 0) {
-            const distStr = districtNames[0];
-            if (!elements.some(el => el.toLowerCase().includes(distStr.toLowerCase()))) {
-              elements.push(distStr);
-            }
-          }
-
-          if (cantonName && !elements.some(el => el.toLowerCase().includes(cantonName.toLowerCase()))) {
-            elements.push(cantonName);
-          }
-
-          if (provinceName && !elements.some(el => el.toLowerCase().includes(provinceName.toLowerCase()))) {
-            elements.push(provinceName);
-          }
-
-          if (elements.length >= 2) {
-            internalGeoData = elements.join(', ');
-          } else if (data.display_name) {
-            // Fallback con display_name limpio sin códigos postales ni "Costa Rica"
-            internalGeoData = data.display_name
-              .split(',')
-              .map(s => s.trim())
-              .filter(s => s && s.toLowerCase() !== 'costa rica' && !/^\d{4,5}$/.test(s))
-              .join(', ');
-          }
-        } catch (e) {
-          // Si la consulta de red falla, se preservan coordenadas crudas
-        }
-      };
-
-      locationBtn.addEventListener('click', () => {
-        locationBtn.disabled = true;
-        locationBtn.innerHTML = `
-          <svg class="spin-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-          </svg>
-          <span>Fijando ubicación...</span>
-        `;
-
-        if (!navigator.geolocation) {
-          resetGpsBtn();
-          return;
-        }
-
-        let bestPosition = null;
-        let watchId = null;
-        let convergenceTimeout = null;
-
-        const finalizeLocation = (position) => {
-          if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-          }
-          if (convergenceTimeout !== null) {
-            clearTimeout(convergenceTimeout);
-            convergenceTimeout = null;
-          }
-
-          userCoords = { 
-            lat: position.coords.latitude, 
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          };
-
-          // Confirmación visual sin exponer datos técnicos al cliente
-          locationBtn.style.display = "none";
-          if (gpsHint) gpsHint.style.display = "none";
-          locationSuccess.style.display = "flex";
-
-          // Geocodificación inversa detallada en segundo plano
-          resolveDetailedAddress(userCoords);
-        };
-
-        // Escucha convergente: Permite al chip GPS móvil fijar satélites de alta precisión (< 25m)
-        try {
-          watchId = navigator.geolocation.watchPosition(
-            (pos) => {
-              if (!bestPosition || pos.coords.accuracy < bestPosition.coords.accuracy) {
-                bestPosition = pos;
-              }
-              // Si la precisión es excelente (≤ 25 metros), tenemos un bloqueo satelital real
-              if (pos.coords.accuracy <= 25) {
-                finalizeLocation(pos);
-              }
-            },
-            (err) => {
-              if (bestPosition) {
-                finalizeLocation(bestPosition);
-              } else {
-                resetGpsBtn();
-              }
-            },
-            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-          );
-
-          // Si tras 3.5 segundos aún no baja de 25m, finaliza con la mejor captura disponible
-          convergenceTimeout = setTimeout(() => {
-            if (bestPosition) {
-              finalizeLocation(bestPosition);
-            }
-          }, 3500);
-        } catch (e) {
-          // Fallback a getCurrentPosition si watchPosition no responde
-          navigator.geolocation.getCurrentPosition(
-            finalizeLocation,
-            resetGpsBtn,
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-          );
-        }
-
-        function resetGpsBtn() {
-          if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-          locationBtn.disabled = false;
-          locationBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
-            <span>Reintentar fijar GPS</span>
-          `;
-        }
-      });
-
-      // ==========================================
-      // FORM SUBMISSION & DESPACHO A WHATSAPP
-      // ==========================================
-      document.getElementById('bookingForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value.trim();
-        const phone1 = document.getElementById('phone1').value.trim();
-        const luggage = document.getElementById('hasLuggage').checked ? 'Sí' : 'No';
-        
-        const [y, m, d] = dateInput.value.split('-');
-        const dateStr = `${d}/${m}/${y}`;
-
-        const cleanPhone1 = phone1.replace(/\D/g, '');
-        const waClientLink = `https://wa.me/${cleanPhone1.length === 8 ? '506' + cleanPhone1 : cleanPhone1}`;
-        
-        // Formateo del Destino
-        let finalDest = destGroup.value;
-        if (finalDest === 'Nicaragua') {
-          finalDest = `Nicaragua (${nicCity.value === 'Otro' ? otherDestText.value.trim() : nicCity.value})`;
-        } else if (finalDest === 'Otro') {
-          finalDest = otherDestText.value.trim();
-        }
-
-        // Formateo de Ubicación y Coordenadas
-        let coordsLine = 'No capturadas';
-        let navLines = '• Enlaces no disponibles (sin GPS)';
-
-        if (userCoords) {
-          const accText = userCoords.accuracy ? ` (±${Math.round(userCoords.accuracy)}m)` : '';
-          coordsLine = `${userCoords.lat.toFixed(6)}, ${userCoords.lng.toFixed(6)}${accText}`;
-          navLines = `• Waze: https://waze.com/ul?ll=${userCoords.lat},${userCoords.lng}&navigate=yes\n• Google Maps: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lng}`;
-        }
-
-        const addressLine = internalGeoData || (userCoords ? 'Coordenadas capturadas (sin geocodificación)' : 'No compartida');
-        const senias = document.getElementById('manualLocation').value.trim();
-
-        // Construcción del Ticket Enriquecido de WhatsApp
-        const headerText = isTestMode ? '[TEST / SIMULACIÓN DE SISTEMA]\n\n' : '';
-        
-        const msg = `${headerText}*🚐 SOLICITUD DE VIAJE - LA SOLUCIÓN*
-
-*👤 INFO DEL CLIENTE*
-• Nombre: ${name}
-• Teléfono: ${phone1}
-• WhatsApp: ${waClientLink}
-
-*🧳 DETALLES DEL VIAJE*
-• Destino: ${finalDest}
-• Fecha: ${dateStr}
-• Pasajeros: ${adultsCount} Adulto(s), ${minorsCount} Niño(s)
-• Equipaje: ${luggage}
-
-*📍 PUNTO DE RECOLECCIÓN*
-• Dirección: ${addressLine}
-• Coordenadas: ${coordsLine}
-• Señas: ${senias || 'Sin señas adicionales'}
-
-*🧭 NAVEGACIÓN CHOFER*
-${navLines}`;
-
-        const targetPhone = isTestMode ? TEST_PHONE : PROD_PHONE;
-        const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`;
-
-        // Despacho mediante window.location.href para evitar bloqueo de ventanas emergentes en móviles
-        window.location.href = waUrl;
-      });
-    });
-  </script>
+  <!-- Modular Scripts Architecture -->
+  <script src="js/config.js"></script>
+  <script src="js/geo.js"></script>
+  <script src="js/tester.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
