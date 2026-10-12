@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Transportes La Solución - Reservas VIP & Asistencia en Carretera</title>
   <meta name="description" content="Servicio de transporte privado VIP y auxilio vial en carretera. Rápido, seguro y confiable.">
+
+  <!-- Favicon SVG Embebido Data-URI (Evita cualquier error 404 de favicon) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚐</text></svg>">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,16 +18,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- CDN Dependencias Open-Source -->
-  <!-- 1. Notyf CSS (Toast notifications) -->
+  <!-- 1. Notyf CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
   
-  <!-- 2. Lucide Icons (Versión latest verificada y con fallbacks) -->
+  <!-- 2. Lucide Icons (CDN + Motor de Respaldo SVG 100% Inmune a Desconexión) -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   
-  <!-- 3. libphonenumber-js (Validación estricta móvil para Costa Rica y Nicaragua) -->
+  <!-- 3. libphonenumber-js -->
   <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.49/bundle/libphonenumber-js.min.js"></script>
   
-  <!-- 4. IMask.js (Máscara en tiempo real) -->
+  <!-- 4. IMask.js -->
   <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
   
   <!-- 5. Notyf JS -->
@@ -66,14 +72,25 @@
       position: relative;
     }
 
-    /* Lucide icons alignment */
-    i[data-lucide] {
+    /* Iconos SVG y Lucide: Alineación perfecta y tamaño uniforme */
+    i[data-lucide], .app-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       vertical-align: middle;
-      width: 1.25rem;
-      height: 1.25rem;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    i[data-lucide] svg, .app-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     /* Background Ambient Orbs (GPU Accelerated) */
@@ -136,7 +153,7 @@
       animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* LOGO CONTAINER CON VAN NÍTIDO Y RESPUESTA TÁCTIL */
+    /* LOGO CONTAINER CON VECTOR SVG DE ALTA DEFINICIÓN (100% INFALIBLE) */
     .logo-container {
       position: relative;
       width: 120px;
@@ -161,12 +178,11 @@
       box-shadow: 0 10px 25px rgba(225, 29, 72, 0.3);
     }
 
-    .logo-icon {
-      font-size: 3.8rem;
-      line-height: 1;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+    .logo-svg {
+      width: 78px;
+      height: 78px;
       pointer-events: none;
-      display: block;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
     }
 
     @keyframes float {
@@ -220,7 +236,7 @@
       gap: 0.35rem;
     }
 
-    /* PANEL DE DOS SERVICIOS INDEPENDIENTES EN PÁGINA PRINCIPAL */
+    /* DOS SERVICIOS INDEPENDIENTES EN LA PÁGINA PRINCIPAL */
     .services-grid {
       width: 100%;
       display: flex;
@@ -282,7 +298,11 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 1.9rem;
+    }
+
+    .service-icon-box i, .service-icon-box svg {
+      width: 1.85rem;
+      height: 1.85rem;
     }
 
     .service-icon-trip {
@@ -821,9 +841,37 @@
   <!-- Vista Principal -->
   <main class="main-wrapper">
     <section class="hero">
-      <!-- Contenedor del Logo Principal con Van Visible + Trigger Oculto de Emergencia (10 toques / 3.5s) -->
+      <!-- Contenedor del Logo con Emblema Vectorial SVG VIP de Alta Gama (100% Inmune a Fallos) -->
       <div class="logo-container" id="logoContainer" title="Transportes La Solución">
-        <span class="logo-icon">🚐</span>
+        <svg class="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vanBody" x1="6" y1="18" x2="52" y2="46" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#f43f5e"/>
+              <stop offset="1" stop-color="#be123c"/>
+            </linearGradient>
+            <linearGradient id="vanFrontGrad" x1="38" y1="18" x2="58" y2="46" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fb7185"/>
+              <stop offset="1" stop-color="#e11d48"/>
+            </linearGradient>
+          </defs>
+          <!-- Carrocería Van VIP -->
+          <rect x="6" y="18" width="46" height="28" rx="7" fill="url(#vanBody)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <path d="M38 18H51C53.2 18 55.1 19.4 55.7 21.5L58 30V44C58 45.1 57.1 46 56 46H52V18Z" fill="url(#vanFrontGrad)"/>
+          <!-- Ventanillas Tintadas -->
+          <rect x="11" y="23" width="11" height="9" rx="2.5" fill="#0f172a" opacity="0.85"/>
+          <rect x="25" y="23" width="11" height="9" rx="2.5" fill="#0f172a" opacity="0.85"/>
+          <path d="M39 23H48L53 32H39V23Z" fill="#38bdf8" opacity="0.9"/>
+          <!-- Luces Delanteras y Traseras -->
+          <circle cx="56" cy="38" r="3" fill="#fef08a"/>
+          <circle cx="8" cy="38" r="2.5" fill="#ef4444"/>
+          <!-- Franja Deportiva VIP -->
+          <line x1="6" y1="36" x2="58" y2="36" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <!-- Ruedas y Rines -->
+          <circle cx="18" cy="46" r="7" fill="#0f172a" stroke="#64748b" stroke-width="2.5"/>
+          <circle cx="18" cy="46" r="2.5" fill="#e2e8f0"/>
+          <circle cx="46" cy="46" r="7" fill="#0f172a" stroke="#64748b" stroke-width="2.5"/>
+          <circle cx="46" cy="46" r="2.5" fill="#e2e8f0"/>
+        </svg>
       </div>
       <h1>La <span>Solución</span></h1>
       <p>Transporte privado VIP y auxilio vial en carretera. Confiable, seguro y disponible 24/7.</p>
@@ -1168,18 +1216,55 @@
   <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y ROBUSTA -->
   <!-- ============================================================ -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // 1. Inicialización Segura de Lucide Icons
-      const initIcons = () => {
-        try {
-          if (typeof lucide !== 'undefined' && lucide.createIcons) {
-            lucide.createIcons();
-          }
-        } catch (_e) {}
-      };
-      initIcons();
+    // DICCIONARIO SVG INLINE EMBEBIDO: 100% AUTÓNOMO Y RESILIENTE ANTE FALLOS DE RED O CDN
+    const INLINE_SVGS = {
+      'calendar': '<svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
+      'user': '<svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+      'phone': '<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+      'map-pin': '<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+      'navigation': '<svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>',
+      'radio': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>',
+      'crosshair': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="6"/><line x1="12" x2="12" y1="18" y2="22"/></svg>',
+      'check-circle-2': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+      'minus': '<svg viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"/></svg>',
+      'plus': '<svg viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>',
+      'smile': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>',
+      'alert-triangle': '<svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>',
+      'x': '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      'briefcase': '<svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+      'send': '<svg viewBox="0 0 24 24"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+      'chevron-right': '<svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>',
+      'wrench': '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+      'truck': '<svg viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>'
+    };
 
-      // 2. Inicialización de Notyf Toasts (Tema Oscuro)
+    // Renderizador Autónomo de Iconos (Ejecuta Lucide y aplica Fallback SVG Inmediato)
+    function renderAppIcons() {
+      // Paso 1: Intentar con Lucide si el CDN cargó exitosamente
+      try {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      } catch (_e) {}
+
+      // Paso 2: Escanear y asegurar que absolutamente ningún icono quede vacío
+      document.querySelectorAll('i[data-lucide]').forEach((el) => {
+        if (!el.querySelector('svg')) {
+          const iconName = el.getAttribute('data-lucide');
+          if (INLINE_SVGS[iconName]) {
+            el.innerHTML = INLINE_SVGS[iconName];
+          }
+        }
+      });
+    }
+
+    // Ejecución inmediata y en eventos clave
+    renderAppIcons();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAppIcons();
+
+      // 2. Inicialización de Notyf Toasts (Tema Oscuro con Fallback)
       let notyf = {
         success: (m) => alert(m),
         error: (m) => alert(m),
@@ -1467,7 +1552,7 @@
       const openTripModal = () => {
         modalTrip.classList.add('active');
         overlayTrip.classList.add('active');
-        initIcons();
+        renderAppIcons();
       };
       const closeTripModal = () => {
         modalTrip.classList.remove('active');
@@ -1487,7 +1572,7 @@
       const openTowModal = () => {
         modalTow.classList.add('active');
         overlayTow.classList.add('active');
-        initIcons();
+        renderAppIcons();
       };
       const closeTowModal = () => {
         modalTow.classList.remove('active');
