@@ -1,0 +1,17 @@
+{
+  "name": "@transportes-la-solucion/validation",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "node test/validation.test.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@transportes-la-solucion/types": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
