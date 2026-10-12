@@ -3,105 +3,850 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transportes La Solución - Reservas Premium</title>
-  <meta name="description" content="Servicio de transporte privado VIP. Rápido, seguro y confiable en Costa Rica y Nicaragua.">
-  
+  <title>Transportes La Solución - Reservas Premium & Asistencia</title>
+  <meta name="description" content="Servicio de transporte privado VIP y asistencia en carretera. Rápido, seguro y confiable.">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Modular Stylesheet -->
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CDN Dependencias Open-Source -->
+  <!-- 1. Notyf (Estilos de notificaciones Toast) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+  <!-- 2. Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+  <!-- 3. libphonenumber-js -->
+  <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.49/bundle/libphonenumber-js.min.js"></script>
+  <!-- 4. IMask.js -->
+  <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
+  <!-- 5. Notyf JS -->
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+  <!-- 6. canvas-confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #e11d48; /* Premium Red */
+      --primary-glow: rgba(225, 29, 72, 0.45);
+      --secondary: #f59e0b; /* Amber / Warning */
+      --secondary-glow: rgba(245, 158, 11, 0.4);
+      --bg: #0b0f19; /* Deep Space Dark */
+      --surface: #111827; /* Dark Glass Surface */
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --input-bg: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Lucide icons alignment helper */
+    i[data-lucide] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* Background Ambient Orbs (GPU Accelerated) */
+    .ambient-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: -1;
+      animation: drift 20s infinite alternate ease-in-out;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+    }
+
+    .orb-1 {
+      top: -10%;
+      left: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: rgba(225, 29, 72, 0.15);
+    }
+
+    .orb-2 {
+      bottom: -20%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: rgba(245, 158, 11, 0.1);
+      animation-delay: -5s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(5%, 10%, 0); }
+    }
+
+    .top-bar {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      width: 100%;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .logo-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--surface-border);
+      animation: float 6s ease-in-out infinite;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: transform 0.15s ease;
+    }
+
+    .logo-container:active {
+      transform: scale(0.92);
+    }
+
+    .logo-container i[data-lucide] {
+      width: 3.5rem;
+      height: 3.5rem;
+      color: #f8fafc;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      font-weight: 400;
+    }
+
+    .warning-box {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 1rem;
+      color: #fcd34d;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+
+    /* CTA BUTTONS */
+    .btn-cta {
+      position: relative;
+      width: 100%;
+      padding: 1.35rem;
+      border-radius: 1.25rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #be123c);
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 15px 35px var(--primary-glow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .btn-cta::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: skewX(-20deg);
+      animation: shine 4s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -100%; }
+      20%, 100% { left: 200%; }
+    }
+
+    .btn-cta:active {
+      transform: scale(0.96);
+      box-shadow: 0 5px 15px var(--primary-glow);
+    }
+
+    /* MODAL OVERLAY & CONTAINER (Glassmorphism) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 40;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      border-radius: 2rem 2rem 0 0;
+      padding: 2rem 1.5rem 3rem;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 50;
+      box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal.active {
+      transform: translateY(0);
+    }
+
+    @media (min-width: 640px) {
+      .modal {
+        top: 50%;
+        bottom: auto;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -45%) scale(0.95);
+        width: 100%;
+        max-width: 500px;
+        border-radius: 1.75rem;
+        border: 1px solid var(--surface-border);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .close-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:active {
+      transform: scale(0.9);
+      background: var(--surface-border);
+      color: white;
+    }
+
+    /* EMERGENCY MODAL SPECIFICS */
+    .modal-emergency {
+      border-top-color: var(--secondary) !important;
+      box-shadow: 0 -20px 50px rgba(245, 158, 11, 0.2) !important;
+    }
+
+    @media (min-width: 640px) {
+      .modal-emergency {
+        border-color: rgba(245, 158, 11, 0.4) !important;
+      }
+    }
+
+    .modal-emergency .modal-title {
+      color: #fbbf24;
+    }
+
+    .btn-cta-emergency {
+      background: linear-gradient(135deg, #d97706, #b45309) !important;
+      box-shadow: 0 15px 35px var(--secondary-glow) !important;
+    }
+
+    /* FORM STYLING */
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #cbd5e1;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1.1rem;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: white;
+      transition: all 0.2s;
+    }
+
+    .form-control::placeholder {
+      color: #64748b;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
+      background: #1e293b;
+    }
+
+    .modal-emergency .form-control:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 85px;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+
+    select.form-control option {
+      background: var(--surface);
+      color: white;
+    }
+
+    /* STEPPERS */
+    .stepper-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.25rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .stepper-card.active {
+      border-color: var(--primary);
+      background: rgba(225, 29, 72, 0.05);
+    }
+
+    .passenger-info {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .p-text strong {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      color: white;
+    }
+
+    .p-text span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.3rem;
+      border-radius: 2rem;
+    }
+
+    .st-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .st-btn:active {
+      transform: scale(0.85);
+      background: var(--primary);
+      color: white;
+    }
+
+    .st-btn:disabled {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .st-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      width: 26px;
+      text-align: center;
+    }
+
+    /* TOGGLE SWITCH */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 1.25rem;
+      padding: 1.15rem 1rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .t-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t-switch {
+      position: relative;
+      width: 56px;
+      height: 32px;
+      background: #334155;
+      border-radius: 16px;
+      transition: 0.3s;
+    }
+
+    .t-switch::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    input[type="checkbox"]:checked ~ .t-switch {
+      background: var(--success);
+      box-shadow: 0 0 12px var(--success-glow);
+    }
+
+    input[type="checkbox"]:checked ~ .t-switch::after {
+      transform: translateX(24px);
+    }
+
+    /* GPS BUTTON & RADAR CALIBRATION MODULE */
+    .btn-gps {
+      width: 100%;
+      padding: 1.15rem;
+      border-radius: 1rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-gps:active {
+      transform: scale(0.97);
+    }
+
+    .gps-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    /* RADAR CONTAINER */
+    .radar-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.4rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 1.25rem;
+      margin-bottom: 0.75rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .radar-sweep {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 2px solid rgba(59, 130, 246, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .radar-sweep::before,
+    .radar-sweep::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      animation: pulse-radar 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    .radar-sweep::after {
+      inset: -18px;
+      animation-delay: 0.7s;
+    }
+
+    @keyframes pulse-radar {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      50% { opacity: 0.4; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .radar-pulse-core {
+      width: 14px;
+      height: 14px;
+      background: #3b82f6;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #3b82f6;
+      animation: pulse-core 1.2s infinite alternate;
+    }
+
+    @keyframes pulse-core {
+      0% { transform: scale(0.8); box-shadow: 0 0 8px #3b82f6; }
+      100% { transform: scale(1.2); box-shadow: 0 0 20px #60a5fa; }
+    }
+
+    .radar-timer {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .radar-accuracy {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-top: 0.25rem;
+    }
+
+    .btn-manual-lock {
+      margin-top: 0.85rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-manual-lock:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ESTADO DE ÉXITO MINIMALISTA */
+    .loc-success {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      padding: 0.95rem 1rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .shake {
+      animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(3px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
+    }
+  </style>
 </head>
 <body>
-  <!-- Ambient Graphic Elements -->
+  <!-- Orbes Ambientales de Fondo -->
   <div class="ambient-orb orb-1"></div>
   <div class="ambient-orb orb-2"></div>
   <div class="top-bar"></div>
-  
-  <!-- Main View Wrapper -->
+
+  <!-- Vista Principal -->
   <main class="main-wrapper">
     <section class="hero">
+      <!-- Contenedor del Logo con Trigger Oculto de Emergencia (10 toques / 3.5s) -->
       <div class="logo-container" id="logoContainer" title="Transportes La Solución">
-        <span class="logo-icon">🚐</span>
+        <i data-lucide="bus"></i>
       </div>
       <h1>La <span>Solución</span></h1>
       <p>Servicio de transporte privado. Rápido, VIP y totalmente seguro.</p>
-      
+
       <div class="warning-box">
-        <strong style="color: #fbbf24; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          AVISO
+        <strong style="color: #fbbf24; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+          <i data-lucide="alert-triangle"></i>
+          AVISO IMPORTANTE
         </strong>
-        Llene esto <strong>ÚNICAMENTE</strong> estando en el punto de recolección para ubicarlo por GPS.
+        Llene este formulario <strong>ÚNICAMENTE</strong> estando en el punto de recolección para calibrar su posición satelital por GPS.
       </div>
     </section>
-    
-    <button class="btn-cta" id="btnOpenModal" type="button">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-        <polyline points="14 2 14 8 20 8"></polyline>
-        <line x1="12" y1="18" x2="12" y2="12"></line>
-        <line x1="9" y1="15" x2="15" y2="15"></line>
-      </svg>
+
+    <!-- Botón Principal: Abre Modal 1 de Reservas -->
+    <button class="btn-cta" id="btnOpenTripModal" type="button">
+      <i data-lucide="calendar"></i>
       Agendar Viaje
     </button>
   </main>
 
-  <!-- Glassmorphism Booking Modal -->
-  <div class="modal-overlay" id="overlay"></div>
-  <div class="modal" id="modal">
+  <!-- ============================================================ -->
+  <!-- MODAL 1: FLUJO REGULAR DE VIAJES (Álvaro Scott: +50672094457) -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="overlayTrip"></div>
+  <div class="modal" id="modalTrip" role="dialog" aria-labelledby="tripModalTitle">
     <div class="modal-header">
-      <h2 class="modal-title" id="modalTitle">Detalles del Viaje</h2>
-      <button class="close-btn" id="btnCloseModal" type="button" aria-label="Cerrar modal">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <h2 class="modal-title" id="tripModalTitle">
+        <i data-lucide="calendar"></i>
+        Detalles del Viaje
+      </h2>
+      <button class="close-btn" id="btnCloseTripModal" type="button" aria-label="Cerrar modal">
+        <i data-lucide="x"></i>
       </button>
     </div>
-    
-    <form id="bookingForm">
-      <!-- Datos Básicos -->
+
+    <form id="tripForm">
+      <!-- 1. Nombre Completo -->
       <div class="form-group">
-        <label class="form-label" for="name">Nombre Completo</label>
-        <input type="text" id="name" class="form-control" required placeholder="Ej: Juan Pérez">
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label" for="phone1">Teléfono</label>
-        <input type="tel" id="phone1" class="form-control" required placeholder="8888-8888" style="letter-spacing: 2px;">
+        <label class="form-label" for="tripName">
+          <i data-lucide="user"></i>
+          Nombre Completo
+        </label>
+        <input type="text" id="tripName" class="form-control" required placeholder="Ej: Juan Pérez">
       </div>
 
-      <!-- Módulo GPS & Recolección (Inicio del modal) -->
+      <!-- 2. Teléfono con IMask y libphonenumber-js -->
+      <div class="form-group">
+        <label class="form-label" for="tripPhone">
+          <i data-lucide="phone"></i>
+          Teléfono Principal
+        </label>
+        <input type="tel" id="tripPhone" class="form-control" required placeholder="8888-8888" style="letter-spacing: 1.5px;">
+      </div>
+
+      <!-- 3. Módulo GPS Temprano con Calibración de 30s -->
       <div class="form-group" style="margin-top: 1.5rem;">
-        <label class="form-label">📍 Punto de Recogida</label>
-        
-        <button type="button" class="btn-gps" id="locationBtn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
-          <span id="locationBtnText">Compartir GPS Actual</span>
+        <label class="form-label">
+          <i data-lucide="map-pin"></i>
+          Punto de Recogida
+        </label>
+
+        <!-- Botón Inicial -->
+        <button type="button" class="btn-gps" id="btnStartTripGPS">
+          <i data-lucide="navigation"></i>
+          <span>Compartir GPS Actual</span>
         </button>
-        <p class="gps-hint" id="gpsHint">Toque para fijar su ubicación exacta en el mapa.</p>
-        
-        <div class="loc-success" id="locationSuccess">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Ubicación fijada correctamente</span>
+        <p class="gps-hint" id="tripGpsHint">Toque para iniciar la calibración satelital de alta precisión.</p>
+
+        <!-- Radar de Calibración en Tiempo Real -->
+        <div class="radar-container" id="tripRadar">
+          <div class="radar-sweep">
+            <div class="radar-pulse-core"></div>
+          </div>
+          <div class="radar-timer">
+            <i data-lucide="radio"></i>
+            <span id="tripRadarCountdown">Escaneando satélites... 30s</span>
+          </div>
+          <div class="radar-accuracy" id="tripRadarAccuracy">Buscando señal óptima...</div>
+          <button type="button" class="btn-manual-lock" id="btnLockTripGPS">
+            <i data-lucide="crosshair"></i>
+            Fijar lectura actual
+          </button>
         </div>
 
-        <textarea id="manualLocation" class="form-control" placeholder="Señas o referencias adicionales (Ej: Zona Franca Coyol edificio B14, casa blanca con portón negro...)"></textarea>
+        <!-- Estado de Éxito Consolidado -->
+        <div class="loc-success" id="tripGpsSuccess">
+          <i data-lucide="check-circle-2"></i>
+          <span>Ubicación fijada con máxima precisión</span>
+        </div>
+
+        <!-- Señas Manuales -->
+        <textarea id="tripLocationDetails" class="form-control" placeholder="Señas o referencias físicas (Ej: Zona Franca Coyol edificio B14, casa blanca con portón negro, frente al parque...)"></textarea>
       </div>
-      
-      <!-- Destinos Dinámicos -->
+
+      <!-- 4. Selector de Destinos Dinámico -->
       <div class="form-group" style="margin-top: 1.5rem;">
-        <label class="form-label" for="destinationGroup">🗺️ Destino</label>
+        <label class="form-label" for="destinationGroup">
+          <i data-lucide="map-pin"></i>
+          ¿Hacia dónde viaja?
+        </label>
         <select id="destinationGroup" class="form-control" required>
-          <option value="" disabled selected>Seleccione...</option>
+          <option value="" disabled selected>Seleccione su destino...</option>
           <option value="Los Chiles">Los Chiles (Costa Rica)</option>
           <option value="Tablillas">Tablillas (Frontera)</option>
           <option value="Nicaragua">Nicaragua (Elegir ciudad)</option>
-          <option value="Otro">Otro...</option>
+          <option value="Otro">Otro destino...</option>
         </select>
       </div>
 
-      <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -1rem;">
+      <!-- Submenú condicional Nicaragua -->
+      <div class="form-group" id="nicaraguaDestinations" style="display: none; margin-top: -0.75rem;">
         <label class="form-label" for="nicaraguaCity" style="font-size: 0.95rem; color: var(--secondary);">Ciudad en Nicaragua</label>
         <select id="nicaraguaCity" class="form-control">
           <option value="" disabled selected>Seleccione la ciudad...</option>
@@ -112,70 +857,913 @@
           <option value="Masaya">Masaya</option>
           <option value="Leon">León</option>
           <option value="Esteli">Estelí</option>
-          <option value="Otro">Otra...</option>
+          <option value="Otro">Otra ciudad...</option>
         </select>
       </div>
 
-      <div class="form-group" id="otherDestination" style="display: none; margin-top: -1rem;">
-        <label class="form-label" for="otherDestText" style="font-size: 0.95rem; color: var(--secondary);">Lugar exacto</label>
-        <input type="text" id="otherDestText" class="form-control" placeholder="Escriba lugar exacto...">
+      <!-- Campo condicional 'Otro' -->
+      <div class="form-group" id="otherDestination" style="display: none; margin-top: -0.75rem;">
+        <label class="form-label" for="otherDestText" style="font-size: 0.95rem; color: var(--secondary);">Especifique el lugar exacto</label>
+        <input type="text" id="otherDestText" class="form-control" placeholder="Ej: San Carlos, Upala, Peñas Blancas...">
       </div>
 
-      <!-- Pasajeros (Máximo 11) -->
-      <div class="form-group" style="margin-top: 2rem;">
-        <label class="form-label" style="text-align: center; margin-bottom: 1rem;">Pasajeros (Máx 11)</label>
-        
+      <!-- 5. Pasajeros (Máximo Combinado 11) -->
+      <div class="form-group" style="margin-top: 1.75rem;">
+        <label class="form-label" style="justify-content: center; margin-bottom: 0.9rem;">Pasajeros (Máximo 11)</label>
+
+        <!-- Adultos -->
         <div class="stepper-card active" id="cardAdults">
           <div class="passenger-info">
-            <span class="p-icon">🧑</span>
-            <div class="p-text"><strong>Adultos</strong><span>> 5 años</span></div>
+            <i data-lucide="user"></i>
+            <div class="p-text">
+              <strong>Adultos</strong>
+              <span>Mayores de 5 años</span>
+            </div>
           </div>
           <div class="stepper-controls">
-            <button type="button" class="st-btn" id="btnSubAdults" aria-label="Disminuir adultos">-</button>
+            <button type="button" class="st-btn" id="btnSubAdults" aria-label="Restar adulto">
+              <i data-lucide="minus"></i>
+            </button>
             <span class="st-val" id="valAdults">1</span>
-            <button type="button" class="st-btn" id="btnAddAdults" aria-label="Aumentar adultos">+</button>
+            <button type="button" class="st-btn" id="btnAddAdults" aria-label="Sumar adulto">
+              <i data-lucide="plus"></i>
+            </button>
           </div>
         </div>
 
+        <!-- Niños / Bebés -->
         <div class="stepper-card" id="cardMinors">
           <div class="passenger-info">
-            <span class="p-icon">👶</span>
-            <div class="p-text"><strong>Niños/Bebés</strong><span>< 5 años</span></div>
+            <i data-lucide="smile"></i>
+            <div class="p-text">
+              <strong>Niños / Bebés</strong>
+              <span>Menores de 5 años</span>
+            </div>
           </div>
           <div class="stepper-controls">
-            <button type="button" class="st-btn" id="btnSubMinors" aria-label="Disminuir niños">-</button>
+            <button type="button" class="st-btn" id="btnSubMinors" aria-label="Restar niño">
+              <i data-lucide="minus"></i>
+            </button>
             <span class="st-val" id="valMinors">0</span>
-            <button type="button" class="st-btn" id="btnAddMinors" aria-label="Aumentar niños">+</button>
+            <button type="button" class="st-btn" id="btnAddMinors" aria-label="Sumar niño">
+              <i data-lucide="plus"></i>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Equipaje Toggle Binario -->
+      <!-- 6. Toggle de Equipaje (Sí / No) -->
       <div class="form-group">
-        <label class="toggle-wrapper" for="hasLuggage">
-          <span class="t-label">🧳 ¿Lleva equipaje?</span>
-          <input type="checkbox" id="hasLuggage">
+        <label class="toggle-wrapper" for="tripLuggage">
+          <span class="t-label">
+            <i data-lucide="briefcase"></i>
+            ¿Lleva equipaje?
+          </span>
+          <input type="checkbox" id="tripLuggage">
           <div class="t-switch"></div>
         </label>
       </div>
-      
-      <!-- Fecha -->
+
+      <!-- 7. Fecha del Viaje -->
       <div class="form-group">
-        <label class="form-label" for="date">Fecha del viaje</label>
-        <input type="date" id="date" class="form-control" required>
+        <label class="form-label" for="tripDate">
+          <i data-lucide="calendar"></i>
+          Fecha del viaje
+        </label>
+        <input type="date" id="tripDate" class="form-control" required>
       </div>
-      
-      <!-- Despacho -->
+
+      <!-- 8. Despacho a WhatsApp con Confetti -->
       <button type="submit" class="btn-cta" style="margin-top: 2rem; width: 100%;">
-        Enviar por WhatsApp
+        <i data-lucide="send"></i>
+        Enviar Solicitud por WhatsApp
       </button>
     </form>
   </div>
 
-  <!-- Modular Scripts Architecture -->
-  <script src="js/config.js"></script>
-  <script src="js/geo.js"></script>
-  <script src="js/tester.js"></script>
-  <script src="js/app.js"></script>
+  <!-- ============================================================ -->
+  <!-- MODAL 2: ASISTENCIA VIAL / GRÚA (Línea Soporte: +50687292124) -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="overlayTow"></div>
+  <div class="modal modal-emergency" id="modalTow" role="dialog" aria-labelledby="towModalTitle">
+    <div class="modal-header modal-header-emergency">
+      <h2 class="modal-title" id="towModalTitle">
+        <i data-lucide="truck"></i>
+        Asistencia Vial & Grúa
+      </h2>
+      <button class="close-btn" id="btnCloseTowModal" type="button" aria-label="Cerrar modal">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <form id="towForm">
+      <!-- 1. Nombre del Conductor / Afectado -->
+      <div class="form-group">
+        <label class="form-label" for="towName">
+          <i data-lucide="user"></i>
+          Nombre del Conductor / Afectado
+        </label>
+        <input type="text" id="towName" class="form-control" required placeholder="Ej: Carlos Méndez">
+      </div>
+
+      <!-- 2. Teléfono de Contacto -->
+      <div class="form-group">
+        <label class="form-label" for="towPhone">
+          <i data-lucide="phone"></i>
+          Teléfono de Contacto
+        </label>
+        <input type="tel" id="towPhone" class="form-control" required placeholder="8888-8888" style="letter-spacing: 1.5px;">
+      </div>
+
+      <!-- 3. Tipo de Avería -->
+      <div class="form-group">
+        <label class="form-label" for="towBreakdownType">
+          <i data-lucide="wrench"></i>
+          Tipo de Avería
+        </label>
+        <select id="towBreakdownType" class="form-control" required>
+          <option value="" disabled selected>Seleccione el problema...</option>
+          <option value="Batería / No enciende">Batería / No enciende</option>
+          <option value="Llanta estallada / Sin repuesto">Llanta estallada / Sin repuesto</option>
+          <option value="Calentamiento / Avería de motor">Calentamiento / Avería de motor</option>
+          <option value="Colisión / Accidente">Colisión / Accidente</option>
+          <option value="Atascado / Fuera de ruta">Atascado / Fuera de ruta</option>
+          <option value="Otro fallo mecánico">Otro fallo mecánico</option>
+        </select>
+      </div>
+
+      <!-- 4. Datos del Vehículo -->
+      <div class="form-group">
+        <label class="form-label" for="towVehicleDetails">
+          <i data-lucide="truck"></i>
+          Datos del Vehículo (Placa, Modelo, Color)
+        </label>
+        <input type="text" id="towVehicleDetails" class="form-control" required placeholder="Ej: ABC-123, Toyota Hilux blanco">
+      </div>
+
+      <!-- 5. Módulo GPS de Emergencia con Calibración de 30s -->
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label class="form-label">
+          <i data-lucide="map-pin"></i>
+          Ubicación del Percance
+        </label>
+
+        <!-- Botón Inicial -->
+        <button type="button" class="btn-gps" id="btnStartTowGPS">
+          <i data-lucide="navigation"></i>
+          <span>Compartir GPS de Emergencia</span>
+        </button>
+        <p class="gps-hint" id="towGpsHint">Calibración de alta precisión para ruta de rescate vehicular.</p>
+
+        <!-- Radar de Calibración -->
+        <div class="radar-container" id="towRadar">
+          <div class="radar-sweep">
+            <div class="radar-pulse-core" style="background: #f59e0b; box-shadow: 0 0 15px #f59e0b;"></div>
+          </div>
+          <div class="radar-timer" style="color: #fde68a;">
+            <i data-lucide="radio"></i>
+            <span id="towRadarCountdown">Escaneando satélites... 30s</span>
+          </div>
+          <div class="radar-accuracy" id="towRadarAccuracy">Buscando señal óptima...</div>
+          <button type="button" class="btn-manual-lock" id="btnLockTowGPS">
+            <i data-lucide="crosshair"></i>
+            Fijar lectura actual
+          </button>
+        </div>
+
+        <!-- Estado de Éxito Consolidado -->
+        <div class="loc-success" id="towGpsSuccess">
+          <i data-lucide="check-circle-2"></i>
+          <span>Ubicación de rescate fijada con éxito</span>
+        </div>
+
+        <!-- Señas de Ubicación en Carretera -->
+        <textarea id="towLocationDetails" class="form-control" placeholder="Puntos de referencia visibles en carretera, mojones kilométricos o comercios cercanos..."></textarea>
+      </div>
+
+      <!-- 6. Despacho a Línea de Grúa -->
+      <button type="submit" class="btn-cta btn-cta-emergency" style="margin-top: 2rem; width: 100%;">
+        <i data-lucide="send"></i>
+        Solicitar Grúa de Emergencia
+      </button>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- LÓGICA JAVASCRIPT EN LÍNEA AUTÓNOMA Y MODULAR -->
+  <!-- ============================================================ -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Inicialización de Lucide Icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+
+      // 2. Inicialización de Notyf Toasts (Tema Oscuro)
+      const notyf = new Notyf({
+        duration: 3500,
+        position: { x: 'center', y: 'top' },
+        types: [
+          { type: 'success', background: '#10b981', icon: false },
+          { type: 'error', background: '#e11d48', icon: false },
+          { type: 'warning', background: '#f59e0b', icon: false }
+        ]
+      });
+
+      // 3. Inicialización de Máscaras IMask.js
+      const tripPhoneEl = document.getElementById('tripPhone');
+      const towPhoneEl = document.getElementById('towPhone');
+      if (typeof IMask !== 'undefined') {
+        if (tripPhoneEl) IMask(tripPhoneEl, { mask: '0000-0000' });
+        if (towPhoneEl) IMask(towPhoneEl, { mask: '0000-0000' });
+      }
+
+      // Constantes de Enrutamiento
+      const PROD_PHONE = '50672094457'; // Álvaro Scott (Viajes)
+      const TOW_PHONE = '50687292124';  // Soporte de Carretera / Grúa
+      const MAX_PASSENGERS = 11;
+
+      // ============================================================
+      // CLASE: MOTOR DE CALIBRACIÓN GPS (HASTA 30 SEGUNDOS)
+      // ============================================================
+      class GPSCalibrationEngine {
+        constructor() {
+          this.watchId = null;
+          this.timerInterval = null;
+          this.wakeLock = null;
+          this.bestSample = null;
+          this.secondsLeft = 30;
+          this.isScanning = false;
+        }
+
+        async startScan({ onProgress, onComplete, onError }) {
+          if (!navigator.geolocation) {
+            onError('La geolocalización no está soportada por su navegador.');
+            return;
+          }
+
+          this.stopScan();
+          this.isScanning = true;
+          this.bestSample = null;
+          this.secondsLeft = 30;
+
+          // Screen Wake Lock API: Evita suspensión de sensores y apagado de pantalla
+          if ('wakeLock' in navigator) {
+            try {
+              this.wakeLock = await navigator.wakeLock.request('screen');
+            } catch (_err) {}
+          }
+
+          // Cuenta regresiva de 30 segundos
+          this.timerInterval = setInterval(() => {
+            this.secondsLeft--;
+            if (onProgress) {
+              onProgress({
+                secondsLeft: this.secondsLeft,
+                bestAccuracy: this.bestSample ? this.bestSample.coords.accuracy : null
+              });
+            }
+            if (this.secondsLeft <= 0) {
+              this.finish(onComplete, onError);
+            }
+          }, 1000);
+
+          // Muestreo continuo con watchPosition
+          try {
+            this.watchId = navigator.geolocation.watchPosition(
+              (position) => {
+                if (!this.bestSample || position.coords.accuracy < this.bestSample.coords.accuracy) {
+                  this.bestSample = position;
+                }
+                if (onProgress) {
+                  onProgress({
+                    secondsLeft: this.secondsLeft,
+                    bestAccuracy: this.bestSample.coords.accuracy
+                  });
+                }
+                // Criterio de Parada Temprana: Precisión óptima <= 8 metros
+                if (position.coords.accuracy <= 8) {
+                  this.finish(onComplete, onError);
+                }
+              },
+              (_err) => {
+                // Si aún no hay muestra, continúa esperando hasta el timeout
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          } catch (_e) {
+            this.finish(onComplete, onError);
+          }
+        }
+
+        finish(onComplete, onError) {
+          this.cleanup();
+          if (this.bestSample) {
+            onComplete(this.bestSample);
+          } else {
+            onError('No se pudo obtener señal satelital. Ingrese señas manuales.');
+          }
+        }
+
+        manualLock(onComplete, onError) {
+          if (this.bestSample) {
+            this.finish(onComplete, onError);
+          } else {
+            onError('Aún no se ha detectado señal satelital.');
+          }
+        }
+
+        cleanup() {
+          this.isScanning = false;
+          if (this.watchId !== null) {
+            navigator.geolocation.clearWatch(this.watchId);
+            this.watchId = null;
+          }
+          if (this.timerInterval !== null) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+          }
+          if (this.wakeLock) {
+            try { this.wakeLock.release(); } catch (_e) {}
+            this.wakeLock = null;
+          }
+        }
+
+        stopScan() {
+          this.cleanup();
+        }
+      }
+
+      // Función de Geocodificación Silenciosa (BigDataCloud + Fallback Nominatim)
+      async function resolveLocationAddress(lat, lng) {
+        let addressText = '';
+
+        // 1. BigDataCloud API
+        try {
+          const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`);
+          if (bdcRes.ok) {
+            const bdc = await bdcRes.json();
+            const parts = [];
+            if (bdc.locality && bdc.locality !== bdc.city) parts.push(bdc.locality);
+            if (bdc.city) parts.push(bdc.city);
+            if (bdc.principalSubdivision) parts.push(bdc.principalSubdivision);
+            if (parts.length > 0) addressText = parts.join(', ');
+          }
+        } catch (_e) {}
+
+        // 2. Nominatim OpenStreetMap (Extracción multinivel de zonas francas, calles y caseríos)
+        try {
+          const osmRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+            headers: { 'Accept-Language': 'es' }
+          });
+          if (osmRes.ok) {
+            const osm = await osmRes.json();
+            const addr = osm.address || {};
+            const places = [
+              addr.industrial,     // Ej: Zona Franca Coyol
+              addr.amenity,
+              addr.office,
+              addr.commercial,
+              addr.residential,    // Ej: Condominio Royal Palm
+              addr.building,
+              addr.neighbourhood,  // Ej: Llanos del Coyol / El Coyol
+              addr.suburb,
+              addr.hamlet
+            ].filter(Boolean);
+
+            const roads = [
+              addr.road || addr.highway || addr.pedestrian,
+              addr.house_number ? `#${addr.house_number}` : null
+            ].filter(Boolean);
+
+            const districts = [
+              addr.district,
+              addr.village,
+              addr.city || addr.town
+            ].filter(Boolean);
+
+            const canton = addr.county || addr.municipality || '';
+            const state = addr.state || '';
+
+            const enriched = [];
+            if (places.length > 0) enriched.push([...new Set(places)].join(', '));
+            if (roads.length > 0) enriched.push(roads.join(' '));
+            if (districts.length > 0) enriched.push(districts[0]);
+            if (canton) enriched.push(canton);
+            if (state) enriched.push(state);
+
+            if (enriched.length >= 2) {
+              addressText = [...new Set(enriched)].join(', ');
+            }
+          }
+        } catch (_e) {}
+
+        return addressText || 'Ubicación satelital consolidada';
+      }
+
+      // Validación Telefónica con libphonenumber-js
+      function validateAndFormatPhone(rawVal) {
+        const digits = rawVal.replace(/\D/g, '');
+        try {
+          if (typeof libphonenumber !== 'undefined') {
+            let parsed = null;
+            if (rawVal.startsWith('+')) {
+              parsed = libphonenumber.parsePhoneNumber(rawVal);
+            } else {
+              parsed = libphonenumber.parsePhoneNumber(rawVal, 'CR');
+            }
+            if (parsed && parsed.isValid()) {
+              return {
+                valid: true,
+                e164: parsed.number.replace('+', ''),
+                display: parsed.number
+              };
+            }
+          }
+        } catch (_e) {}
+
+        // Fallback Costa Rica / Nicaragua
+        if (digits.length === 8) {
+          return { valid: true, e164: '506' + digits, display: '+506' + digits };
+        }
+        if (digits.length >= 11) {
+          return { valid: true, e164: digits, display: '+' + digits };
+        }
+        return { valid: false, e164: digits, display: '+' + digits };
+      }
+
+      // ============================================================
+      // DISPARADOR OCULTO (10 TOQUES / 3.5s EN EL LOGO -> MODAL 2 GRÚA)
+      // ============================================================
+      let logoTaps = 0;
+      let logoTimer = null;
+      const logoContainer = document.getElementById('logoContainer');
+
+      if (logoContainer) {
+        logoContainer.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          logoTaps++;
+
+          if (logoTaps === 1) {
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(() => {
+              logoTaps = 0;
+            }, 3500);
+          } else if (logoTaps >= 10) {
+            clearTimeout(logoTimer);
+            logoTaps = 0;
+
+            // Vibración háptica [100, 50, 100]
+            if (navigator.vibrate) {
+              navigator.vibrate([100, 50, 100]);
+            }
+
+            // Cerrar Modal 1 si estuviese abierto y abrir Modal 2 de Grúa
+            closeTripModal();
+            openTowModal();
+            notyf.open({
+              type: 'warning',
+              message: '🚨 Modo de Asistencia Vial / Grúa activado'
+            });
+          }
+        });
+      }
+
+      // ============================================================
+      // CONTROLADORES DE MODALES
+      // ============================================================
+      // Modal 1: Viajes
+      const modalTrip = document.getElementById('modalTrip');
+      const overlayTrip = document.getElementById('overlayTrip');
+      const btnOpenTripModal = document.getElementById('btnOpenTripModal');
+      const btnCloseTripModal = document.getElementById('btnCloseTripModal');
+
+      const openTripModal = () => {
+        modalTrip.classList.add('active');
+        overlayTrip.classList.add('active');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      };
+      const closeTripModal = () => {
+        modalTrip.classList.remove('active');
+        overlayTrip.classList.remove('active');
+      };
+      if (btnOpenTripModal) btnOpenTripModal.addEventListener('click', openTripModal);
+      if (btnCloseTripModal) btnCloseTripModal.addEventListener('click', closeTripModal);
+      if (overlayTrip) overlayTrip.addEventListener('click', closeTripModal);
+
+      // Modal 2: Grúa
+      const modalTow = document.getElementById('modalTow');
+      const overlayTow = document.getElementById('overlayTow');
+      const btnCloseTowModal = document.getElementById('btnCloseTowModal');
+
+      const openTowModal = () => {
+        modalTow.classList.add('active');
+        overlayTow.classList.add('active');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      };
+      const closeTowModal = () => {
+        modalTow.classList.remove('active');
+        overlayTow.classList.remove('active');
+      };
+      if (btnCloseTowModal) btnCloseTowModal.addEventListener('click', closeTowModal);
+      if (overlayTow) overlayTow.addEventListener('click', closeTowModal);
+
+      // Restricción de Fecha Mínima en Viajes (Hoy en adelante)
+      const tripDateInput = document.getElementById('tripDate');
+      if (tripDateInput) {
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        tripDateInput.min = todayStr;
+        tripDateInput.value = todayStr;
+      }
+
+      // Destinos Dinámicos (Modal 1)
+      const destGroup = document.getElementById('destinationGroup');
+      const nicGroup = document.getElementById('nicaraguaDestinations');
+      const nicCity = document.getElementById('nicaraguaCity');
+      const otherGroup = document.getElementById('otherDestination');
+      const otherDestText = document.getElementById('otherDestText');
+
+      const handleDestinations = () => {
+        const val = destGroup.value;
+        const nicVal = nicCity ? nicCity.value : '';
+
+        if (nicGroup) nicGroup.style.display = (val === 'Nicaragua') ? 'block' : 'none';
+        if (nicCity) nicCity.required = (val === 'Nicaragua');
+
+        if (val === 'Otro' || (val === 'Nicaragua' && nicVal === 'Otro')) {
+          if (otherGroup) otherGroup.style.display = 'block';
+          if (otherDestText) otherDestText.required = true;
+        } else {
+          if (otherGroup) otherGroup.style.display = 'none';
+          if (otherDestText) otherDestText.required = false;
+        }
+      };
+      if (destGroup) destGroup.addEventListener('change', handleDestinations);
+      if (nicCity) nicCity.addEventListener('change', handleDestinations);
+
+      // Steppers de Pasajeros (Modal 1)
+      let adultsCount = 1;
+      let minorsCount = 0;
+      const valAdultsEl = document.getElementById('valAdults');
+      const valMinorsEl = document.getElementById('valMinors');
+      const btnSubAdults = document.getElementById('btnSubAdults');
+      const btnSubMinors = document.getElementById('btnSubMinors');
+      const btnAddAdults = document.getElementById('btnAddAdults');
+      const btnAddMinors = document.getElementById('btnAddMinors');
+      const cardAdults = document.getElementById('cardAdults');
+      const cardMinors = document.getElementById('cardMinors');
+
+      const updatePassengerUI = () => {
+        if (valAdultsEl) valAdultsEl.textContent = adultsCount;
+        if (valMinorsEl) valMinorsEl.textContent = minorsCount;
+
+        if (btnSubAdults) btnSubAdults.disabled = (adultsCount <= 1);
+        if (btnSubMinors) btnSubMinors.disabled = (minorsCount <= 0);
+
+        const canAdd = (adultsCount + minorsCount) < MAX_PASSENGERS;
+        if (btnAddAdults) btnAddAdults.disabled = !canAdd;
+        if (btnAddMinors) btnAddMinors.disabled = !canAdd;
+
+        if (cardAdults) cardAdults.classList.toggle('active', adultsCount > 0);
+        if (cardMinors) cardMinors.classList.toggle('active', minorsCount > 0);
+      };
+
+      const triggerShake = (btn) => {
+        if (!btn) return;
+        btn.classList.remove('shake');
+        void btn.offsetWidth;
+        btn.classList.add('shake');
+        if (navigator.vibrate) navigator.vibrate(50);
+        notyf.open({ type: 'warning', message: 'Capacidad máxima de 11 pasajeros alcanzada.' });
+      };
+
+      if (btnAddAdults) {
+        btnAddAdults.addEventListener('click', () => {
+          if (adultsCount + minorsCount < MAX_PASSENGERS) {
+            adultsCount++;
+            updatePassengerUI();
+          } else {
+            triggerShake(btnAddAdults);
+          }
+        });
+      }
+      if (btnSubAdults) {
+        btnSubAdults.addEventListener('click', () => {
+          if (adultsCount > 1) {
+            adultsCount--;
+            updatePassengerUI();
+          }
+        });
+      }
+      if (btnAddMinors) {
+        btnAddMinors.addEventListener('click', () => {
+          if (adultsCount + minorsCount < MAX_PASSENGERS) {
+            minorsCount++;
+            updatePassengerUI();
+          } else {
+            triggerShake(btnAddMinors);
+          }
+        });
+      }
+      if (btnSubMinors) {
+        btnSubMinors.addEventListener('click', () => {
+          if (minorsCount > 0) {
+            minorsCount--;
+            updatePassengerUI();
+          }
+        });
+      }
+      updatePassengerUI();
+
+      // ============================================================
+      // INTEGRACIÓN DE GPS EN MODAL 1 (VIAJES)
+      // ============================================================
+      const tripGpsEngine = new GPSCalibrationEngine();
+      let tripCoords = null;
+      let tripAddressText = '';
+
+      const btnStartTripGPS = document.getElementById('btnStartTripGPS');
+      const tripGpsHint = document.getElementById('tripGpsHint');
+      const tripRadar = document.getElementById('tripRadar');
+      const tripRadarCountdown = document.getElementById('tripRadarCountdown');
+      const tripRadarAccuracy = document.getElementById('tripRadarAccuracy');
+      const btnLockTripGPS = document.getElementById('btnLockTripGPS');
+      const tripGpsSuccess = document.getElementById('tripGpsSuccess');
+
+      if (btnStartTripGPS) {
+        btnStartTripGPS.addEventListener('click', () => {
+          btnStartTripGPS.style.display = 'none';
+          if (tripGpsHint) tripGpsHint.style.display = 'none';
+          tripRadar.style.display = 'flex';
+
+          tripGpsEngine.startScan({
+            onProgress: ({ secondsLeft, bestAccuracy }) => {
+              tripRadarCountdown.textContent = `Escaneando satélites... ${secondsLeft}s`;
+              tripRadarAccuracy.textContent = bestAccuracy
+                ? `Mejor lectura: ±${Math.round(bestAccuracy)}m`
+                : 'Buscando satélites...';
+            },
+            onComplete: async (pos) => {
+              tripRadar.style.display = 'none';
+              tripGpsSuccess.style.display = 'flex';
+              tripCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación fijada con máxima precisión.');
+              tripAddressText = await resolveLocationAddress(tripCoords.lat, tripCoords.lng);
+            },
+            onError: (errMsg) => {
+              tripRadar.style.display = 'none';
+              btnStartTripGPS.style.display = 'flex';
+              if (tripGpsHint) tripGpsHint.style.display = 'block';
+              notyf.error(errMsg);
+            }
+          });
+        });
+      }
+
+      if (btnLockTripGPS) {
+        btnLockTripGPS.addEventListener('click', () => {
+          tripGpsEngine.manualLock(
+            async (pos) => {
+              tripRadar.style.display = 'none';
+              tripGpsSuccess.style.display = 'flex';
+              tripCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Lectura consolidada exitosamente.');
+              tripAddressText = await resolveLocationAddress(tripCoords.lat, tripCoords.lng);
+            },
+            (err) => notyf.open({ type: 'warning', message: err })
+          );
+        });
+      }
+
+      // ============================================================
+      // INTEGRACIÓN DE GPS EN MODAL 2 (ASISTENCIA / GRÚA)
+      // ============================================================
+      const towGpsEngine = new GPSCalibrationEngine();
+      let towCoords = null;
+      let towAddressText = '';
+
+      const btnStartTowGPS = document.getElementById('btnStartTowGPS');
+      const towGpsHint = document.getElementById('towGpsHint');
+      const towRadar = document.getElementById('towRadar');
+      const towRadarCountdown = document.getElementById('towRadarCountdown');
+      const towRadarAccuracy = document.getElementById('towRadarAccuracy');
+      const btnLockTowGPS = document.getElementById('btnLockTowGPS');
+      const towGpsSuccess = document.getElementById('towGpsSuccess');
+
+      if (btnStartTowGPS) {
+        btnStartTowGPS.addEventListener('click', () => {
+          btnStartTowGPS.style.display = 'none';
+          if (towGpsHint) towGpsHint.style.display = 'none';
+          towRadar.style.display = 'flex';
+
+          towGpsEngine.startScan({
+            onProgress: ({ secondsLeft, bestAccuracy }) => {
+              towRadarCountdown.textContent = `Escaneando satélites... ${secondsLeft}s`;
+              towRadarAccuracy.textContent = bestAccuracy
+                ? `Mejor lectura: ±${Math.round(bestAccuracy)}m`
+                : 'Buscando satélites...';
+            },
+            onComplete: async (pos) => {
+              towRadar.style.display = 'none';
+              towGpsSuccess.style.display = 'flex';
+              towCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Ubicación de rescate fijada.');
+              towAddressText = await resolveLocationAddress(towCoords.lat, towCoords.lng);
+            },
+            onError: (errMsg) => {
+              towRadar.style.display = 'none';
+              btnStartTowGPS.style.display = 'flex';
+              if (towGpsHint) towGpsHint.style.display = 'block';
+              notyf.error(errMsg);
+            }
+          });
+        });
+      }
+
+      if (btnLockTowGPS) {
+        btnLockTowGPS.addEventListener('click', () => {
+          towGpsEngine.manualLock(
+            async (pos) => {
+              towRadar.style.display = 'none';
+              towGpsSuccess.style.display = 'flex';
+              towCoords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                accuracy: pos.coords.accuracy
+              };
+              notyf.success('Lectura consolidada exitosamente.');
+              towAddressText = await resolveLocationAddress(towCoords.lat, towCoords.lng);
+            },
+            (err) => notyf.open({ type: 'warning', message: err })
+          );
+        });
+      }
+
+      // ============================================================
+      // ENVÍO DEL FORMULARIO 1: VIAJES (ÁLVARO SCOTT: 50672094457)
+      // ============================================================
+      const tripForm = document.getElementById('tripForm');
+      if (tripForm) {
+        tripForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('tripName').value.trim();
+          const phoneRaw = document.getElementById('tripPhone').value.trim();
+          const phoneValidation = validateAndFormatPhone(phoneRaw);
+
+          if (!phoneValidation.valid) {
+            notyf.error('Por favor ingrese un número telefónico válido (8 dígitos).');
+            return;
+          }
+
+          // Resolver Destino
+          let finalDest = destGroup.value;
+          if (finalDest === 'Nicaragua') {
+            const city = nicCity ? nicCity.value : '';
+            const custom = otherDestText ? otherDestText.value.trim() : '';
+            finalDest = `Nicaragua (${city === 'Otro' ? custom : city})`;
+          } else if (finalDest === 'Otro') {
+            finalDest = otherDestText ? otherDestText.value.trim() : 'Otro destino';
+          }
+
+          // Fecha DD/MM/AAAA
+          const [y, m, d] = tripDateInput.value.split('-');
+          const dateFormatted = `${d}/${m}/${y}`;
+
+          // Equipaje
+          const luggage = document.getElementById('tripLuggage').checked ? 'Sí' : 'No';
+
+          // Coordenadas y Enlaces
+          let coordsStr = 'No capturadas';
+          let wazeLink = 'No disponible (sin GPS)';
+          let gmapsLink = 'No disponible (sin GPS)';
+
+          if (tripCoords) {
+            coordsStr = `${tripCoords.lat.toFixed(6)}, ${tripCoords.lng.toFixed(6)} (±${Math.round(tripCoords.accuracy)}m)`;
+            wazeLink = `https://waze.com/ul?ll=${tripCoords.lat},${tripCoords.lng}&navigate=yes`;
+            gmapsLink = `https://www.google.com/maps?q=${tripCoords.lat},${tripCoords.lng}`;
+          }
+
+          const addressFinal = tripAddressText || (tripCoords ? 'Coordenadas satelitales consolidadas' : 'No se compartió GPS');
+          const senias = document.getElementById('tripLocationDetails').value.trim();
+
+          // Serialización estética del Mensaje 1
+          const msg = `*🚐 TRANSPORTES LA SOLUCIÓN*
+*SOLICITUD DE RESERVA*
+━━━━━━━━━━━━━━━━━━━━
+
+*👤 DATOS DEL CLIENTE*
+▪ *Nombre:* ${name}
+▪ *Teléfono:* ${phoneValidation.display}
+▪ *WhatsApp:* https://wa.me/${phoneValidation.e164}
+
+*🗺️ DETALLES DEL TRAYECTO*
+▪ *Destino:* ${finalDest}
+▪ *Fecha:* ${dateFormatted}
+▪ *Pasajeros:* ${adultsCount} Adulto(s), ${minorsCount} Niño(s)
+▪ *Lleva Equipaje:* ${luggage}
+
+*📍 PUNTO DE RECOGIDA*
+▪ *Zona / Dirección:* ${addressFinal}
+▪ *Coordenadas:* ${coordsStr}
+▪ *Señas:* ${senias || 'Sin señas adicionales'}
+
+*🧭 NAVEGACIÓN PARA EL CHOFER*
+▪ *Waze:* ${wazeLink}
+▪ *Google Maps:* ${gmapsLink}
+━━━━━━━━━━━━━━━━━━━━`;
+
+          // Confeti visual de confirmación
+          if (typeof confetti !== 'undefined') {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.65 }
+            });
+          }
+
+          // Redirección directa por window.location.href
+          setTimeout(() => {
+            window.location.href = `https://wa.me/${PROD_PHONE}?text=${encodeURIComponent(msg)}`;
+          }, 450);
+        });
+      }
+
+      // ============================================================
+      // ENVÍO DEL FORMULARIO 2: ASISTENCIA VIAL / GRÚA (50687292124)
+      // ============================================================
+      const towForm = document.getElementById('towForm');
+      if (towForm) {
+        towForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById('towName').value.trim();
+          const phoneRaw = document.getElementById('towPhone').value.trim();
+          const phoneValidation = validateAndFormatPhone(phoneRaw);
+
+          if (!phoneValidation.valid) {
+            notyf.error('Por favor ingrese un número telefónico de contacto válido.');
+            return;
+          }
+
+          const breakdownType = document.getElementById('towBreakdownType').value;
+          const vehicleDetails = document.getElementById('towVehicleDetails').value.trim();
+
+          let coordsStr = 'No capturadas';
+          let wazeLink = 'No disponible (sin GPS)';
+          let gmapsLink = 'No disponible (sin GPS)';
+
+          if (towCoords) {
+            coordsStr = `${towCoords.lat.toFixed(6)}, ${towCoords.lng.toFixed(6)} (±${Math.round(towCoords.accuracy)}m)`;
+            wazeLink = `https://waze.com/ul?ll=${towCoords.lat},${towCoords.lng}&navigate=yes`;
+            gmapsLink = `https://www.google.com/maps?q=${towCoords.lat},${towCoords.lng}`;
+          }
+
+          const addressFinal = towAddressText || (towCoords ? 'Coordenadas satelitales de rescate' : 'No se compartió GPS');
+          const senias = document.getElementById('towLocationDetails').value.trim();
+
+          // Serialización estética del Mensaje 2
+          const msg = `*🚨 ASISTENCIA VIAL / SERVICIO DE GRÚA*
+*REPORTE DE VEHÍCULO VARADO*
+━━━━━━━━━━━━━━━━━━━━
+
+*👤 CONDUCTOR EN RUTA*
+▪ *Nombre:* ${name}
+▪ *Teléfono:* ${phoneValidation.display}
+▪ *Contacto:* https://wa.me/${phoneValidation.e164}
+
+*🔧 DETALLES DEL VEHÍCULO Y AVERÍA*
+▪ *Problema:* ${breakdownType}
+▪ *Vehículo / Placa:* ${vehicleDetails}
+
+*📍 UBICACIÓN EXACTA DEL PERCANCE*
+▪ *Referencia:* ${addressFinal}
+▪ *Coordenadas:* ${coordsStr}
+▪ *Punto de Encuentro:* ${senias || 'En el punto de coordenadas marcadas'}
+
+*🧭 RUTA DIRECTA DE RESCATE*
+▪ *Waze:* ${wazeLink}
+▪ *Google Maps:* ${gmapsLink}
+━━━━━━━━━━━━━━━━━━━━`;
+
+          // Redirección directa por window.location.href a la línea de grúa
+          window.location.href = `https://wa.me/${TOW_PHONE}?text=${encodeURIComponent(msg)}`;
+        });
+      }
+    });
+  </script>
 </body>
 </html>
