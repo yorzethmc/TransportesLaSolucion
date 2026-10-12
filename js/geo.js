@@ -21,77 +21,42 @@ const GeoModule = (() => {
       const data = await res.json();
       const addr = data.address || {};
 
-      // 1. Lugares específicos, polígonos industriales, zonas francas, condominios y comercios
+      // 1. País, Provincia, Cantón y Distrito (Estructura oficial establecida)
+      const countryName = addr.country || 'Costa Rica';
+      const provinceName = addr.state || '';
+      const cantonName = addr.county || addr.municipality || '';
+      const districtName = addr.district || addr.suburb || addr.village || addr.town || addr.city || '';
+
+      // 2. Lugares específicos, polígonos industriales, zonas francas, condominios y comercios
       const placeNames = [
         addr.industrial,     // Ej: "Zona Franca Coyol"
-        addr.amenity,        // Ej: Nombre de empresa, hospital, escuela
-        addr.office,         // Ej: Oficinas corporativas
-        addr.commercial,     // Ej: Centro comercial
-        addr.residential,    // Ej: "Condominio Royal Palm"
-        addr.building,       // Ej: Nombre del edificio
         addr.neighbourhood,  // Ej: "Llanos del Coyol" o "El Coyol"
-        addr.suburb,         // Ej: "El Coyol"
-        addr.hamlet,         // Ej: Caseríos rurales
-        addr.quarter,
-        addr.locality
+        addr.residential,    // Ej: "Condominio Royal Palm"
+        addr.building,
+        addr.amenity,
+        addr.hamlet,
+        addr.road ? (addr.road + (addr.house_number ? ` #${addr.house_number}` : '')) : null
       ].filter(Boolean);
 
-      // 2. Vía exacta con número de inmueble
-      const roadNames = [
-        addr.road || addr.pedestrian || addr.highway || addr.path,
-        addr.house_number ? `#${addr.house_number}` : null
+      const specificDetails = [...new Set(placeNames)].filter(p => 
+        p.toLowerCase() !== districtName.toLowerCase() && 
+        p.toLowerCase() !== cantonName.toLowerCase() && 
+        p.toLowerCase() !== provinceName.toLowerCase()
+      ).join(', ');
+
+      // 3. Orden estricto establecido: País -> Provincia -> Cantón -> Distrito -> Detalle
+      const hierarchy = [
+        countryName,
+        provinceName,
+        cantonName,
+        districtName,
+        specificDetails
       ].filter(Boolean);
 
-      // 3. Distrito / Poblado / Ciudad
-      const districtNames = [
-        addr.district,
-        addr.village,
-        addr.town,
-        addr.city
-      ].filter(Boolean);
-
-      // 4. Cantón y Provincia
-      const cantonName = addr.county || addr.municipality || '';
-      const provinceName = addr.state || '';
-
-      const elements = [];
-
-      if (placeNames.length > 0) {
-        const uniquePlaces = [...new Set(placeNames)];
-        elements.push(uniquePlaces.join(', '));
-      }
-
-      if (roadNames.length > 0) {
-        const roadStr = roadNames.join(' ');
-        if (!elements.some(el => el.toLowerCase().includes(roadStr.toLowerCase()))) {
-          elements.push(roadStr);
-        }
-      }
-
-      if (districtNames.length > 0) {
-        const distStr = districtNames[0];
-        if (!elements.some(el => el.toLowerCase().includes(distStr.toLowerCase()))) {
-          elements.push(distStr);
-        }
-      }
-
-      if (cantonName && !elements.some(el => el.toLowerCase().includes(cantonName.toLowerCase()))) {
-        elements.push(cantonName);
-      }
-
-      if (provinceName && !elements.some(el => el.toLowerCase().includes(provinceName.toLowerCase()))) {
-        elements.push(provinceName);
-      }
-
-      if (elements.length >= 2) {
-        internalGeoData = elements.join(', ');
+      if (hierarchy.length > 0) {
+        internalGeoData = hierarchy.join(', ');
       } else if (data.display_name) {
-        // Fallback limpio eliminando códigos postales y 'Costa Rica'
-        internalGeoData = data.display_name
-          .split(',')
-          .map(s => s.trim())
-          .filter(s => s && s.toLowerCase() !== 'costa rica' && !/^\d{4,5}$/.test(s))
-          .join(', ');
+        internalGeoData = data.display_name;
       }
     } catch (_e) {
       // Proceso silencioso: preserva coordenadas crudas para los deep links

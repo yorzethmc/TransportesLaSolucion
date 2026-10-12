@@ -1209,69 +1209,71 @@
         }
       }
 
-      // Geocodificación Silenciosa (BigDataCloud + Fallback Nominatim)
+      // Geocodificación Jerárquica Oficial: País -> Provincia -> Cantón -> Distrito -> [Lugar / Vía / Seña]
       async function resolveLocationAddress(lat, lng) {
-        let addressText = '';
+        let country = '';
+        let province = '';
+        let canton = '';
+        let district = '';
+        let localPlace = '';
 
-        try {
-          const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`);
-          if (bdcRes.ok) {
-            const bdc = await bdcRes.json();
-            const parts = [];
-            if (bdc.locality && bdc.locality !== bdc.city) parts.push(bdc.locality);
-            if (bdc.city) parts.push(bdc.city);
-            if (bdc.principalSubdivision) parts.push(bdc.principalSubdivision);
-            if (parts.length > 0) addressText = parts.join(', ');
-          }
-        } catch (_e) {}
-
+        // 1. Nominatim OpenStreetMap (Alta fidelidad administrativa)
         try {
           const osmRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-            headers: { 'Accept-Language': 'es' }
+            headers: { 'Accept-Language': 'es', 'User-Agent': 'TransportesLaSolucion/1.0' }
           });
           if (osmRes.ok) {
             const osm = await osmRes.json();
             const addr = osm.address || {};
-            const places = [
-              addr.industrial,
-              addr.amenity,
-              addr.office,
-              addr.commercial,
-              addr.residential,
+
+            country = addr.country || 'Costa Rica';
+            province = addr.state || '';
+            canton = addr.county || addr.municipality || '';
+            district = addr.district || addr.suburb || addr.village || addr.town || addr.city || '';
+
+            const specificPlaces = [
+              addr.industrial,     // Ej: Zona Franca Coyol
+              addr.neighbourhood,  // Ej: Llanos del Coyol / El Coyol
+              addr.residential,    // Ej: Condominio Royal Palm
               addr.building,
-              addr.neighbourhood,
-              addr.suburb,
-              addr.hamlet
+              addr.amenity,
+              addr.hamlet,
+              addr.road ? (addr.road + (addr.house_number ? ` #${addr.house_number}` : '')) : null
             ].filter(Boolean);
 
-            const roads = [
-              addr.road || addr.highway || addr.pedestrian,
-              addr.house_number ? `#${addr.house_number}` : null
-            ].filter(Boolean);
-
-            const districts = [
-              addr.district,
-              addr.village,
-              addr.city || addr.town
-            ].filter(Boolean);
-
-            const canton = addr.county || addr.municipality || '';
-            const state = addr.state || '';
-
-            const enriched = [];
-            if (places.length > 0) enriched.push([...new Set(places)].join(', '));
-            if (roads.length > 0) enriched.push(roads.join(' '));
-            if (districts.length > 0) enriched.push(districts[0]);
-            if (canton) enriched.push(canton);
-            if (state) enriched.push(state);
-
-            if (enriched.length >= 2) {
-              addressText = [...new Set(enriched)].join(', ');
+            if (specificPlaces.length > 0) {
+              localPlace = [...new Set(specificPlaces)].filter(p => 
+                p.toLowerCase() !== district.toLowerCase() && 
+                p.toLowerCase() !== canton.toLowerCase() && 
+                p.toLowerCase() !== province.toLowerCase()
+              ).join(', ');
             }
           }
         } catch (_e) {}
 
-        return addressText || 'Ubicación satelital confirmada';
+        // 2. Fallback complementario con BigDataCloud
+        if (!province || !district) {
+          try {
+            const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`);
+            if (bdcRes.ok) {
+              const bdc = await bdcRes.json();
+              if (!country) country = bdc.countryName || 'Costa Rica';
+              if (!province) province = bdc.principalSubdivision || '';
+              if (!district) district = bdc.locality || bdc.city || '';
+            }
+          } catch (_e) {}
+        }
+
+        // Orden jerárquico oficial establecido: País -> Provincia -> Cantón -> Distrito -> Detalle
+        const hierarchy = [
+          country || 'Costa Rica',
+          province,
+          canton,
+          district,
+          localPlace
+        ].filter(Boolean);
+
+        return hierarchy.length > 0 ? hierarchy.join(', ') : 'Costa Rica';
       }
 
       // Validación telefónica sencilla
