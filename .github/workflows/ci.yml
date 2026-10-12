@@ -1,0 +1,40 @@
+name: CI/CD Pipeline - Transportes La Solución
+
+on:
+  push:
+    branches: [ main, 'fix/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Instalar dependencias del monorepo
+      run: npm install
+
+    - name: Compilar paquetes y aplicaciones
+      run: |
+        npx tsc -p packages/types/tsconfig.json
+        npx tsc -p packages/configuration/tsconfig.json
+        npx tsc -p packages/validation/tsconfig.json
+        npx tsc -p packages/api-client/tsconfig.json
+        npx tsc -p apps/driver-app/tsconfig.json
+        npx tsc -p apps/admin-dashboard/tsconfig.json
+
+    - name: Ejecutar pruebas unitarias e integración
+      run: |
+        npx tsc packages/validation/test/validation.test.ts --module NodeNext --moduleResolution NodeNext --target ES2022
+        node packages/validation/test/validation.test.js
+        npx tsc packages/validation/test/integration.test.ts --module NodeNext --moduleResolution NodeNext --target ES2022
+        node packages/validation/test/integration.test.js
